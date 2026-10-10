@@ -44,11 +44,11 @@ Tipos: `uuid|string|number|boolean|date|datetime|image|enum|ref|array`. `require
 ## 5. Diagrama (Mermaid)
 ```mermaid
 flowchart LR
-  JSON[schemas/*.json] --> Store[schemaStore]
-  Store --> Val[validator]
-  Val -->|ok| Gen[dataGenerator + seed]
-  Val -->|erro| Diag[Diagnostic campo + motivo]
-  Gen --> Out[object[] determinístico]
+  JSON["schemas por modelo - JSON"] --> Store["schemaStore"]
+  Store --> Val["validator"]
+  Val -->|"ok"| Gen["dataGenerator com seed"]
+  Val -->|"erro"| Diag["Diagnostic - campo e motivo"]
+  Gen --> Out["array de objetos deterministico"]
 ```
 
 ## 6. Implicações

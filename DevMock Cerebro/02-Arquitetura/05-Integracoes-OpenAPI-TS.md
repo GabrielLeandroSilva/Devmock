@@ -39,11 +39,11 @@ paths:
 ## 5. Diagrama (Mermaid)
 ```mermaid
 flowchart LR
-  S[Schema[]] --> O[openapiBuilder]
-  S --> T[tsBuilder]
-  S --> M[mdBuilder]
-  O --> V{swagger-parser ok?}
-  V -->|sim| Out[.devmock/openapi + docs/]
+  S["Schema - lista"] --> O["openapiBuilder"]
+  S --> T["tsBuilder"]
+  S --> M["mdBuilder"]
+  O --> V{"swagger-parser ok?"}
+  V -->|"sim"| Out["devmock openapi e docs"]
 ```
 
 ## 6. Implicações
