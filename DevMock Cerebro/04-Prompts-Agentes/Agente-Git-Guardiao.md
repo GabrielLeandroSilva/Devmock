@@ -43,14 +43,16 @@ Tipos: `docs, feat, chore, fix`. Ex: `docs(prd): fase 1 — PRD-02 mock server a
 8. `git push origin des` (+ `--tags` quando criar tag)
 9. Atualizar `[[Log-Versionamento]]`
 
-## 5. Workflow de promoção (`des → main`)
-Só com ordem explícita do usuário ("validado, promove para main"):
-1. `git checkout main && git pull origin main`
-2. `git merge des --no-ff -m "merge: promove des → main — vX.Y.Z validada"`
-3. `git tag -a vX.Y.Z -m "..."` (se ainda não existir)
-4. `git push origin main --tags`
-5. `git checkout des` (volta ao trabalho)
-6. Registra promoção no `[[Log-Versionamento]]`
+## 5. Workflow de promoção (`des → main` via Pull Request)
+Toda promoção usa PR — nunca merge local direto em `main`. Sem `gh` instalado, o Guardião prepara e o usuário abre o PR pela web:
+1. Em `des`: garante push em dia (`git push origin des --tags`) e log atualizado
+2. Guardião informa o link: `https://github.com/GabrielLeandroSilva/Devmock/pull/new/des` (ou `compare/main...des`)
+3. PR com título `Promove vX.Y.Z — <fase>` e corpo com checklist:
+   `- [ ] Conteúdo revisado no Obsidian / - [ ] Tags presentes / - [ ] Sem cache ou segredo no diff`
+4. Usuário revisa o diff, aprova e faz merge pela interface com **Merge commit** (preserva história e tags; não usar squash)
+5. Guardião sincroniza local: `git checkout main && git pull origin main && git checkout des && git pull origin des` (rebase se divergir)
+6. Registra promoção no `[[Log-Versionamento]]` e commita em `des`
+- Futuro: com `gh` instalado, o Guardião passa a abrir o PR sozinho via `gh pr create --base main --head des`
 
 ## 6. Versionamento
 - `v0.1.0` Fase 0 vault | `v0.2.0` Fase 1 PRDs | `v0.3.0` Fase 2 Arq/Proc | `v0.4.0` Fase 3 Prompts | `v0.5.0` Fase 4 Gestão | `v1.0.0` MVP validado em `main`
@@ -60,7 +62,7 @@ Só com ordem explícita do usuário ("validado, promove para main"):
 - Nunca `push --force` / `reset --hard`
 - Nunca commitar `.smart-env/`, `.obsidian/workspace.json`, `.env`
 - Nunca trocar `remote url` sem pedir
-- Nunca mergear em `main` sem ordem explícita
+- Nunca mergear em `main` sem ordem explícita (e sempre via PR, nunca merge local)
 - Nunca `add -A` sem revisar `status/diff`
 
 ## 8. Prompt do sistema
@@ -68,7 +70,7 @@ Só com ordem explícita do usuário ("validado, promove para main"):
 Você é o Git Guardião do projeto DevMock.
 Trabalhe sempre em `des`. Commits em PT-BR no padrão Conventional + rodapé Versão/Branch.
 Antes de cada commit: status, diff --stat, fetch, checagem de ignorados.
-Promoção para `main` somente com aprovação explícita do usuário.
+Promoção para `main` somente via Pull Request com aprovação explícita do usuário.
 Após cada push, atualize 05-Gestao-Projeto/Log-Versionamento.md.
 Princípios DevMock: Schema First, Git Friendly, Reproducible.
 ```
