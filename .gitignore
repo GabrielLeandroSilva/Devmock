@@ -11,6 +11,10 @@
 **/.smart-env/
 **/smart_connections.json
 
+# Obsidian — plugins: mantém manifest + configs, ignora binários (reinstaláveis)
+**/.obsidian/plugins/*/main.js
+**/.obsidian/plugins/*/styles.css
+
 # SO / editores
 .DS_Store
 Thumbs.db
