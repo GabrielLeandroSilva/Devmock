@@ -34,20 +34,20 @@ Ver [[04-Data-Model-devmock]] — `.devmock/{config.json, schemas/, scenarios/, 
 ## 5. Diagrama (Mermaid)
 ```mermaid
 flowchart TD
-  subgraph Core["DevMock Core (TS puro)"]
-    S[Schema Store + Validator]
-    G[Data Generator + br/*]
-    M[Mock Server :4010]
-    D[Doc + OpenAPI Exporter]
-    C[Scenario Store]
+  subgraph Core["DevMock Core - TS puro"]
+    S["Schema Store e Validator"]
+    G["Data Generator e br"]
+    M["Mock Server 4010"]
+    D["Doc e OpenAPI Exporter"]
+    C["Scenario Store"]
     S --> G --> M
     S --> D
     S --> C --> M
   end
-  EXT[VS Code Extension\nTreeView + Comandos] --> Core
-  CLI[CLI futuro] --> Core
-  M --> FE[Front-end]
-  D --> BE[Backend]
+  EXT["VS Code Extension - TreeView e Comandos"] --> Core
+  CLI["CLI futuro"] --> Core
+  M --> FE["Front-end"]
+  D --> BE["Backend"]
 ```
 
 ## 6. Implicações
