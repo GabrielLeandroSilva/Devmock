@@ -1,0 +1,27 @@
+# DevMock — gitignore (vault Obsidian + dev futuro)
+# Mantém .md, templates e configs essenciais. Ignora cache/pessoal.
+
+# Obsidian — workspace pessoal e cache
+**/.obsidian/workspace.json
+**/.obsidian/cache/
+**/.obsidian/hotkeys.json
+
+# Smart Connections — embeddings locais (pesados, regeneráveis)
+.smart-env/
+**/.smart-env/
+**/smart_connections.json
+
+# SO / editores
+.DS_Store
+Thumbs.db
+*.tmp
+*.bak
+~$*
+
+# Node / build futuro (quando o código DevMock nascer)
+node_modules/
+dist/
+build/
+coverage/
+.env
+.env.local
