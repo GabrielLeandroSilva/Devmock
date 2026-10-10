@@ -21,6 +21,8 @@ updated: 2026-10-10
 | v0.1.1 | 2026-10-10 | des | Infra git — guardião + log | `docs(git): infra do guardião + log de versionamento` | ✅ em des |
 | v0.1.2 | 2026-10-10 | des | Repo leve — ignora binários plugins | `chore(git): ignora binários dos plugins Obsidian` | ✅ em des |
 | v0.2.0 | 2026-10-10 | main + des | Fase 1 — 5 PRDs MVP | `docs(prd): fase 1 — 5 PRDs do MVP` + merge `eb90ddf` | ✅ validado, em main |
+| v0.2.1 | 2026-10-10 | des | Pós-promoção + ignora graph.json | `docs(git): registra promoção v0.2.0 em main` | ✅ em des |
+| v0.3.0 | 2026-10-10 | des | Fase 2 — Arquitetura + Processos | `docs(arq): fase 2 — arquitetura e processos` | ⏳ em des, em revisão |
 
 ## Consulta (Dataview — notas de gestão)
 
@@ -33,4 +35,6 @@ SORT file.name ASC
 ## Tasks
 - [x] #task ⏫ Revisar os 5 PRDs da Fase 1 e aprovar 🏷️ fase/1
 - [x] #task 🔼 Promover v0.2.0 para main após aprovação 🏷️ fase/1
-- [ ] #task 🔼 Iniciar Fase 2 — Arquitetura + Processos 🏷️ fase/2
+- [x] #task 🔼 Iniciar Fase 2 — Arquitetura + Processos 🏷️ fase/2
+- [ ] #task ⏫ Revisar Arquitetura + Processos da Fase 2 🏷️ fase/2
+- [ ] #task 🔼 Promover v0.3.0 para main após aprovação 🏷️ fase/2
