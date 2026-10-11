@@ -44,15 +44,15 @@ Tipos: `docs, feat, chore, fix`. Ex: `docs(prd): fase 1 — PRD-02 mock server a
 9. Atualizar `[[Log-Versionamento]]`
 
 ## 5. Workflow de promoção (`des → main` via Pull Request)
-Toda promoção usa PR — nunca merge local direto em `main`. Sem `gh` instalado, o Guardião prepara e o usuário abre o PR pela web:
+Toda promoção usa PR — nunca merge local direto em `main` (a `main` é protegida por ruleset: exige PR, bloqueia force-push e deleção, sem bypass). `gh` instalado e autenticado (`gh auth login` feito em 2026-10-10):
 1. Em `des`: garante push em dia (`git push origin des --tags`) e log atualizado
-2. Guardião informa o link: `https://github.com/GabrielLeandroSilva/Devmock/pull/new/des` (ou `compare/main...des`)
-3. PR com título `Promove vX.Y.Z — <fase>` e corpo com checklist:
-   `- [ ] Conteúdo revisado no Obsidian / - [ ] Tags presentes / - [ ] Sem cache ou segredo no diff`
-4. Usuário revisa o diff, aprova e faz merge pela interface com **Merge commit** (preserva história e tags; não usar squash)
-5. Guardião sincroniza local: `git checkout main && git pull origin main && git checkout des && git pull origin des` (rebase se divergir)
-6. Registra promoção no `[[Log-Versionamento]]` e commita em `des`
-- Futuro: com `gh` instalado, o Guardião passa a abrir o PR sozinho via `gh pr create --base main --head des`
+2. Guardião abre o PR sozinho:
+```powershell
+gh pr create --base main --head des --title "Promove vX.Y.Z — <fase>" --body "Checklist: conteúdo revisado no Obsidian; tags presentes; sem cache ou segredo no diff."
+```
+3. Usuário revisa o diff, aprova e faz merge pela interface com **Merge commit** (não squash)
+4. Guardião sincroniza local: `git checkout main && git pull origin main && git checkout des && git merge origin/main` (resolve divergência com rebase se preciso)
+5. Registra promoção no `[[Log-Versionamento]]` e commita em `des`
 
 ## 6. Versionamento
 - `v0.1.0` Fase 0 vault | `v0.2.0` Fase 1 PRDs | `v0.3.0` Fase 2 Arq/Proc | `v0.4.0` Fase 3 Prompts | `v0.5.0` Fase 4 Gestão | `v1.0.0` MVP validado em `main`
