@@ -1,0 +1,36 @@
+---
+title: "SPEC Prompt Validator (futuro)"
+type: prompt
+status: rascunho
+fase: 3
+tags: [devmock/prompt, devmock/futuro]
+related: ["[[BPM-06-Validate-Real-API]]"]
+created: 2026-10-11
+updated: 2026-10-11
+---
+
+# Spec de Prompt — Validator (futuro, pós-MVP)
+
+## 1. Objetivo
+Comparar respostas da API real contra o contrato e classificar `Compatible / Warning / Breaking Change` (stub — detalhar com PRD-07).
+
+## 2. Input
+- Variáveis: `{{schema_json}}`, `{{real_response}}`, `{{endpoint}}`
+- Formato: JSON ambos
+
+## 3. Output esperado
+- Relatório por campo: `esperado x recebido x severidade`, ex: `balance number x string → Breaking`
+
+## 4. Prompt base (PT-BR)
+```text
+Você é o validador de contrato do DevMock. Compare {{real_response}} de {{endpoint}} com {{schema_json}}.
+Classifique por campo: Compatible, Warning (campo extra, formato tolerável) ou Breaking Change (tipo divergente, required ausente, enum fora da lista).
+Seja estrito com tipos e enums; tolerante com campos extras (Warning, não Breaking).
+```
+
+## 5. Guardrails
+- [ ] Campo extra nunca é Breaking (é Warning)
+- [ ] `balance` string vs number é sempre Breaking (caso clássico §22)
+
+## 6. Links
+- Processo: [[BPM-06-Validate-Real-API]]
