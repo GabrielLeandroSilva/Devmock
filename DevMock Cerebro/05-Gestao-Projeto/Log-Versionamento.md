@@ -31,6 +31,7 @@ updated: 2026-10-10
 | v0.3.6 | 2026-10-11 | des | Pós-promoção v0.3.5 (PR nº 3) | `docs(git): registra promoção v0.3.5 em main` | ✅ em des |
 | v0.4.0 | 2026-10-11 | main + des | Fase 3 — Prompts + Agentes | `docs(prompt): fase 3 — specs e agentes` + PR `nº 4` (merge commit) | ✅ validado, em main |
 | v0.4.1 | 2026-10-11 | des | Pós-promoção v0.4.0 (PR nº 4) | `docs(git): registra promoção v0.4.0 em main` | ✅ em des |
+| v0.5.0 | 2026-10-11 | des | Fase 4 — Gestão (EAP + Cronograma) | `docs(gestao): fase 4 — charter, eap, cronograma e cia` | ⏳ em des, em revisão |
 
 ## Consulta (Dataview — notas de gestão)
 
@@ -49,4 +50,6 @@ SORT file.name ASC
 - [x] #task 🔼 Iniciar Fase 3 — Prompts + Agentes 🏷️ fase/3
 - [x] #task ⏫ Revisar SPECs + agentes da Fase 3 🏷️ fase/3
 - [x] #task 🔼 Promover v0.4.0 para main após aprovação 🏷️ fase/3
-- [ ] #task 🔼 Iniciar Fase 4 — Gestão (EAP + Cronograma) 🏷️ fase/4
+- [x] #task 🔼 Iniciar Fase 4 — Gestão (EAP + Cronograma) 🏷️ fase/4
+- [ ] #task ⏫ Revisar Gestão da Fase 4 🏷️ fase/4
+- [ ] #task 🔼 Promover v0.5.0 para main após aprovação 🏷️ fase/4
