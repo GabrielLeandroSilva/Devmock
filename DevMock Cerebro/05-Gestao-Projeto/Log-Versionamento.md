@@ -32,6 +32,7 @@ updated: 2026-10-10
 | v0.4.0 | 2026-10-11 | main + des | Fase 3 — Prompts + Agentes | `docs(prompt): fase 3 — specs e agentes` + PR `nº 4` (merge commit) | ✅ validado, em main |
 | v0.4.1 | 2026-10-11 | des | Pós-promoção v0.4.0 (PR nº 4) | `docs(git): registra promoção v0.4.0 em main` | ✅ em des |
 | v0.5.0 | 2026-10-11 | des | Fase 4 — Gestão (EAP + Cronograma) | `docs(gestao): fase 4 — charter, eap, cronograma e cia` | ⏳ em des, em revisão |
+| v0.5.1 | 2026-10-11 | des | Config Tasks Kanban | `fix(obsidian): configura Tasks Kanban com 4 boards` | ⏳ em des, em revisão |
 
 ## Consulta (Dataview — notas de gestão)
 
