@@ -16,12 +16,12 @@ updated: 2026-10-10
 
 ## Mapa por Fase
 
-- [x] **Fase 0 — Vault pronto** (esta fase)
-- [ ] **Fase 1 — PRDs** → [[Indice-PRDs]] — `01-PRDs/`
-- [ ] **Fase 2 — Arquitetura + Processos** → [[Indice-Arquitetura]] + [[Indice-Processos]]
-- [ ] **Fase 3 — Prompts + Agentes** → [[Indice-Prompts-Agentes]]
-- [ ] **Fase 4 — Gestão (EAP + Cronograma)** → [[Indice-Gestao]]
-- [ ] **Fase 5 — Extras + Costura** → `06-Extras/`
+- [x] **Fase 0 — Vault pronto** → `v0.1.0` em main
+- [x] **Fase 1 — PRDs** → [[Indice-PRDs]] — `01-PRDs/` (`v0.2.0` em main)
+- [x] **Fase 2 — Arquitetura + Processos** → [[Indice-Arquitetura]] + [[Indice-Processos]] (`v0.3.2` em main)
+- [x] **Fase 3 — Prompts + Agentes** → [[Indice-Prompts-Agentes]] (`v0.4.0` em main)
+- [x] **Fase 4 — Gestão (EAP + Cronograma)** → [[Indice-Gestao]] (`v0.5.1` em main)
+- [ ] **Fase 5 — Extras + Costura** → `06-Extras/` (`v0.6.0` em `des`, em revisão)
 
 ## Status geral (Dataview)
 
