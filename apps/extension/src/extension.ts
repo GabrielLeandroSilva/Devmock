@@ -411,7 +411,6 @@ function openSchemaForm(context: vscode.ExtensionContext, root: string, refresh:
     <div class="flex gap mt">
       <button id="preview" class="btn btn-secondary">Preview</button>
       <button id="save" class="btn btn-primary">Salvar schema</button>
-      <span id="previewBadge" class="badge hidden"></span>
     </div>
     <pre id="previewOut" class="preview hidden"></pre>
     <div id="msg" class="alert hidden mt"></div>
@@ -438,7 +437,6 @@ function openSchemaForm(context: vscode.ExtensionContext, root: string, refresh:
         const rows = generate(schema, msg.records ?? 5, seed);
         void panel.webview.postMessage({
           kind: "previewResult",
-          label: `${rows.length} registros · seed ${seed}`,
           text: JSON.stringify(rows, null, 2),
         });
         return;

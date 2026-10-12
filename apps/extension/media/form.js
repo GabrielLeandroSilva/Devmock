@@ -118,11 +118,6 @@
       const pre = $("#previewOut");
       pre.textContent = msg.text;
       pre.classList.remove("hidden");
-      const badge = $("#previewBadge");
-      if (badge) {
-        badge.textContent = msg.label || "";
-        badge.classList.remove("hidden");
-      }
     }
   });
 })();

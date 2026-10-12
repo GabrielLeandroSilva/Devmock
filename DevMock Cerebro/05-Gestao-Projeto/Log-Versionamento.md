@@ -57,6 +57,7 @@ updated: 2026-10-10
 | v1.0.1 | 2026-10-12 | des | Pós-promoção v1.0.0 (PR nº 10) | `docs(git): registra promoção v1.0.0 em main` | ✅ em des |
 | v1.1.0 | 2026-10-12 | des | Studio: painel Schema+Preview com CSS próprio | `feat(extension): studio com preview, CSP estrito` | ⏳ em des, em revisão |
 | v1.1.1 | 2026-10-12 | des | Studio: badge oculto + preview automático | `fix(extension): badge e auto-preview com debounce` | ⏳ em des, em revisão |
+| v1.1.2 | 2026-10-12 | des | Studio: remove badge de registros/seed | `fix(extension): remove badge do preview` | ⏳ em des, em revisão |
 
 ## Consulta (Dataview — notas de gestão)
 
