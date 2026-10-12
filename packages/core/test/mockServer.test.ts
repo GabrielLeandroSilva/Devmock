@@ -164,6 +164,25 @@ describe("Mock Server (integração)", () => {
 });
 
 describe("cenários (PRD-04)", () => {
+  it("troca de cenário sem restart (PRD-04 RF-02)", async () => {
+    const s = createMockServer([user], { config: EPHEMERAL });
+    const port = await s.listen();
+    const url = `http://127.0.0.1:${port}/users`;
+
+    const before = await (await fetch(url)).json();
+    expect(before.data.length).toBeGreaterThan(0);
+
+    s.reload({
+      scenarios: { "GET /users": { Empty: { status: 200, body: { data: [], total: 0 } } } },
+      config: { activeScenarios: { "GET /users": "Empty" } },
+    });
+
+    const after = await (await fetch(url)).json();
+    expect(after).toEqual({ data: [], total: 0 });
+    expect(s.logs().at(-1)?.scenario).toBe("Empty");
+    await s.close();
+  });
+
   it("Empty retorna envelope vazio com 200", async () => {
     const s = createMockServer([user], {
       config: { ...EPHEMERAL, activeScenarios: { "GET /users": "Empty" } },

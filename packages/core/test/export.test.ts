@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import SwaggerParser from "@apidevtools/swagger-parser";
 import {
   buildDocFor,
   buildJsonSchemas,
@@ -51,6 +52,13 @@ describe("buildOpenApi (PRD-05 RF-02)", () => {
       $ref: "#/components/schemas/User",
     });
   });
+
+  it("valida em swagger-parser sem erros (aceite PRD-05)", async () => {
+    const api = (await SwaggerParser.validate(
+      JSON.parse(JSON.stringify(buildOpenApi([user, order]))),
+    )) as unknown as { openapi: string };
+    expect(api.openapi.startsWith("3.")).toBe(true);
+  }, 30000);
 });
 
 describe("buildTypes (PRD-05 RF-04)", () => {

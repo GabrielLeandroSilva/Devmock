@@ -45,6 +45,7 @@ updated: 2026-10-10
 | v0.8.2 | 2026-10-12 | main + des | Agente Auditor + gate no Guardião | `docs(agente): cria auditor e amarra ao fluxo de promoção` + PR `nº 8` | ✅ validado, em main |
 | v0.8.3 | 2026-10-12 | des | Pós-promoção v0.8.2 (PR nº 8) | `docs(git): registra promoção v0.8.2 em main` | ✅ em des |
 | v0.9.0 | 2026-10-12 | des | Código EAP 1.3–1.5 — exportadores + extension | `feat(export): eap 1.5 + extension 1.3/1.4` | ⏳ em des, em revisão |
+| v0.9.1 | 2026-10-12 | des | Auditoria 1.5 — reload sem restart, YAML, parser real | `fix(auditoria): reload, yaml canônico, swagger-parser` | ⏳ em des, em revisão |
 
 ## Consulta (Dataview — notas de gestão)
 

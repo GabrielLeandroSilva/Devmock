@@ -277,7 +277,9 @@ export function activate(context: vscode.ExtensionContext): void {
       cfg.activeScenarios = { ...cfg.activeScenarios, [endpoint]: scenario };
       writeConfig(root, cfg);
       if (state.server) {
-        await vscode.window.showInformationMessage("Cenário salvo. Reinicie o servidor para aplicar (stop → start).");
+        // Aplica sem restart (PRD-04): recarrega cenários no servidor vivo.
+        state.server.reload({ config: cfg, scenarios: readScenarios(root) });
+        await vscode.window.showInformationMessage(`Cenário ${scenario} ativo em ${endpoint}.`);
       }
       refresh();
     }),
