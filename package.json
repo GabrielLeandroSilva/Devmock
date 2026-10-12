@@ -1,0 +1,15 @@
+{
+  "name": "devmock",
+  "version": "0.7.0",
+  "private": true,
+  "description": "DevMock — API Contract & Mocking for Front-end (monorepo)",
+  "workspaces": ["packages/*", "apps/*"],
+  "scripts": {
+    "build": "npm run build --workspaces",
+    "test": "npm run test --workspaces --if-present",
+    "lint": "npm run lint --workspaces --if-present"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
