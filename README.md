@@ -35,6 +35,64 @@ node packages/cli/bin/devmock.js start demo
 # GET http://localhost:4010/users?page=1&limit=5
 ```
 
+## Comandos
+
+### CLI (`devmock`)
+
+| Comando | O que faz |
+|---------|-----------|
+| `devmock init [dir]` | Cria `.devmock/{config.json,schemas/,scenarios/,docs/,openapi/}` (idempotente; não apaga o existente) |
+| `devmock start [dir]` | Sobe o Mock Server na porta do `config.json` (padrão `4010`); valida Schemas e ignora os inválidos com aviso |
+
+### Extension (paleta `Ctrl+Shift+P` → `DevMock: …`)
+
+| Comando | O que faz |
+|---------|-----------|
+| Initialize Project | Igual ao `init`, dentro do VS Code |
+| Start / Stop Mock Server | Sobe/derruba o server; Stop mostra o request log |
+| New Schema… | Abre o Studio: edita campos, preview com seed e salva em `schemas/` |
+| Generate / Save Fake Data… | Preview em aba ou salva em `docs/examples/<model>.json` |
+| Switch Scenario… | Troca o cenário do endpoint **sem restart** |
+| Export Contract… | Gera OpenAPI JSON/YAML, JSON Schema, `types.ts` e Markdown |
+| Show Request Log | Exibe método, rota, status, ms e cenário |
+| Refresh View | Recarrega a Tree |
+
+## Exemplo de ponta a ponta
+
+```bash
+# 1. Inicializa e cria um Schema
+node packages/cli/bin/devmock.js init demo
+# (crie demo/.devmock/schemas/user.json — veja o exemplo abaixo)
+
+# 2. Sobe o mock
+node packages/cli/bin/devmock.js start demo
+# DevMock 🟢 http://localhost:4010
+
+# 3. Usa como se fosse a API real
+curl "http://localhost:4010/users?page=1&limit=5"
+curl -X POST http://localhost:4010/users -H "Content-Type: application/json" -d "{}"
+
+# 4. Testa o estado vazio sem restart: em
+#    demo/.devmock/config.json, defina
+#    "activeScenarios": { "GET /users": "Empty" }
+#    ...e recarregue (a extension aplica via reload; no CLI, reinicie)
+curl http://localhost:4010/users
+# {"data":[],"total":0}
+```
+
+`demo/.devmock/schemas/user.json` mínimo:
+
+```json
+{
+  "name": "User",
+  "fields": [
+    { "name": "id", "type": "uuid", "required": true },
+    { "name": "name", "type": "string", "generator": "br.nome" },
+    { "name": "cpf", "type": "string", "generator": "br.cpf" }
+  ]
+}
+```
+
 ## Branches e versões
 
 - `des` — desenvolvimento diário · `main` — estável, só via Pull Request (ruleset ativo, sem bypass)
