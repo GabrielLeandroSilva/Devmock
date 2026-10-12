@@ -42,7 +42,7 @@ O front-end depende do backend para conhecer formato dos dados, testar estados e
 | RF-01 | Criar/editar/excluir Schema via Extension e via arquivo JSON | Must | §7 |
 | RF-02 | Validar Schema e exibir erro por campo (tipo, required, enum, ref quebrada) | Must | §7, §21 |
 | RF-03 | Gerar N registros com seed: `generate(schema, records, seed)` determinístico | Must | §9 |
-| RF-04 | Biblioteca de geradores BR com formato válido (CPF com dígito, CEP `00000-000`, BRL `number`) | Must | §8 |
+| RF-04 | Biblioteca de geradores BR com formato válido (CPF com dígito, CNPJ numérico + alfanumérico desde 31/07/2026, CEP `00000-000`, BRL `number`) | Must | §8 |
 | RF-05 | Suportar `ref` entre Schemas (ex: `Order.userId → User.id`) | Should | §24 |
 | RF-06 | Preview dos dados gerados na Extension antes de subir o Mock | Should | §9 |
 | RF-07 | `config.json` com `localeDefault: pt-BR`, `seedDefault`, `port: 4010` | Must | §5.2 |

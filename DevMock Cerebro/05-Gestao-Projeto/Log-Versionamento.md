@@ -34,7 +34,10 @@ updated: 2026-10-10
 | v0.5.0 | 2026-10-11 | main + des | Fase 4 — Gestão (EAP + Cronograma) | `docs(gestao): fase 4 — charter, eap, cronograma e cia` + PR `nº 5` (merge commit) | ✅ validado, em main |
 | v0.5.1 | 2026-10-11 | main + des | Config Tasks Kanban | `fix(obsidian): configura Tasks Kanban com 4 boards` + PR `nº 5` (merge commit) | ✅ validado, em main |
 | v0.5.2 | 2026-10-11 | des | Pós-promoção v0.5.1 (PR nº 5) | `docs(git): registra promoção v0.5.1 em main` | ✅ em des |
-| v0.6.0 | 2026-10-11 | des | Fase 5 — Extras + Costura | `docs(extras): fase 5 — concorrentes, gtm, ux, glossário, adrs` | ⏳ em des, em revisão |
+| v0.6.0 | 2026-10-11 | main + des | Fase 5 — Extras + Costura | `docs(extras): fase 5 — concorrentes, gtm, ux, glossário, adrs` + PR `nº 6` (merge commit) | ✅ validado, em main |
+| v0.6.1 | 2026-10-11 | des | Pós-promoção v0.6.0 (PR nº 6) | `docs(git): registra promoção v0.6.0 em main` | ✅ em des |
+| v0.7.0 | 2026-10-11 | des | Código EAP 1.1 + scaffolds | `feat(core): monorepo, core 1.1 com testes, extension mínima` | ⏳ em des, em revisão |
+| v0.7.1 | 2026-10-11 | des | CNPJ alfanumérico (Receita 31/07/2026) | `fix(core): genCnpj emite formatos numérico + alfanumérico` | ⏳ em des, em revisão |
 
 ## Consulta (Dataview — notas de gestão)
 
@@ -57,5 +60,7 @@ SORT file.name ASC
 - [x] #task ⏫ Revisar Gestão da Fase 4 🏷️ fase/4
 - [x] #task 🔼 Promover v0.5.0 para main após aprovação 🏷️ fase/4
 - [x] #task 🔼 Iniciar Fase 5 — Extras e Costura 🏷️ fase/5
-- [ ] #task ⏫ Revisar Extras da Fase 5 🏷️ fase/5
-- [ ] #task 🔼 Promover v0.6.0 para main após aprovação 🏷️ fase/5
+- [x] #task ⏫ Revisar Extras da Fase 5 🏷️ fase/5
+- [x] #task 🔼 Promover v0.6.0 para main após aprovação 🏷️ fase/5
+- [ ] #task ⏫ Revisar código v0.7.0 (core 1.1 + scaffolds) 🏷️ fase/codigo
+- [ ] #task 🔼 Promover v0.7.0 para main após aprovação 🏷️ fase/codigo
