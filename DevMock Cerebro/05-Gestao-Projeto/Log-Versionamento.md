@@ -41,6 +41,7 @@ updated: 2026-10-10
 | v0.7.2 | 2026-10-11 | main + des | Fix outDir do core | `fix(core): outDir explicito no tsconfig do core` + PR `nº 7` | ✅ validado, em main |
 | v0.7.3 | 2026-10-12 | des | Pós-promoção v0.7.2 (PR nº 7) | `docs(git): registra promoção v0.7.2 em main` | ✅ em des |
 | v0.8.0 | 2026-10-12 | des | Código EAP 1.2 — Mock Server + CLI | `feat(mock): eap 1.2 — mock server, cenários, cli start` | ⏳ em des, em revisão |
+| v0.8.1 | 2026-10-12 | des | Auditoria 1.2 — 7 bugs corrigidos, 26/26 verdes | `fix(mock): crud persiste, eaddrinuse, nan, case, cli` | ⏳ em des, em revisão |
 
 ## Consulta (Dataview — notas de gestão)
 

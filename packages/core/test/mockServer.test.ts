@@ -81,10 +81,72 @@ describe("Mock Server (integração)", () => {
     expect(r.status).toBe(404);
   });
 
-  it("POST /users → 201", async () => {
-    const res = await fetch(`${base}/users`, { method: "POST", body: "{}" });
+  it("POST /users → 201 e o objeto aparece no GET seguinte", async () => {
+    const before = await get("/users");
+    const res = await fetch(`${base}/users`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ name: "Criado Via Post" }),
+    });
     expect(res.status).toBe(201);
-    await res.arrayBuffer();
+    const created = await res.json();
+    expect(created.id).toBeDefined();
+    expect(created.name).toBe("Criado Via Post");
+
+    const after = await get("/users");
+    expect(after.body.total).toBe(before.body.total + 1);
+    expect(after.body.data.some((r: any) => r.id === created.id)).toBe(true);
+  });
+
+  it("PUT atualiza e DELETE remove; id inexistente → 404", async () => {
+    const list = await get("/users");
+    const id = list.body.data[0].id;
+
+    const put = await fetch(`${base}/users/${id}`, {
+      method: "PUT",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ name: "Atualizado" }),
+    });
+    expect(put.status).toBe(200);
+    expect((await put.json()).name).toBe("Atualizado");
+
+    const putMissing = await fetch(`${base}/users/nao-existe`, {
+      method: "PUT",
+      headers: { "content-type": "application/json" },
+      body: "{}",
+    });
+    expect(putMissing.status).toBe(404);
+    await putMissing.arrayBuffer();
+
+    const del = await fetch(`${base}/users/${id}`, { method: "DELETE" });
+    expect(del.status).toBe(204);
+    const gone = await get(`/users/${id}`);
+    expect(gone.status).toBe(404);
+
+    const delMissing = await fetch(`${base}/users/${id}`, { method: "DELETE" });
+    expect(delMissing.status).toBe(404);
+    await delMissing.arrayBuffer();
+  });
+
+  it("page/limit inválidos caem para os defaults (sem NaN)", async () => {
+    const r = await get("/users?page=abc&limit=-5");
+    expect(r.status).toBe(200);
+    expect(r.body.page).toBe(1);
+    expect(r.body.total).toBeGreaterThan(0);
+    expect(Array.isArray(r.body.data)).toBe(true);
+  });
+
+  it("routeKey ignora case (/Users resolve como /users)", async () => {
+    const r = await get("/Users");
+    expect(r.status).toBe(200);
+  });
+
+  it("porta ocupada gera erro acionável (PRD-02 RF-07)", async () => {
+    const first = createMockServer([user], { config: EPHEMERAL });
+    const port = await first.listen();
+    const second = createMockServer([user], { config: { port } });
+    await expect(second.listen()).rejects.toThrow(/já está em uso/);
+    await first.close();
   });
 
   it("aplica delayMs configurado", async () => {

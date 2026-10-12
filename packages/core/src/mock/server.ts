@@ -1,4 +1,5 @@
 import { createServer, type IncomingMessage, type Server, type ServerResponse } from "node:http";
+import { randomUUID } from "node:crypto";
 import { generate } from "../generators/index.js";
 import { DEFAULT_CONFIG, type DevMockConfig, type Schema } from "../types.js";
 import {
@@ -66,7 +67,7 @@ export function createMockServer(schemas: Schema[], opts: MockServerOptions = {}
     const method = (req.method ?? "GET").toUpperCase();
 
     if (method === "OPTIONS") {
-      send(res, 204, undefined);
+      sendPreflight(res);
       entries.push({
         method,
         route: req.url ?? "/",
@@ -76,7 +77,7 @@ export function createMockServer(schemas: Schema[], opts: MockServerOptions = {}
       });
       return;
     }
-    await drain(req);
+    const rawBody = await drain(req);
 
     const url = new URL(req.url ?? "/", `http://localhost:${actualPort}`);
     const parts = url.pathname.split("/").filter(Boolean);
@@ -95,9 +96,10 @@ export function createMockServer(schemas: Schema[], opts: MockServerOptions = {}
       return;
     }
 
-    const route = `${method} /${parts[0]}` + (parts.length >= 2 ? "/:id" : "");
+    // B2: routeKey sempre em minúsculas para casar com a config ("GET /users").
+    const route = `${method} /${parts[0].toLowerCase()}` + (parts.length >= 2 ? "/:id" : "");
     const { cfg, scenario } = resolveEndpoint(route, { ...opts, config });
-    const reply = buildReply(method, parts, store, url, cfg);
+    const reply = buildReply(method, parts, store, url, cfg, rawBody);
 
     logAndSend(
       res,
@@ -120,6 +122,7 @@ export function createMockServer(schemas: Schema[], opts: MockServerOptions = {}
     store: StoreEntry,
     url: URL,
     cfg: ReturnType<typeof resolveEndpoint>["cfg"],
+    rawBody: string,
   ): Reply {
     // Cenário com corpo explícito tem precedência sobre o comportamento default.
     if (cfg.body !== undefined && cfg.body !== null) {
@@ -130,33 +133,66 @@ export function createMockServer(schemas: Schema[], opts: MockServerOptions = {}
       return { status: cfg.status, body: ERROR_BODY[cfg.status] ?? NOT_FOUND_BODY };
     }
 
-    if (method === "GET" && parts.length >= 2) {
-      const found = store.rows.find((r) => String(r.id ?? "") === parts[1]);
-      return found
-        ? { status: 200, body: found }
-        : { status: 404, body: NOT_FOUND_BODY };
+    if ((method === "GET" || method === "DELETE" || method === "PUT" || method === "PATCH") && parts.length >= 2) {
+      const idx = store.rows.findIndex((r) => String(r.id ?? "") === parts[1]);
+      if (idx === -1) {
+        return { status: 404, body: NOT_FOUND_BODY };
+      }
+      if (method === "GET") {
+        return { status: 200, body: store.rows[idx] };
+      }
+      if (method === "DELETE") {
+        // B1: DELETE remove da sessão (até o restart).
+        store.rows.splice(idx, 1);
+        return { status: 204, body: undefined };
+      }
+      const patch = parseJsonBody(rawBody);
+      store.rows[idx] = { ...store.rows[idx], ...patch };
+      return { status: 200, body: store.rows[idx] };
     }
 
     if (method === "GET") {
+      const total = store.rows.length;
       const rows = store.rows.slice(0, cfg.records);
       const p = url.searchParams;
       const wantsPagination =
         cfg.pagination?.enabled || (p.has("page") && p.has("limit"));
       if (wantsPagination) {
-        const page = Number(p.get("page") ?? cfg.pagination?.page ?? 1);
-        const limit = Number(p.get("limit") ?? cfg.pagination?.limit ?? cfg.records);
-        return { status: 200, body: paginate(rows, page, limit) };
+        // B3: page/limit inválidos caem para os defaults em vez de NaN.
+        const page = toPositiveInt(p.get("page") ?? cfg.pagination?.page, 1);
+        const limit = toPositiveInt(p.get("limit") ?? cfg.pagination?.limit, cfg.records);
+        const env = paginate(rows, page, limit);
+        return { status: 200, body: { ...env, total } };
       }
-      return { status: 200, body: { data: rows, total: rows.length } };
+      return { status: 200, body: { data: rows, total } };
     }
 
     if (method === "POST") {
-      return { status: 201, body: store.rows[0] ?? {} };
+      // B1: POST cria na sessão (201 + objeto aparece no GET seguinte).
+      const created = { ...(store.rows[0] ?? {}), ...parseJsonBody(rawBody), id: randomUUID() };
+      store.rows.unshift(created);
+      return { status: 201, body: created };
     }
     if (method === "DELETE") {
       return { status: 204, body: undefined };
     }
     return { status: 200, body: store.rows[0] ?? {} };
+  }
+
+  /** Corpo JSON best-effort: inválido/ausente vira objeto vazio (nunca quebra o mock). */
+  function parseJsonBody(raw: string): Record<string, unknown> {
+    if (!raw) return {};
+    try {
+      const parsed: unknown = JSON.parse(raw);
+      return parsed && typeof parsed === "object" ? (parsed as Record<string, unknown>) : {};
+    } catch {
+      return {};
+    }
+  }
+
+  function toPositiveInt(value: unknown, fallback: number): number {
+    const n = typeof value === "number" ? value : Number(value);
+    return Number.isInteger(n) && n > 0 ? n : fallback;
   }
 
   function logAndSend(res: ServerResponse, ctx: Ctx, reply: Reply): void {
@@ -197,18 +233,30 @@ export function createMockServer(schemas: Schema[], opts: MockServerOptions = {}
     return undefined;
   }
 
-  function push(entry: RequestLogEntry): void {
-    entries.push(entry);
-  }
-
-  return {    get port() {
+  return {
+    get port() {
       return actualPort;
     },
     logs: () => [...entries],
     listen: () =>
       new Promise<number>((resolve, reject) => {
-        server.once("error", reject);
+        const onError = (err: unknown): void => {
+          // B4: porta ocupada vira mensagem acionável (PRD-02 RF-07).
+          if (err && typeof err === "object" && (err as { code?: string }).code === "EADDRINUSE") {
+            reject(
+              new Error(
+                `DevMock: porta ${config.port} já está em uso. ` +
+                  `Troque "port" em .devmock/config.json ou encerre o processo que a ocupa e tente de novo.`,
+              ),
+            );
+            return;
+          }
+          reject(err);
+        };
+        // B5: remove o listener após sucesso para não vazar unhandled em erros tardios.
+        server.once("error", onError);
         server.listen(config.port, "127.0.0.1", () => {
+          server.removeListener("error", onError);
           const addr = server.address();
           actualPort = typeof addr === "object" && addr ? addr.port : config.port;
           resolve(actualPort);
@@ -221,22 +269,31 @@ export function createMockServer(schemas: Schema[], opts: MockServerOptions = {}
   };
 }
 
-function send(res: ServerResponse, status: number, body: unknown): void {
+function sendPreflight(res: ServerResponse): void {
   res.setHeader("access-control-allow-origin", "*");
-  res.statusCode = status;
-  res.end(body === undefined ? undefined : JSON.stringify(body));
+  res.setHeader("access-control-allow-methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
+  res.setHeader("access-control-allow-headers", "content-type");
+  res.statusCode = 204;
+  res.end();
 }
 
-async function drain(req: IncomingMessage): Promise<void> {
+/** Lê o corpo até o fim e o devolve como texto (B1: POST/PUT/PATCH precisam dele). */
+async function drain(req: IncomingMessage): Promise<string> {
+  const chunks: Buffer[] = [];
+  let size = 0;
   await new Promise<void>((resolve) => {
-    let size = 0;
     req.on("data", (chunk: Buffer) => {
       size += chunk.length;
-      if (size > MAX_BODY_BYTES) req.destroy();
+      if (size > MAX_BODY_BYTES) {
+        req.destroy();
+        return;
+      }
+      chunks.push(chunk);
     });
     req.on("end", resolve);
     req.on("close", resolve);
   });
+  return Buffer.concat(chunks).toString("utf8");
 }
 
 const MAX_BODY_BYTES = 1024 * 1024;
