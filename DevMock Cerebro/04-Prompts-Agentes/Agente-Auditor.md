@@ -43,6 +43,7 @@ Todo fim de passo, antes do Guardião abrir o PR: `feat/*` ou `fix/*` pronto em 
 | AUD-05 | EADDRINUSE cru sem mensagem acionável | v0.8.1 server.ts |
 | AUD-06 | `outDir` herdado resolvendo para fora do pacote | v0.7.2 tsconfig |
 | AUD-07 | CNPJ só numérico (regra oficial mudou em 31/07/2026) | v0.7.1 br.ts |
+| AUD-08 | Extension CJS com `require()` de Core ESM — host VS Code rejeita; Core virou CJS | v0.9.5 core package.json (achado no teste manual F5) |
 
 ## 6. Inputs
 - Diff do passo (`git diff main...des` ou arquivos listados), PRD/RNF correspondentes, métricas de [[05-Metricas-Sucesso]]

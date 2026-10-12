@@ -49,6 +49,7 @@ updated: 2026-10-10
 | v0.9.2 | 2026-10-12 | des | Pós-promoção v0.9.1 (PR nº 9) | `docs(git): registra promoção v0.9.1 em main` | ✅ em des |
 | v0.9.3 | 2026-10-12 | des | Manual de teste v1.0.0 | `docs(qa): manual de teste passo a passo` | ⏳ em des, em revisão |
 | v0.9.4 | 2026-10-12 | des | launch.json F5 da extension | `fix(extension): debug Run Extension via F5` | ⏳ em des, em revisão |
+| v0.9.5 | 2026-10-12 | des | Core CJS p/ host VS Code (AUD-08) | `fix(core): emite CJS; host-sim + cli e2e verdes` | ⏳ em des, em revisão |
 
 ## Consulta (Dataview — notas de gestão)
 

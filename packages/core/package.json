@@ -2,7 +2,6 @@
   "name": "@devmock/core",
   "version": "0.7.0",
   "description": "DevMock Core — schema, validação, fake data e mock server (TS puro, sem dependência de editor)",
-  "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "exports": {
