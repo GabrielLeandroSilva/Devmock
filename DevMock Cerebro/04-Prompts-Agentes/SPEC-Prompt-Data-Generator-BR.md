@@ -30,12 +30,12 @@ Especificar o comportamento dos 11 geradores `br.*` para que dados pareçam reai
 ```text
 Você é o especificador dos geradores brasileiros do DevMock.
 Para o gerador {{generator}}, descreva: formato exato, algoritmo (ex: dígitos verificadores de CPF/CNPJ), exemplos válidos/inválidos e casos de borda com seed {{seed}}.
-Restrições: determinístico (seeded RNG, nunca Math.random); CPF/CNPJ com DV correto; CEP no formato 00000-000; celular (00) 90000-0000; BRL como number com 2 casas.
+Restrições: determinístico (seeded RNG, nunca Math.random); CPF com DV correto; CNPJ nos dois formatos coexistentes desde 31/07/2026 (numérico majoritário + alfanumérico `[A-Z0-9]{12}[0-9]{2}`, DV mod 11 com letras em ASCII-48, IN RFB 2.229/2024); CEP no formato 00000-000; celular (00) 90000-0000; BRL como number com 2 casas.
 Retorne tabela: gerador | formato | exemplo válido | armadilha comum.
 ```
 
 ## 5. Guardrails
-- [ ] Todo exemplo de CPF/CNPJ/CEP do vault deve passar em validador real
+- [ ] Todo exemplo de CPF/CNPJ/CEP do vault deve passar em validador real (CNPJ: aceitar `[A-Z0-9]{12}[0-9]{2}`)
 - [ ] `brl` sempre `number` (regra anti-mismatch §22)
 - [ ] Nomes/endereços plausíveis em PT-BR, sem dados de pessoas reais
 

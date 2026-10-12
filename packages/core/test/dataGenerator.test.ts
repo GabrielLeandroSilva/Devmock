@@ -1,5 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { generate } from "../src/generators/index.js";
+import { cnpjCharValue, genCnpj } from "../src/generators/br.js";
+import { mulberry32 } from "../src/rng.js";
 import type { Schema } from "../src/types.js";
 
 const user: Schema = {
@@ -59,5 +61,45 @@ describe("generate", () => {
     for (const r of rows) {
       expect(["ACTIVE", "BLOCKED", "PENDING"]).toContain(r.status);
     }
+  });
+});
+
+/** Validador espelho da regra oficial (IN RFB 2.229/2024): [A-Z0-9]{12}[0-9]{2}, DV mod 11 com ASCII-48. */
+function validCnpj(masked: string): boolean {
+  const n = masked.replace(/[.\-/]/g, "");
+  if (!/^[A-Z0-9]{12}[0-9]{2}$/.test(n)) return false;
+  const vals = [...n].map((c) => (/\d/.test(c) ? Number(c) : cnpjCharValue(c)));
+  const dv = (nums: number[], startW: number) => {
+    let sum = 0;
+    let w = startW;
+    for (const v of nums) {
+      sum += v * w;
+      w = w === 2 ? 9 : w - 1;
+    }
+    const r = sum % 11;
+    return r < 2 ? 0 : 11 - r;
+  };
+  return dv(vals.slice(0, 12), 5) === vals[12] && dv(vals.slice(0, 13), 6) === vals[13];
+}
+
+describe("genCnpj alfanumérico (Receita, desde 31/07/2026)", () => {
+  it("gera os dois formatos coexistentes, todos com DV válido", () => {
+    const rand = mulberry32("cnpj-sweep");
+    let numeric = 0;
+    let alpha = 0;
+    for (let i = 0; i < 400; i++) {
+      const c = genCnpj(rand);
+      expect(validCnpj(c)).toBe(true);
+      if (/[A-Z]/.test(c)) alpha++;
+      else numeric++;
+    }
+    expect(numeric).toBeGreaterThan(0);
+    expect(alpha).toBeGreaterThan(0);
+  });
+
+  it("é determinístico para o mesmo seed", () => {
+    const a = genCnpj(mulberry32("x"));
+    const b = genCnpj(mulberry32("x"));
+    expect(a).toBe(b);
   });
 });

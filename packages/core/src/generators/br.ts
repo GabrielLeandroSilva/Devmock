@@ -33,12 +33,35 @@ export function genCpf(rand: Rand): string {
   return `${n.slice(0, 3)}.${n.slice(3, 6)}.${n.slice(6, 9)}-${n.slice(9)}`;
 }
 
-/** CNPJ com dígitos verificadores corretos, formato 00.000.000/0001-00. */
+/**
+ * Valor de um caractere no cálculo do DV do CNPJ (IN RFB 2.229/2024):
+ * dígitos mantêm o valor, letras usam ASCII - 48 (A=17 … Z=42).
+ */
+export function cnpjCharValue(ch: string): number {
+  return ch.charCodeAt(0) - 48;
+}
+
+const ALNUM = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+/**
+ * CNPJ com dígitos verificadores corretos.
+ * Desde 31/07/2026 a Receita emite os dois formatos (coexistência):
+ * numérico (ainda o mais comum) e alfanumérico — 12 posições [A-Z0-9] + 2 DV numéricos.
+ * Formato: 00.000.000/0001-00 (ex. real alfa: 00.000.000/E08G-12).
+ */
 export function genCnpj(rand: Rand): string {
-  const base = [...Array.from({ length: 8 }, () => int(rand, 0, 9)), 0, 0, 0, 1];
-  const d1 = mod11(base, 5);
-  const d2 = mod11([...base, d1], 6);
-  const n = [...base, d1, d2].join("");
+  const alphanumeric = rand() >= 0.75;
+  const base: string[] = [];
+  for (let i = 0; i < 12; i++) {
+    base.push(alphanumeric ? ALNUM[int(rand, 0, ALNUM.length - 1)] : String(int(rand, 0, 9)));
+  }
+  if (alphanumeric && !base.some((c) => c >= "A")) {
+    base[int(rand, 0, 11)] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"[int(rand, 0, 25)];
+  }
+  const vals = base.map(cnpjCharValue);
+  const d1 = mod11(vals, 5);
+  const d2 = mod11([...vals, d1], 6);
+  const n = `${base.join("")}${d1}${d2}`;
   return `${n.slice(0, 2)}.${n.slice(2, 5)}.${n.slice(5, 8)}/${n.slice(8, 12)}-${n.slice(12)}`;
 }
 
