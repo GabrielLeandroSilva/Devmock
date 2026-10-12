@@ -18,6 +18,8 @@ export { routesFor } from "./routes.js";
 export interface MockServer {
   listen(): Promise<number>;
   close(): Promise<void>;
+  /** Aplica nova config/cenários sem restart (PRD-04: troca imediata). */
+  reload(next?: MockServerOptions): void;
   readonly port: number;
   logs(): RequestLogEntry[];
 }
@@ -49,6 +51,7 @@ const SEED_RECORDS = 20;
  */
 export function createMockServer(schemas: Schema[], opts: MockServerOptions = {}): MockServer {
   const config: DevMockConfig = { ...DEFAULT_CONFIG, ...opts.config };
+  let liveOpts: MockServerOptions = { ...opts, config };
 
   const stores = new Map<string, StoreEntry>();
   for (const s of schemas) {
@@ -98,7 +101,7 @@ export function createMockServer(schemas: Schema[], opts: MockServerOptions = {}
 
     // B2: routeKey sempre em minúsculas para casar com a config ("GET /users").
     const route = `${method} /${parts[0].toLowerCase()}` + (parts.length >= 2 ? "/:id" : "");
-    const { cfg, scenario } = resolveEndpoint(route, { ...opts, config });
+    const { cfg, scenario } = resolveEndpoint(route, liveOpts);
     const reply = buildReply(method, parts, store, url, cfg, rawBody);
 
     logAndSend(
@@ -238,6 +241,15 @@ export function createMockServer(schemas: Schema[], opts: MockServerOptions = {}
       return actualPort;
     },
     logs: () => [...entries],
+    reload: (next: MockServerOptions = {}): void => {
+      liveOpts = {
+        ...liveOpts,
+        ...next,
+        config: { ...liveOpts.config, ...next.config },
+        scenarios: next.scenarios ?? liveOpts.scenarios,
+        endpoints: next.endpoints ?? liveOpts.endpoints,
+      };
+    },
     listen: () =>
       new Promise<number>((resolve, reject) => {
         const onError = (err: unknown): void => {
