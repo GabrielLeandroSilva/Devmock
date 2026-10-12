@@ -48,6 +48,7 @@ updated: 2026-10-10
 | v0.9.1 | 2026-10-12 | main + des | Auditoria 1.5 — reload, YAML, parser real | `fix(auditoria): reload, yaml canônico, swagger-parser` + PR `nº 9` | ✅ validado, em main |
 | v0.9.2 | 2026-10-12 | des | Pós-promoção v0.9.1 (PR nº 9) | `docs(git): registra promoção v0.9.1 em main` | ✅ em des |
 | v0.9.3 | 2026-10-12 | des | Manual de teste v1.0.0 | `docs(qa): manual de teste passo a passo` | ⏳ em des, em revisão |
+| v0.9.4 | 2026-10-12 | des | launch.json F5 da extension | `fix(extension): debug Run Extension via F5` | ⏳ em des, em revisão |
 
 ## Consulta (Dataview — notas de gestão)
 

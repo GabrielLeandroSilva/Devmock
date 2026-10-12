@@ -14,9 +14,9 @@ updated: 2026-10-12
 > Execute na ordem. Marque cada caixa. Qualquer falha vira linha na tabela de Resultado + volta para o Coder (não promove). Meta: time-to-first-mock <5min (§1–§4 cronometrados).
 
 ## 0. Preparação
-- [ ] #task 🔼 Build limpo: `npm run build --workspaces` sem erro 🏷️ fase/codigo
-- [ ] #task 🔼 Testes verdes: `npx --prefix packages/core vitest run --root packages/core` → 37/37 🏷️ fase/codigo
-- [ ] #task 🔼 Abrir `apps/extension` no VS Code e apertar **F5** (host de desenvolvimento) 🏷️ fase/codigo
+- [x] #task 🔼 Build limpo: `npm run build --workspaces` sem erro 🏷️ fase/codigo ✅ 2026-10-12
+- [x] #task 🔼 Testes verdes: `npx --prefix packages/core vitest run --root packages/core` → 37/37 🏷️ fase/codigo ✅ 2026-10-12
+- [ ] #task 🔼 Abrir `apps/extension` no VS Code e apertar **F5** (host de desenvolvimento, config `Run Extension` em `.vscode/launch.json`) 🏷️ fase/codigo
 
 ## 1. Init (PRD-03)
 - [ ] #task Sem `.devmock/`, a Tree mostra CTA único; comando `DevMock: Initialize Project` cria `.devmock/{config.json,schemas/,scenarios/,docs/,openapi/}` 🏷️ fase/codigo
