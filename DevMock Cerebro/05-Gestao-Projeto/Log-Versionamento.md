@@ -40,6 +40,7 @@ updated: 2026-10-10
 | v0.7.1 | 2026-10-11 | main + des | CNPJ alfanumérico (Receita 31/07/2026) | `fix(core): genCnpj emite formatos numérico + alfanumérico` + PR `nº 7` | ✅ validado, em main |
 | v0.7.2 | 2026-10-11 | main + des | Fix outDir do core | `fix(core): outDir explicito no tsconfig do core` + PR `nº 7` | ✅ validado, em main |
 | v0.7.3 | 2026-10-12 | des | Pós-promoção v0.7.2 (PR nº 7) | `docs(git): registra promoção v0.7.2 em main` | ✅ em des |
+| v0.8.0 | 2026-10-12 | des | Código EAP 1.2 — Mock Server + CLI | `feat(mock): eap 1.2 — mock server, cenários, cli start` | ⏳ em des, em revisão |
 
 ## Consulta (Dataview — notas de gestão)
 
@@ -66,4 +67,6 @@ SORT file.name ASC
 - [x] #task 🔼 Promover v0.6.0 para main após aprovação 🏷️ fase/5
 - [x] #task ⏫ Revisar código v0.7.0 (core 1.1 + scaffolds) 🏷️ fase/codigo
 - [x] #task 🔼 Promover v0.7.0 para main após aprovação 🏷️ fase/codigo
-- [ ] #task 🔼 Seguir EAP 1.2 — Mock Server 🏷️ fase/codigo
+- [x] #task 🔼 Seguir EAP 1.2 — Mock Server 🏷️ fase/codigo
+- [ ] #task ⏫ Revisar código v0.8.0 (mock server) 🏷️ fase/codigo
+- [ ] #task 🔼 Promover v0.8.0 para main após aprovação 🏷️ fase/codigo

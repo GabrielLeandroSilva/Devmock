@@ -4,3 +4,14 @@ export * from "./rng.js";
 export * from "./validator.js";
 export * from "./schemaStore.js";
 export { generate, generatorNames } from "./generators/index.js";
+export {
+  createMockServer,
+  routesFor,
+  paginate,
+  DEFAULT_ENDPOINT,
+  type MockServer,
+  type MockServerOptions,
+  type EndpointConfig,
+  type RequestLogEntry,
+  type Envelope,
+} from "./mock/index.js";
