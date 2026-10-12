@@ -25,6 +25,8 @@ updated: 2026-10-12
 ## 2. Schema via formulário (PRD-01 + PRD-03)
 - [x] #task `DevMock: New Schema…` → model `User` + campos (id uuid required, name br.nome, cpf br.cpf, status enum ACTIVE/BLOCKED/PENDING, balance number BRL) → salva `schemas/user.json` 🏷️ fase/codigo ✅ 2026-10-12
 - [x] #task Schema inválido (enum sem valores) mostra erro com campo + motivo e **não** salva 🏷️ fase/codigo ✅ 2026-10-12
+- [ ] #task Studio: preview com records/seed mostra JSON no painel antes de salvar 🏷️ fase/codigo
+- [ ] #task Studio legível em tema claro e escuro; recarregar o painel preserva o preenchido 🏷️ fase/codigo
 
 ## 3. Fake Data (PRD-01)
 - [x] #task `DevMock: Generate Fake Data…` → preview JSON com 20 users, CPF formatado, `balance` numérico 🏷️ fase/codigo ✅ 2026-10-12

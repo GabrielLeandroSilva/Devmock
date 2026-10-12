@@ -33,5 +33,10 @@ REQUEST LOG (método, rota, status, ms)
 - Switch de cenário = radio com efeito imediato (<500ms), sem restart.
 - Form de Schema: tipos em dropdown + geradores `br.*` agrupados ("Brasil").
 
+## DevMock Studio (painel, v1.1.0)
+- **Visual:** CSS utilitário próprio (`apps/extension/media/form.css`, sem dependências — CDN Tailwind é vetado pelo CSP/offline), cores via variáveis do tema (`var(--vscode-*)`, claro/escuro).
+- **Combinado:** editor de Schema + seção Gerar (records/seed) + preview JSON no painel + salvar com erros inline por campo.
+- **Segurança:** CSP estrito (só recursos locais via `asWebviewUri`, `localResourceRoots`, nonce no script de config); estado do form sobrevive a reloads (`getState/setState`).
+
 ## Links
 - PRD: [[PRD-03-VSCode-Extension]] | Design técnico: [[03-Extension-Design]]

@@ -1,0 +1,133 @@
+/* DevMock Studio — CSS utilitário próprio (sem dependências).
+   Inspirado em Tailwind; cores via variáveis do tema VS Code (claro/escuro). */
+
+:root {
+  --dm-radius: 8px;
+  --dm-gap: 12px;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: 20px;
+  font-family: var(--vscode-font-family);
+  font-size: var(--vscode-font-size, 13px);
+  color: var(--vscode-foreground);
+  background: var(--vscode-editor-background);
+}
+
+.flex { display: flex; }
+.flex-col { display: flex; flex-direction: column; }
+.items-center { align-items: center; }
+.justify-between { display: flex; justify-content: space-between; align-items: center; }
+.gap { gap: var(--dm-gap); }
+.gap-sm { gap: 6px; }
+.mt { margin-top: 16px; }
+.w-full { width: 100%; }
+
+.card {
+  background: var(--vscode-sideBar-background, var(--vscode-editor-background));
+  border: 1px solid var(--vscode-panel-border, var(--vscode-widget-border));
+  border-radius: var(--dm-radius);
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.card h2, .card h3 {
+  margin: 0 0 12px 0;
+  font-weight: 600;
+}
+
+.title { font-size: 18px; }
+.subtitle { font-size: 14px; }
+.muted { color: var(--vscode-descriptionForeground); font-size: 12px; }
+
+label.field { display: flex; flex-direction: column; gap: 4px; font-weight: 600; }
+
+input[type="text"], input[type="number"], input:not([type]), select {
+  background: var(--vscode-input-background);
+  color: var(--vscode-input-foreground);
+  border: 1px solid var(--vscode-input-border, var(--vscode-widget-border));
+  border-radius: 4px;
+  padding: 6px 8px;
+  font: inherit;
+}
+
+input:focus, select:focus {
+  outline: 1px solid var(--vscode-focusBorder);
+  border-color: var(--vscode-focusBorder);
+}
+
+table.grid { width: 100%; border-collapse: collapse; }
+table.grid th {
+  text-align: left;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--vscode-descriptionForeground);
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--vscode-panel-border, var(--vscode-widget-border));
+}
+table.grid td {
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--vscode-widget-border);
+  vertical-align: middle;
+}
+table.grid input[type="text"], table.grid input:not([type]) { width: 130px; }
+table.grid select { max-width: 130px; }
+table.grid input[type="checkbox"] { width: 16px; height: 16px; accent-color: var(--vscode-button-background); }
+
+.btn {
+  border: 1px solid var(--vscode-button-border, transparent);
+  border-radius: 4px;
+  padding: 6px 14px;
+  font: inherit;
+  cursor: pointer;
+}
+.btn-primary {
+  background: var(--vscode-button-background);
+  color: var(--vscode-button-foreground);
+}
+.btn-primary:hover { background: var(--vscode-button-hoverBackground); }
+.btn-secondary {
+  background: var(--vscode-button-secondaryBackground);
+  color: var(--vscode-button-secondaryForeground);
+}
+.btn-secondary:hover { background: var(--vscode-button-secondaryHoverBackground); }
+
+.alert {
+  border-radius: var(--dm-radius);
+  padding: 10px 12px;
+  white-space: pre-wrap;
+  font-family: var(--vscode-editor-font-family, monospace);
+  font-size: 12px;
+}
+.alert-error {
+  background: var(--vscode-inputValidation-errorBackground);
+  border: 1px solid var(--vscode-inputValidation-errorBorder);
+}
+.alert-ok {
+  background: var(--vscode-inputValidation-infoBackground, transparent);
+  border: 1px solid var(--vscode-inputValidation-infoBorder, var(--vscode-widget-border));
+}
+.hidden { display: none; }
+
+pre.preview {
+  background: var(--vscode-textCodeBlock-background, var(--vscode-editor-background));
+  border: 1px solid var(--vscode-widget-border);
+  border-radius: var(--dm-radius);
+  padding: 12px;
+  overflow: auto;
+  max-height: 320px;
+  font-size: 12px;
+}
+
+.badge {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 1px 10px;
+  font-size: 11px;
+  background: var(--vscode-badge-background);
+  color: var(--vscode-badge-foreground);
+}
