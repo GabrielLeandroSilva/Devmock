@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { createMockServer, type MockServer } from "../src/mock/index.js";
-import { routesFor, paginate } from "../src/mock/routes.js";
+import { routesFor, paginate, plural } from "../src/mock/routes.js";
 import type { Schema } from "../src/types.js";
 
 const user: Schema = {
@@ -43,6 +43,16 @@ describe("routes e paginação (un)", () => {
       "PUT /users/:id",
       "PATCH /users/:id",
       "DELETE /users/:id",
+    ]);
+  });
+
+  it("model já no plural não ganha 's' extra (/users, nunca /userss)", () => {
+    expect(plural("Users")).toBe("users");
+    expect(plural("Status")).toBe("status");
+    expect(plural("User")).toBe("users");
+    expect(routesFor({ name: "Users", fields: [] }).filter((r) => r.startsWith("GET "))).toEqual([
+      "GET /users",
+      "GET /users/:id",
     ]);
   });
 

@@ -54,7 +54,11 @@ export const ERROR_BODY: Record<number, { error: string; message: string }> = {
 };
 
 export function plural(name: string): string {
-  return name.toLowerCase() === "person" ? "people" : `${name.toLowerCase()}s`;
+  const lower = name.toLowerCase();
+  if (lower === "person") return "people";
+  // Model já no plural ("Users", "Status") não ganha outro "s" (evita "/userss").
+  if (lower.endsWith("s")) return lower;
+  return `${lower}s`;
 }
 
 export function basePath(schema: Schema): string {
