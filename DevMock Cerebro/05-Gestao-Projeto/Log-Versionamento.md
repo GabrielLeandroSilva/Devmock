@@ -52,6 +52,7 @@ updated: 2026-10-10
 | v0.9.5 | 2026-10-12 | des | Core CJS p/ host VS Code (AUD-08) | `fix(core): emite CJS; host-sim + cli e2e verdes` | ⏳ em des, em revisão |
 | v0.9.6 | 2026-10-12 | des | Comando Save Fake Data | `feat(extension): save fake data em docs/examples` | ⏳ em des, em revisão |
 | v0.9.7 | 2026-10-12 | des | plural idempotente (AUD-09) | `fix(core): model plural não ganha s extra` | ⏳ em des, em revisão |
+| v0.9.8 | 2026-10-12 | des | Built-in scenarios (AUD-10) | `fix(core): cenários default embutidos + 403/429` | ⏳ em des, em revisão |
 
 ## Consulta (Dataview — notas de gestão)
 

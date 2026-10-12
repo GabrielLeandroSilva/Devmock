@@ -193,6 +193,47 @@ describe("cenários (PRD-04)", () => {
     await s.close();
   });
 
+  it("cenários embutidos funcionam sem nenhum arquivo (PRD-04 MVP)", async () => {
+    for (const [name, status] of [
+      ["Unauthorized", 401],
+      ["Forbidden", 403],
+      ["Server Error", 500],
+      ["Rate Limited", 429],
+    ] as const) {
+      const s = createMockServer([user], {
+        config: { ...EPHEMERAL, activeScenarios: { "GET /users": name } },
+      });
+      const port = await s.listen();
+      const res = await fetch(`http://127.0.0.1:${port}/users`);
+      const body = await res.json();
+      expect(res.status).toBe(status);
+      expect(body.error).toBeDefined();
+      await s.close();
+    }
+  });
+
+  it("Empty embutido retorna envelope vazio sem arquivos", async () => {
+    const s = createMockServer([user], {
+      config: { ...EPHEMERAL, activeScenarios: { "GET /users": "Empty" } },
+    });
+    const port = await s.listen();
+    const res = await fetch(`http://127.0.0.1:${port}/users`);
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ data: [], total: 0 });
+    await s.close();
+  });
+
+  it("arquivo tem precedência sobre o embutido", async () => {
+    const s = createMockServer([user], {
+      config: { ...EPHEMERAL, activeScenarios: { "GET /users": "Empty" } },
+      scenarios: { "GET /users": { Empty: { status: 200, body: { data: [{ custom: true }], total: 1 } } } },
+    });
+    const port = await s.listen();
+    const res = await fetch(`http://127.0.0.1:${port}/users`);
+    expect(await res.json()).toEqual({ data: [{ custom: true }], total: 1 });
+    await s.close();
+  });
+
   it("Empty retorna envelope vazio com 200", async () => {
     const s = createMockServer([user], {
       config: { ...EPHEMERAL, activeScenarios: { "GET /users": "Empty" } },
