@@ -44,8 +44,16 @@ updated: 2026-10-10
 | v0.8.1 | 2026-10-12 | main + des | Auditoria 1.2 — 7 bugs corrigidos, 26/26 verdes | `fix(mock): crud persiste, eaddrinuse, nan, case, cli` + PR `nº 8` (merge commit) | ✅ validado, em main |
 | v0.8.2 | 2026-10-12 | main + des | Agente Auditor + gate no Guardião | `docs(agente): cria auditor e amarra ao fluxo de promoção` + PR `nº 8` | ✅ validado, em main |
 | v0.8.3 | 2026-10-12 | des | Pós-promoção v0.8.2 (PR nº 8) | `docs(git): registra promoção v0.8.2 em main` | ✅ em des |
-| v0.9.0 | 2026-10-12 | des | Código EAP 1.3–1.5 — exportadores + extension | `feat(export): eap 1.5 + extension 1.3/1.4` | ⏳ em des, em revisão |
-| v0.9.1 | 2026-10-12 | des | Auditoria 1.5 — reload sem restart, YAML, parser real | `fix(auditoria): reload, yaml canônico, swagger-parser` | ⏳ em des, em revisão |
+| v0.9.0 | 2026-10-12 | main + des | Código EAP 1.3–1.5 — exportadores + extension | `feat(export): eap 1.5 + extension 1.3/1.4` + PR `nº 9` (merge commit) | ✅ validado, em main |
+| v0.9.1 | 2026-10-12 | main + des | Auditoria 1.5 — reload, YAML, parser real | `fix(auditoria): reload, yaml canônico, swagger-parser` + PR `nº 9` | ✅ validado, em main |
+| v0.9.2 | 2026-10-12 | des | Pós-promoção v0.9.1 (PR nº 9) | `docs(git): registra promoção v0.9.1 em main` | ✅ em des |
+| v0.9.3 | 2026-10-12 | des | Manual de teste v1.0.0 | `docs(qa): manual de teste passo a passo` | ⏳ em des, em revisão |
+| v0.9.4 | 2026-10-12 | des | launch.json F5 da extension | `fix(extension): debug Run Extension via F5` | ⏳ em des, em revisão |
+| v0.9.5 | 2026-10-12 | des | Core CJS p/ host VS Code (AUD-08) | `fix(core): emite CJS; host-sim + cli e2e verdes` | ⏳ em des, em revisão |
+| v0.9.6 | 2026-10-12 | des | Comando Save Fake Data | `feat(extension): save fake data em docs/examples` | ⏳ em des, em revisão |
+| v0.9.7 | 2026-10-12 | des | plural idempotente (AUD-09) | `fix(core): model plural não ganha s extra` | ⏳ em des, em revisão |
+| v0.9.8 | 2026-10-12 | des | Built-in scenarios (AUD-10) | `fix(core): cenários default embutidos + 403/429` | ⏳ em des, em revisão |
+| v1.0.0 | 2026-10-12 | des | MVP — manual 100% ✅ | Manual-Teste-v1 §0–§8 todos ✅ | ⏳ em des, em revisão |
 
 ## Consulta (Dataview — notas de gestão)
 
@@ -76,5 +84,8 @@ SORT file.name ASC
 - [x] #task ⏫ Revisar código v0.8.x (mock server + auditoria) 🏷️ fase/codigo
 - [x] #task 🔼 Promover v0.8.2 para main após aprovação (PR nº 8) 🏷️ fase/codigo
 - [x] #task 🔼 Seguir EAP 1.3–1.5 — Extension + Export 🏷️ fase/codigo
-- [ ] #task ⏫ Revisar código v0.9.0 (export + extension) 🏷️ fase/codigo
-- [ ] #task 🔼 Promover v0.9.0 para main após aprovação 🏷️ fase/codigo
+- [x] #task ⏫ Revisar código v0.9.0 (export + extension) 🏷️ fase/codigo
+- [x] #task 🔼 Promover v0.9.0 para main após aprovação 🏷️ fase/codigo
+- [ ] #task ⏫ Teste manual passo a passo (host VS Code real) antes da v1.0.0 🏷️ fase/codigo
+- [x] #task ⏫ Executar Manual-Teste-v1 e preencher tabela de Resultado 🏷️ fase/codigo
+- [x] #task 🔼 Promover v1.0.0 para main após manual 100% (PR nº 10) 🏷️ fase/codigo

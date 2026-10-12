@@ -1,6 +1,6 @@
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import { createMockServer, type MockServer } from "../src/mock/index.js";
-import { routesFor, paginate } from "../src/mock/routes.js";
+import { routesFor, paginate, plural } from "../src/mock/routes.js";
 import type { Schema } from "../src/types.js";
 
 const user: Schema = {
@@ -43,6 +43,16 @@ describe("routes e paginação (un)", () => {
       "PUT /users/:id",
       "PATCH /users/:id",
       "DELETE /users/:id",
+    ]);
+  });
+
+  it("model já no plural não ganha 's' extra (/users, nunca /userss)", () => {
+    expect(plural("Users")).toBe("users");
+    expect(plural("Status")).toBe("status");
+    expect(plural("User")).toBe("users");
+    expect(routesFor({ name: "Users", fields: [] }).filter((r) => r.startsWith("GET "))).toEqual([
+      "GET /users",
+      "GET /users/:id",
     ]);
   });
 
@@ -180,6 +190,47 @@ describe("cenários (PRD-04)", () => {
     const after = await (await fetch(url)).json();
     expect(after).toEqual({ data: [], total: 0 });
     expect(s.logs().at(-1)?.scenario).toBe("Empty");
+    await s.close();
+  });
+
+  it("cenários embutidos funcionam sem nenhum arquivo (PRD-04 MVP)", async () => {
+    for (const [name, status] of [
+      ["Unauthorized", 401],
+      ["Forbidden", 403],
+      ["Server Error", 500],
+      ["Rate Limited", 429],
+    ] as const) {
+      const s = createMockServer([user], {
+        config: { ...EPHEMERAL, activeScenarios: { "GET /users": name } },
+      });
+      const port = await s.listen();
+      const res = await fetch(`http://127.0.0.1:${port}/users`);
+      const body = await res.json();
+      expect(res.status).toBe(status);
+      expect(body.error).toBeDefined();
+      await s.close();
+    }
+  });
+
+  it("Empty embutido retorna envelope vazio sem arquivos", async () => {
+    const s = createMockServer([user], {
+      config: { ...EPHEMERAL, activeScenarios: { "GET /users": "Empty" } },
+    });
+    const port = await s.listen();
+    const res = await fetch(`http://127.0.0.1:${port}/users`);
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ data: [], total: 0 });
+    await s.close();
+  });
+
+  it("arquivo tem precedência sobre o embutido", async () => {
+    const s = createMockServer([user], {
+      config: { ...EPHEMERAL, activeScenarios: { "GET /users": "Empty" } },
+      scenarios: { "GET /users": { Empty: { status: 200, body: { data: [{ custom: true }], total: 1 } } } },
+    });
+    const port = await s.listen();
+    const res = await fetch(`http://127.0.0.1:${port}/users`);
+    expect(await res.json()).toEqual({ data: [{ custom: true }], total: 1 });
     await s.close();
   });
 

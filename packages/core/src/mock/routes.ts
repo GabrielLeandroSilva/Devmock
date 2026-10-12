@@ -50,11 +50,32 @@ export const NOT_FOUND_BODY = {
 
 export const ERROR_BODY: Record<number, { error: string; message: string }> = {
   401: { error: "UNAUTHORIZED", message: "Não autorizado." },
+  403: { error: "FORBIDDEN", message: "Acesso proibido." },
+  429: { error: "RATE_LIMITED", message: "Muitas requisições. Tente de novo em instantes." },
   500: { error: "INTERNAL_ERROR", message: "Erro interno do servidor." },
 };
 
+/**
+ * Cenários embutidos (PRD-04 MVP): valem quando não há definição em
+ * scenarios/*.json — trocar de cenário funciona direto da caixa.
+ * Arquivo sempre tem precedência sobre o embutido.
+ */
+export const BUILTIN_SCENARIOS: Record<string, EndpointConfig> = {
+  Default: { status: 200 },
+  Empty: { status: 200, body: { data: [], total: 0 } },
+  Unauthorized: { status: 401 },
+  Forbidden: { status: 403 },
+  "Server Error": { status: 500 },
+  "Slow Network": { status: 200, delayMs: 5000 },
+  "Rate Limited": { status: 429 },
+};
+
 export function plural(name: string): string {
-  return name.toLowerCase() === "person" ? "people" : `${name.toLowerCase()}s`;
+  const lower = name.toLowerCase();
+  if (lower === "person") return "people";
+  // Model já no plural ("Users", "Status") não ganha outro "s" (evita "/userss").
+  if (lower.endsWith("s")) return lower;
+  return `${lower}s`;
 }
 
 export function basePath(schema: Schema): string {
@@ -81,7 +102,8 @@ export function resolveEndpoint(
   const endpointCfg = opts.endpoints?.[key] ?? {};
   const scenarios = opts.scenarios?.[key] ?? {};
   const activeName = endpointCfg.scenario ?? activeScenarioName(key, opts);
-  const scenarioCfg = activeName ? (scenarios[activeName] ?? {}) : {};
+  // Arquivo > embutido > vazio (embutido evita cair no default silenciosamente).
+  const scenarioCfg = activeName ? (scenarios[activeName] ?? BUILTIN_SCENARIOS[activeName] ?? {}) : {};
   const merged: EndpointConfig = { ...endpointCfg, ...scenarioCfg, scenario: activeName };
   return {
     cfg: { ...DEFAULT_ENDPOINT, ...merged },
