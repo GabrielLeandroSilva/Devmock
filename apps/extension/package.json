@@ -2,7 +2,7 @@
   "name": "devmock-vscode",
   "displayName": "DevMock",
   "description": "API Contract & Mocking for Front-end — build without waiting for the backend.",
-  "version": "0.7.0",
+  "version": "0.9.0",
   "publisher": "devmock",
   "private": true,
   "engines": {
@@ -15,8 +15,21 @@
     "commands": [
       { "command": "devmock.init", "title": "DevMock: Initialize Project" },
       { "command": "devmock.start", "title": "DevMock: Start Mock Server" },
-      { "command": "devmock.stop", "title": "DevMock: Stop Mock Server" }
+      { "command": "devmock.stop", "title": "DevMock: Stop Mock Server" },
+      { "command": "devmock.refresh", "title": "DevMock: Refresh View", "icon": "$(refresh)" },
+      { "command": "devmock.createSchema", "title": "DevMock: New Schema…" },
+      { "command": "devmock.generate", "title": "DevMock: Generate Fake Data…" },
+      { "command": "devmock.switchScenario", "title": "DevMock: Switch Scenario…" },
+      { "command": "devmock.export", "title": "DevMock: Export Contract…" },
+      { "command": "devmock.showLog", "title": "DevMock: Show Request Log" }
     ],
+    "menus": {
+      "view/title": [
+        { "command": "devmock.refresh", "when": "view == devmock.project", "group": "navigation" },
+        { "command": "devmock.createSchema", "when": "view == devmock.project", "group": "navigation" },
+        { "command": "devmock.start", "when": "view == devmock.project", "group": "navigation" }
+      ]
+    },
     "viewsContainers": {
       "activitybar": [{ "id": "devmock", "title": "DevMock", "icon": "$(beaker)" }]
     },
@@ -27,6 +40,9 @@
   "scripts": {
     "build": "tsc -p tsconfig.json",
     "lint": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "@devmock/core": "*"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",

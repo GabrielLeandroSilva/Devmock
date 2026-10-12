@@ -5,6 +5,17 @@ export * from "./validator.js";
 export * from "./schemaStore.js";
 export { generate, generatorNames } from "./generators/index.js";
 export {
+  buildJsonSchemas,
+  schemaToJsonSchema,
+  buildOpenApi,
+  buildTypes,
+  buildDocFor,
+  buildDocs,
+  hashSchema,
+  isStale,
+  toYaml,
+} from "./export/index.js";
+export {
   createMockServer,
   routesFor,
   paginate,
