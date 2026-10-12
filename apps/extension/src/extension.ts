@@ -411,7 +411,7 @@ function openSchemaForm(context: vscode.ExtensionContext, root: string, refresh:
     <div class="flex gap mt">
       <button id="preview" class="btn btn-secondary">Preview</button>
       <button id="save" class="btn btn-primary">Salvar schema</button>
-      <span id="previewBadge" class="badge"></span>
+      <span id="previewBadge" class="badge hidden"></span>
     </div>
     <pre id="previewOut" class="preview hidden"></pre>
     <div id="msg" class="alert hidden mt"></div>
@@ -422,13 +422,16 @@ function openSchemaForm(context: vscode.ExtensionContext, root: string, refresh:
 </body></html>`;
 
   panel.webview.onDidReceiveMessage(
-    (msg: { kind: string; model: string; fields: Record<string, unknown>[]; records?: number; seed?: number | string }) => {
+    (msg: { kind: string; model: string; fields: Record<string, unknown>[]; records?: number; seed?: number | string; silent?: boolean }) => {
       const schema = { name: (msg.model || "").trim(), fields: msg.fields } as unknown as Schema;
       const diags = validateSchema(schema);
       const errors = diags.filter((d) => d.severity === "error");
       if (msg.kind === "preview") {
+        // Preview silencioso (auto): sem erros válidos, sem resposta — nunca polui a tela.
         if (errors.length > 0) {
-          void panel.webview.postMessage({ kind: "error", text: errors.map((d) => `${d.field}: ${d.message}`).join("\n") });
+          if (!msg.silent) {
+            void panel.webview.postMessage({ kind: "error", text: errors.map((d) => `${d.field}: ${d.message}`).join("\n") });
+          }
           return;
         }
         const seed = msg.seed === undefined || msg.seed === "" ? cfg.seedDefault : msg.seed;

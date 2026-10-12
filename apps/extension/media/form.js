@@ -50,6 +50,40 @@
   function persist() {
     const c = collect();
     vscode.setState(c);
+    scheduleAutoPreview(c);
+  }
+
+  // Preview automático com debounce: gera a cada edição sem poluir (silencioso).
+  let autoTimer = undefined;
+  function scheduleAutoPreview(c) {
+    if (autoTimer) clearTimeout(autoTimer);
+    autoTimer = setTimeout(() => {
+      const hasModel = (c.model || "").trim().length > 0;
+      const hasField = c.rows.some((r) => (r.n || "").trim().length > 0);
+      if (!hasModel || !hasField) return;
+      sendPreview(c, true);
+    }, 600);
+  }
+
+  function toFields(rows) {
+    return rows.map((r) => ({
+      name: r.n,
+      type: r.t,
+      required: r.r,
+      generator: r.g === "(tipo)" ? undefined : r.g,
+      values: r.e ? r.e.split(",").map((s) => s.trim()).filter(Boolean) : undefined,
+    }));
+  }
+
+  function sendPreview(c, silent) {
+    vscode.postMessage({
+      kind: "preview",
+      silent: !!silent,
+      model: c.model,
+      fields: toFields(c.rows),
+      records: Math.max(1, parseInt($("#records").value, 10) || 5),
+      seed: $("#seed").value === "" ? undefined : $("#seed").value,
+    });
   }
 
   function showBox(kind, text) {
@@ -69,32 +103,12 @@
   $("#add").onclick = () => addRow();
   $("#save").onclick = () => {
     const c = collect();
-    const fields = c.rows.map((r) => ({
-      name: r.n,
-      type: r.t,
-      required: r.r,
-      generator: r.g === "(tipo)" ? undefined : r.g,
-      values: r.e ? r.e.split(",").map((s) => s.trim()).filter(Boolean) : undefined,
-    }));
-    vscode.postMessage({ kind: "save", model: c.model, fields });
+    vscode.postMessage({ kind: "save", model: c.model, fields: toFields(c.rows) });
   };
-  $("#preview").onclick = () => {
-    const c = collect();
-    const fields = c.rows.map((r) => ({
-      name: r.n,
-      type: r.t,
-      required: r.r,
-      generator: r.g === "(tipo)" ? undefined : r.g,
-      values: r.e ? r.e.split(",").map((s) => s.trim()).filter(Boolean) : undefined,
-    }));
-    vscode.postMessage({
-      kind: "preview",
-      model: c.model,
-      fields,
-      records: Math.max(1, parseInt($("#records").value, 10) || 20),
-      seed: $("#seed").value === "" ? undefined : $("#seed").value,
-    });
-  };
+  $("#preview").onclick = () => sendPreview(collect(), false);
+  const recSeed = () => persist();
+  $("#records").addEventListener("input", recSeed);
+  $("#seed").addEventListener("input", recSeed);
 
   window.addEventListener("message", (e) => {
     const msg = e.data || {};
@@ -105,7 +119,10 @@
       pre.textContent = msg.text;
       pre.classList.remove("hidden");
       const badge = $("#previewBadge");
-      if (badge) badge.textContent = msg.label || "";
+      if (badge) {
+        badge.textContent = msg.label || "";
+        badge.classList.remove("hidden");
+      }
     }
   });
 })();

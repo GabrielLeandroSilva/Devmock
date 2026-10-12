@@ -56,6 +56,7 @@ updated: 2026-10-10
 | v1.0.0 | 2026-10-12 | main + des | MVP — manual 100% ✅ | Manual-Teste-v1 §0–§8 todos ✅ + PR `nº 10` (merge commit) | ✅ validado, em main |
 | v1.0.1 | 2026-10-12 | des | Pós-promoção v1.0.0 (PR nº 10) | `docs(git): registra promoção v1.0.0 em main` | ✅ em des |
 | v1.1.0 | 2026-10-12 | des | Studio: painel Schema+Preview com CSS próprio | `feat(extension): studio com preview, CSP estrito` | ⏳ em des, em revisão |
+| v1.1.1 | 2026-10-12 | des | Studio: badge oculto + preview automático | `fix(extension): badge e auto-preview com debounce` | ⏳ em des, em revisão |
 
 ## Consulta (Dataview — notas de gestão)
 
