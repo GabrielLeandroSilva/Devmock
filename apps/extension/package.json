@@ -19,6 +19,7 @@
       { "command": "devmock.refresh", "title": "DevMock: Refresh View", "icon": "$(refresh)" },
       { "command": "devmock.createSchema", "title": "DevMock: New Schema…" },
       { "command": "devmock.generate", "title": "DevMock: Generate Fake Data…" },
+      { "command": "devmock.saveFakeData", "title": "DevMock: Save Fake Data…" },
       { "command": "devmock.switchScenario", "title": "DevMock: Switch Scenario…" },
       { "command": "devmock.export", "title": "DevMock: Export Contract…" },
       { "command": "devmock.showLog", "title": "DevMock: Show Request Log" }

@@ -127,8 +127,22 @@ interface TreeNode {
   command?: vscode.Command;
 }
 
-function readConfig(root: string): typeof DEFAULT_CONFIG {
-  try {
+/** Escolhe um Schema válido ou avisa; usado por generate/saveFakeData. */
+async function pickSchema(): Promise<{ root: string; schema: Schema } | undefined> {
+  const root = workspaceRoot();
+  if (!root) return undefined;
+  const schemas = listSchemas(root);
+  if (schemas.length === 0) {
+    await vscode.window.showErrorMessage("DevMock: nenhum Schema válido.");
+    return undefined;
+  }
+  const picked = await vscode.window.showQuickPick(schemas.map((s) => s.name), { placeHolder: "Schema" });
+  if (!picked) return undefined;
+  const schema = schemas.find((s) => s.name === picked);
+  return schema ? { root, schema } : undefined;
+}
+
+function readConfig(root: string): typeof DEFAULT_CONFIG {  try {
     return { ...DEFAULT_CONFIG, ...readJson<Record<string, unknown>>(join(devmockDir(root), "config.json")) };
   } catch {
     return { ...DEFAULT_CONFIG };
@@ -239,17 +253,9 @@ export function activate(context: vscode.ExtensionContext): void {
       openSchemaForm(context, root, refresh);
     }),
     vscode.commands.registerCommand("devmock.generate", async () => {
-      const root = workspaceRoot();
-      if (!root) return;
-      const schemas = listSchemas(root);
-      if (schemas.length === 0) {
-        await vscode.window.showErrorMessage("DevMock: nenhum Schema válido.");
-        return;
-      }
-      const picked = await vscode.window.showQuickPick(schemas.map((s) => s.name), { placeHolder: "Schema" });
-      if (!picked) return;
-      const schema = schemas.find((s) => s.name === picked);
-      if (!schema) return;
+      const found = await pickSchema();
+      if (!found) return;
+      const { root, schema } = found;
       const cfg = readConfig(root);
       const rows = generate(schema, 20, cfg.seedDefault);
       const doc = await vscode.workspace.openTextDocument({
@@ -257,6 +263,27 @@ export function activate(context: vscode.ExtensionContext): void {
         language: "json",
       });
       await vscode.window.showTextDocument(doc, { preview: true });
+    }),
+    vscode.commands.registerCommand("devmock.saveFakeData", async () => {
+      const found = await pickSchema();
+      if (!found) return;
+      const { root, schema } = found;
+      const cfg = readConfig(root);
+      const input = await vscode.window.showInputBox({
+        prompt: "Quantos registros?",
+        value: "20",
+        validateInput: (v) => (/^\d+$/.test(v) && Number(v) > 0 ? undefined : "Informe um inteiro positivo."),
+      });
+      if (!input) return;
+      const rows = generate(schema, Number(input), cfg.seedDefault);
+      const dir = join(devmockDir(root), "docs", "examples");
+      mkdirSync(dir, { recursive: true });
+      const file = join(dir, `${schema.name.toLowerCase()}.json`);
+      writeFileSync(file, `${JSON.stringify(rows, null, 2)}\n`);
+      await vscode.window.showInformationMessage(
+        `DevMock: ${rows.length} registros salvos em docs/examples/${schema.name.toLowerCase()}.json (seed ${cfg.seedDefault}).`,
+      );
+      refresh();
     }),
     vscode.commands.registerCommand("devmock.switchScenario", async () => {
       const root = workspaceRoot();

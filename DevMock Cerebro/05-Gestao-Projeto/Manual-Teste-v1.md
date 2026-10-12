@@ -16,22 +16,22 @@ updated: 2026-10-12
 ## 0. Preparação
 - [x] #task 🔼 Build limpo: `npm run build --workspaces` sem erro 🏷️ fase/codigo ✅ 2026-10-12
 - [x] #task 🔼 Testes verdes: `npx --prefix packages/core vitest run --root packages/core` → 37/37 🏷️ fase/codigo ✅ 2026-10-12
-- [ ] #task 🔼 Abrir `apps/extension` no VS Code e apertar **F5** (host de desenvolvimento, config `Run Extension` em `.vscode/launch.json`) 🏷️ fase/codigo
+- [x] #task 🔼 Abrir `apps/extension` no VS Code e apertar **F5** (host de desenvolvimento, config `Run Extension` em `.vscode/launch.json`) 🏷️ fase/codigo ✅ 2026-10-12
 
 ## 1. Init (PRD-03)
-- [ ] #task Sem `.devmock/`, a Tree mostra CTA único; comando `DevMock: Initialize Project` cria `.devmock/{config.json,schemas/,scenarios/,docs/,openapi/}` 🏷️ fase/codigo
-- [ ] #task `config.json` contém `port: 4010`, `seedDefault`, `localeDefault: pt-BR` 🏷️ fase/codigo
+- [x] #task Sem `.devmock/`, a Tree mostra CTA único; comando `DevMock: Initialize Project` cria `.devmock/{config.json,schemas/,scenarios/,docs/,openapi/}` 🏷️ fase/codigo ✅ 2026-10-12
+- [x] #task `config.json` contém `port: 4010`, `seedDefault`, `localeDefault: pt-BR` 🏷️ fase/codigo ✅ 2026-10-12
 
 ## 2. Schema via formulário (PRD-01 + PRD-03)
-- [ ] #task `DevMock: New Schema…` → model `User` + campos (id uuid required, name br.nome, cpf br.cpf, status enum ACTIVE/BLOCKED/PENDING, balance number BRL) → salva `schemas/user.json` 🏷️ fase/codigo
-- [ ] #task Schema inválido (enum sem valores) mostra erro com campo + motivo e **não** salva 🏷️ fase/codigo
+- [x] #task `DevMock: New Schema…` → model `User` + campos (id uuid required, name br.nome, cpf br.cpf, status enum ACTIVE/BLOCKED/PENDING, balance number BRL) → salva `schemas/user.json` 🏷️ fase/codigo ✅ 2026-10-12
+- [x] #task Schema inválido (enum sem valores) mostra erro com campo + motivo e **não** salva 🏷️ fase/codigo ✅ 2026-10-12
 
 ## 3. Fake Data (PRD-01)
-- [ ] #task `DevMock: Generate Fake Data…` → preview JSON com 20 users, CPF formatado, `balance` numérico 🏷️ fase/codigo
+- [x] #task `DevMock: Generate Fake Data…` → preview JSON com 20 users, CPF formatado, `balance` numérico 🏷️ fase/codigo ✅ 2026-10-12
 
 ## 4. Mock Server (PRD-02) — cronometrar do §1 até o primeiro 200
-- [ ] #task `DevMock: Start Mock Server` → notificação `🟢 http://localhost:4010` e Tree mostra servidor verde 🏷️ fase/codigo
-- [ ] #task `GET /users?page=1&limit=5` → 200 com `{data[5], total, page: 1, limit: 5}` 🏷️ fase/codigo
+- [x] #task `DevMock: Start Mock Server` → notificação `🟢 http://localhost:4010` e Tree mostra servidor verde 🏷️ fase/codigo ✅ 2026-10-12
+- [x] #task `GET /users?page=1&limit=5` → 200 com `{data[5], total, page: 1, limit: 5}` 🏷️ fase/codigo ✅ 2026-10-12
 - [ ] #task `GET /users/:id` existente → 200; inexistente → 404 `{error: NOT_FOUND}` 🏷️ fase/codigo
 - [ ] #task `POST /users` → 201 e o criado aparece no `GET` seguinte 🏷️ fase/codigo
 - [ ] #task `DELETE /users/:id` → 204 e some do `GET`; repetir → 404 🏷️ fase/codigo
