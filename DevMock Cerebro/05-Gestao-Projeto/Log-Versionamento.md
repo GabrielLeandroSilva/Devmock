@@ -53,6 +53,7 @@ updated: 2026-10-10
 | v0.9.6 | 2026-10-12 | des | Comando Save Fake Data | `feat(extension): save fake data em docs/examples` | ⏳ em des, em revisão |
 | v0.9.7 | 2026-10-12 | des | plural idempotente (AUD-09) | `fix(core): model plural não ganha s extra` | ⏳ em des, em revisão |
 | v0.9.8 | 2026-10-12 | des | Built-in scenarios (AUD-10) | `fix(core): cenários default embutidos + 403/429` | ⏳ em des, em revisão |
+| v1.0.0 | 2026-10-12 | des | MVP — manual 100% ✅ | Manual-Teste-v1 §0–§8 todos ✅ | ⏳ em des, em revisão |
 
 ## Consulta (Dataview — notas de gestão)
 
@@ -86,4 +87,5 @@ SORT file.name ASC
 - [x] #task ⏫ Revisar código v0.9.0 (export + extension) 🏷️ fase/codigo
 - [x] #task 🔼 Promover v0.9.0 para main após aprovação 🏷️ fase/codigo
 - [ ] #task ⏫ Teste manual passo a passo (host VS Code real) antes da v1.0.0 🏷️ fase/codigo
-- [ ] #task ⏫ Executar Manual-Teste-v1 e preencher tabela de Resultado 🏷️ fase/codigo
+- [x] #task ⏫ Executar Manual-Teste-v1 e preencher tabela de Resultado 🏷️ fase/codigo
+- [x] #task 🔼 Promover v1.0.0 para main após manual 100% (PR nº 10) 🏷️ fase/codigo
