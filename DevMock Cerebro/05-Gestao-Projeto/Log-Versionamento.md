@@ -36,8 +36,13 @@ updated: 2026-10-10
 | v0.5.2 | 2026-10-11 | des | Pós-promoção v0.5.1 (PR nº 5) | `docs(git): registra promoção v0.5.1 em main` | ✅ em des |
 | v0.6.0 | 2026-10-11 | main + des | Fase 5 — Extras + Costura | `docs(extras): fase 5 — concorrentes, gtm, ux, glossário, adrs` + PR `nº 6` (merge commit) | ✅ validado, em main |
 | v0.6.1 | 2026-10-11 | des | Pós-promoção v0.6.0 (PR nº 6) | `docs(git): registra promoção v0.6.0 em main` | ✅ em des |
-| v0.7.0 | 2026-10-11 | des | Código EAP 1.1 + scaffolds | `feat(core): monorepo, core 1.1 com testes, extension mínima` | ⏳ em des, em revisão |
-| v0.7.1 | 2026-10-11 | des | CNPJ alfanumérico (Receita 31/07/2026) | `fix(core): genCnpj emite formatos numérico + alfanumérico` | ⏳ em des, em revisão |
+| v0.7.0 | 2026-10-11 | main + des | Código EAP 1.1 + scaffolds | `feat(core): monorepo, core 1.1 com testes, extension mínima` + PR `nº 7` (merge commit) | ✅ validado, em main |
+| v0.7.1 | 2026-10-11 | main + des | CNPJ alfanumérico (Receita 31/07/2026) | `fix(core): genCnpj emite formatos numérico + alfanumérico` + PR `nº 7` | ✅ validado, em main |
+| v0.7.2 | 2026-10-11 | main + des | Fix outDir do core | `fix(core): outDir explicito no tsconfig do core` + PR `nº 7` | ✅ validado, em main |
+| v0.7.3 | 2026-10-12 | des | Pós-promoção v0.7.2 (PR nº 7) | `docs(git): registra promoção v0.7.2 em main` | ✅ em des |
+| v0.8.0 | 2026-10-12 | des | Código EAP 1.2 — Mock Server + CLI | `feat(mock): eap 1.2 — mock server, cenários, cli start` | ⏳ em des, em revisão |
+| v0.8.1 | 2026-10-12 | des | Auditoria 1.2 — 7 bugs corrigidos, 26/26 verdes | `fix(mock): crud persiste, eaddrinuse, nan, case, cli` | ⏳ em des, em revisão |
+| v0.8.2 | 2026-10-12 | des | Agente Auditor + gate no Guardião | `docs(agente): cria auditor e amarra ao fluxo de promoção` | ⏳ em des, em revisão |
 
 ## Consulta (Dataview — notas de gestão)
 
@@ -62,5 +67,8 @@ SORT file.name ASC
 - [x] #task 🔼 Iniciar Fase 5 — Extras e Costura 🏷️ fase/5
 - [x] #task ⏫ Revisar Extras da Fase 5 🏷️ fase/5
 - [x] #task 🔼 Promover v0.6.0 para main após aprovação 🏷️ fase/5
-- [ ] #task ⏫ Revisar código v0.7.0 (core 1.1 + scaffolds) 🏷️ fase/codigo
-- [ ] #task 🔼 Promover v0.7.0 para main após aprovação 🏷️ fase/codigo
+- [x] #task ⏫ Revisar código v0.7.0 (core 1.1 + scaffolds) 🏷️ fase/codigo
+- [x] #task 🔼 Promover v0.7.0 para main após aprovação 🏷️ fase/codigo
+- [x] #task 🔼 Seguir EAP 1.2 — Mock Server 🏷️ fase/codigo
+- [ ] #task ⏫ Revisar código v0.8.0 (mock server) 🏷️ fase/codigo
+- [ ] #task 🔼 Promover v0.8.0 para main após aprovação 🏷️ fase/codigo

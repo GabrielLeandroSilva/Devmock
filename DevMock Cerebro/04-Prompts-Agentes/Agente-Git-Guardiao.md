@@ -45,6 +45,7 @@ Tipos: `docs, feat, chore, fix`. Ex: `docs(prd): fase 1 — PRD-02 mock server a
 
 ## 5. Workflow de promoção (`des → main` via Pull Request)
 Toda promoção usa PR — nunca merge local direto em `main` (a `main` é protegida por ruleset: exige PR, bloqueia force-push e deleção, sem bypass). `gh` instalado e autenticado (`gh auth login` feito em 2026-10-10):
+0. **Pré-requisito: veredito `APROVADO` do [[Agente-Auditor]]** — sem auditoria no fim do passo, sem PR. Reprovado volta para o Coder, nunca avança.
 1. Em `des`: garante push em dia (`git push origin des --tags`) e log atualizado
 2. Guardião abre o PR sozinho:
 ```powershell
