@@ -60,6 +60,7 @@ updated: 2026-10-10
 | v1.1.2 | 2026-10-12 | main + des | Studio: remove badge de registros/seed | `fix(extension): remove badge do preview` + PR `nº 11` | ✅ validado, em main |
 | v1.1.3 | 2026-10-12 | main + des | README com comandos + exemplo | `docs(readme): comandos cli/extension + e2e` + PR `nº 11` (merge commit) | ✅ validado, em main |
 | v1.1.4 | 2026-10-12 | des | Pós-promoção v1.1.3 (PR nº 11) | `docs(git): registra promoção v1.1.3 em main` | ✅ em des |
+| v1.2.0 | 2026-10-12 | des | Fecha EAP-1: picker Create API + aviso stale | `feat(extension): create-api picker + stale no export` | ⏳ em des, em revisão |
 
 ## Consulta (Dataview — notas de gestão)
 

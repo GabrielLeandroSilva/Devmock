@@ -11,6 +11,7 @@ import {
   createMockServer,
   generate,
   generatorNames,
+  hashSchema,
   loadSchemas,
   routesFor,
   toYaml,
@@ -246,12 +247,29 @@ export function activate(context: vscode.ExtensionContext): void {
       await vscode.window.showInformationMessage("DevMock: servidor parado. Log nas últimas 50 requisições.");
     }),
     vscode.commands.registerCommand("devmock.createSchema", async () => {
+      await createFromScratch(context, refresh);
+    }),
+    vscode.commands.registerCommand("devmock.createApi", async () => {
       const root = workspaceRoot();
       if (!root || !existsSync(devmockDir(root))) {
         await vscode.window.showErrorMessage("DevMock: rode `DevMock: Initialize Project` primeiro.");
         return;
       }
-      openSchemaForm(context, root, refresh);
+      // PRD-03 RF-06: só From scratch no MVP; demais sinalizam o futuro.
+      const picked = await vscode.window.showQuickPick(
+        [
+          { label: "From scratch", description: "Criar Schema no Studio", action: "scratch" },
+          { label: "Import OpenAPI", description: "Em breve (PRD-06)", action: "soon" },
+          { label: "Detect from project", description: "Em breve (pós-MVP)", action: "soon" },
+        ],
+        { placeHolder: "Create API" },
+      );
+      if (!picked) return;
+      if (picked.action === "scratch") {
+        await createFromScratch(context, refresh);
+        return;
+      }
+      await vscode.window.showInformationMessage(`DevMock: ${picked.label} chega em versão futura — por enquanto, use From scratch.`);
     }),
     vscode.commands.registerCommand("devmock.generate", async () => {
       const found = await pickSchema();
@@ -326,6 +344,13 @@ export function activate(context: vscode.ExtensionContext): void {
       if (!picked) return;
       const want = (name: string): boolean => picked === "Tudo" || picked.startsWith(name);
       const dir = devmockDir(root);
+      // (d) staleDetector: avisa quais Schemas mudaram desde o último export.
+      const stale = staleSinceLastExport(root, schemas);
+      if (stale.length > 0) {
+        await vscode.window.showWarningMessage(
+          `DevMock: artefatos desatualizados para: ${stale.join(", ")}. Exportando agora para sincronizar.`,
+        );
+      }
       if (want("OpenAPI JSON")) {
         const doc = buildOpenApi(schemas);
         writeFileSync(join(dir, "openapi", "generated.json"), `${JSON.stringify(doc, null, 2)}\n`);
@@ -343,6 +368,7 @@ export function activate(context: vscode.ExtensionContext): void {
       if (want("Markdown")) {
         for (const s of schemas) writeFileSync(join(dir, "docs", `${s.name.toLowerCase()}.md`), buildDocFor(s));
       }
+      recordExportHashes(root, schemas);
       refresh();
       await vscode.window.showInformationMessage(`DevMock: contrato exportado (${picked}).`);
     }),
@@ -360,6 +386,26 @@ export function activate(context: vscode.ExtensionContext): void {
   );
 }
 
+const HASHES_FILE = ".hashes.json";
+
+/** Schemas cujo hash mudou desde o último export (vazio = tudo sincronizado). */
+function staleSinceLastExport(root: string, schemas: Schema[]): string[] {
+  let stored: Record<string, string> = {};
+  try {
+    stored = readJson<Record<string, string>>(join(devmockDir(root), "openapi", HASHES_FILE));
+  } catch {
+    return [];
+  }
+  return schemas.filter((s) => stored[s.name] !== hashSchema(s)).map((s) => s.name);
+}
+
+/** Grava o hash atual de cada Schema após exportar. */
+function recordExportHashes(root: string, schemas: Schema[]): void {
+  const hashes: Record<string, string> = {};
+  for (const s of schemas) hashes[s.name] = hashSchema(s);
+  writeFileSync(join(devmockDir(root), "openapi", HASHES_FILE), `${JSON.stringify(hashes, null, 2)}\n`);
+}
+
 function readScenarios(root: string): Record<string, Record<string, never>> {
   const out: Record<string, Record<string, never>> = {};
   const dir = join(devmockDir(root), "scenarios");
@@ -373,6 +419,19 @@ function readScenarios(root: string): Record<string, Record<string, never>> {
     }
   }
   return out;
+}
+
+/** Abre o Studio após garantir projeto inicializado (usado por createSchema/createApi). */
+async function createFromScratch(
+  context: vscode.ExtensionContext,
+  refresh: () => void,
+): Promise<void> {
+  const root = workspaceRoot();
+  if (!root || !existsSync(devmockDir(root))) {
+    await vscode.window.showErrorMessage("DevMock: rode `DevMock: Initialize Project` primeiro.");
+    return;
+  }
+  openSchemaForm(context, root, refresh);
 }
 
 /** DevMock Studio: editor de Schema + preview de Fake Data (PRD-03 RF-04). */
