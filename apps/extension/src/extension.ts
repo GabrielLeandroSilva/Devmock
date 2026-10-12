@@ -1,4 +1,5 @@
 import * as vscode from "vscode";
+import { randomBytes } from "node:crypto";
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import {
@@ -374,57 +375,79 @@ function readScenarios(root: string): Record<string, Record<string, never>> {
   return out;
 }
 
-/** Form de Schema em Webview (PRD-03 RF-04): tipos + geradores br.* em dropdown. */
+/** DevMock Studio: editor de Schema + preview de Fake Data (PRD-03 RF-04). */
 function openSchemaForm(context: vscode.ExtensionContext, root: string, refresh: () => void): void {
-  const panel = vscode.window.createWebviewPanel("devmockSchema", "DevMock: New Schema", vscode.ViewColumn.One, {
+  const media = vscode.Uri.joinPath(context.extensionUri, "media");
+  const panel = vscode.window.createWebviewPanel("devmockSchema", "DevMock Studio", vscode.ViewColumn.One, {
     enableScripts: true,
+    localResourceRoots: [media],
   });
-  const genOptions = GENERATORS.map((g) => `<option value="${g}">${g}</option>`).join("");
-  const typeOptions = TYPES.map((t) => `<option value="${t}">${t}</option>`).join("");
-  panel.webview.html = `<!DOCTYPE html><html><body>
-<h2>New Schema</h2>
-<label>Model: <input id="model" placeholder="User" /></label>
-<table id="fields"><tr><th>campo</th><th>tipo</th><th>required</th><th>generator</th><th>enum (vírgula)</th></tr></table>
-<button id="add">+ campo</button> <button id="save">Salvar</button>
-<pre id="err"></pre>
-<script>
-const genOptions = ${JSON.stringify(genOptions)};
-const typeOptions = ${JSON.stringify(typeOptions)};
-const vscode = acquireVsCodeApi();
-function row() {
-  const tr = document.createElement("tr");
-  tr.innerHTML = '<td><input class="n"/></td><td><select class="t">' + typeOptions + '</select></td>' +
-    '<td><input type="checkbox" class="r"/></td><td><select class="g">' + genOptions + '</select></td>' +
-    '<td><input class="e" placeholder="ACTIVE,BLOCKED"/></td>';
-  document.getElementById("fields").appendChild(tr);
-}
-row();
-document.getElementById("add").onclick = row;
-document.getElementById("save").onclick = () => {
-  const fields = [...document.querySelectorAll("#fields tr")].slice(1).map((tr) => ({
-    name: tr.querySelector(".n").value,
-    type: tr.querySelector(".t").value,
-    required: tr.querySelector(".r").checked,
-    generator: tr.querySelector(".g").value === "(tipo)" ? undefined : tr.querySelector(".g").value,
-    values: tr.querySelector(".e").value ? tr.querySelector(".e").value.split(",").map((s) => s.trim()) : undefined,
-  }));
-  vscode.postMessage({ model: document.getElementById("model").value, fields });
-};
-window.addEventListener("message", (e) => { document.getElementById("err").textContent = e.data.error ?? "Salvo!"; });
-</script></body></html>`;
+  const cssUri = panel.webview.asWebviewUri(vscode.Uri.joinPath(media, "form.css"));
+  const jsUri = panel.webview.asWebviewUri(vscode.Uri.joinPath(media, "form.js"));
+  const csp = panel.webview.cspSource;
+  const nonce = randomBytes(16).toString("base64");  const cfg = readConfig(root);
+  panel.webview.html = `<!DOCTYPE html><html><head>
+<meta charset="UTF-8" />
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${csp}; script-src 'nonce-${nonce}' ${csp};" />
+<link rel="stylesheet" href="${cssUri}" />
+</head><body>
+<div class="flex-col gap">
+  <div class="card">
+    <div class="justify-between"><h2 class="title">DevMock Studio <span class="badge">Schema + Preview</span></h2></div>
+    <p class="muted">Defina o modelo, pré-visualize os dados com seed e salve em <code>schemas/</code>.</p>
+    <label class="field">Model <input id="model" placeholder="User" /></label>
+  </div>
+  <div class="card">
+    <h3 class="subtitle">Campos</h3>
+    <table class="grid" id="fields"><tr><th>campo</th><th>tipo</th><th>req.</th><th>generator</th><th>enum (vírgula)</th><th></th></tr></table>
+    <div class="flex gap mt"><button id="add" class="btn btn-secondary">+ campo</button></div>
+  </div>
+  <div class="card">
+    <h3 class="subtitle">Gerar preview</h3>
+    <div class="flex gap">
+      <label class="field">Records <input id="records" type="number" value="5" min="1" max="100" /></label>
+      <label class="field">Seed <input id="seed" type="number" /></label>
+    </div>
+    <div class="flex gap mt">
+      <button id="preview" class="btn btn-secondary">Preview</button>
+      <button id="save" class="btn btn-primary">Salvar schema</button>
+    </div>
+    <pre id="previewOut" class="preview hidden"></pre>
+    <div id="msg" class="alert hidden mt"></div>
+  </div>
+</div>
+<script nonce="${nonce}">window.DM_GENERATORS = ${JSON.stringify(GENERATORS)}; window.DM_TYPES = ${JSON.stringify(TYPES)}; window.DM_SEED = ${JSON.stringify(cfg.seedDefault)};</script>
+<script src="${jsUri}"></script>
+</body></html>`;
 
   panel.webview.onDidReceiveMessage(
-    (msg: { model: string; fields: Record<string, unknown>[] }) => {
+    (msg: { kind: string; model: string; fields: Record<string, unknown>[]; records?: number; seed?: number | string; silent?: boolean }) => {
       const schema = { name: (msg.model || "").trim(), fields: msg.fields } as unknown as Schema;
       const diags = validateSchema(schema);
       const errors = diags.filter((d) => d.severity === "error");
+      if (msg.kind === "preview") {
+        // Preview silencioso (auto): sem erros válidos, sem resposta — nunca polui a tela.
+        if (errors.length > 0) {
+          if (!msg.silent) {
+            void panel.webview.postMessage({ kind: "error", text: errors.map((d) => `${d.field}: ${d.message}`).join("\n") });
+          }
+          return;
+        }
+        const seed = msg.seed === undefined || msg.seed === "" ? cfg.seedDefault : msg.seed;
+        const rows = generate(schema, msg.records ?? 5, seed);
+        void panel.webview.postMessage({
+          kind: "previewResult",
+          text: JSON.stringify(rows, null, 2),
+        });
+        return;
+      }
       if (errors.length > 0) {
-        void panel.webview.postMessage({ error: errors.map((d) => `${d.field}: ${d.message}`).join("\n") });
+        void panel.webview.postMessage({ kind: "error", text: errors.map((d) => `${d.field}: ${d.message}`).join("\n") });
         return;
       }
       const file = join(devmockDir(root), "schemas", `${schema.name.toLowerCase()}.json`);
       writeFileSync(file, `${JSON.stringify(schema, null, 2)}\n`);
-      void panel.webview.postMessage({ error: `Salvo em schemas/${schema.name.toLowerCase()}.json` });
+      void panel.webview.postMessage({ kind: "ok", text: `Salvo em schemas/${schema.name.toLowerCase()}.json` });
       refresh();
     },
     undefined,

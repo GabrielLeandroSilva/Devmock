@@ -39,7 +39,7 @@ Dev precisa de experiência visual simples (TreeView) + edição direta dos arqu
 | RF-01 | Init cria estrutura completa e é idempotente | Must | §5.2 |
 | RF-02 | TreeView lista Schemas/Endpoints/Scenarios a partir dos arquivos | Must | §6 |
 | RF-03 | Start/Stop server pelo painel com status e porta | Must | §13 |
-| RF-04 | Form de Schema com tipos + geradores BR em dropdown | Must | §7 |
+| RF-04 | Form de Schema com tipos + geradores BR em dropdown; v1.1.0: painel Studio com preview (records/seed) e erros inline | Must | §7 |
 | RF-05 | Edição manual de JSON recarrega a Tree sem restart | Should | §6 |
 | RF-06 | `Create API: From scratch / Import / Detect` — MVP só habilita From scratch, demais mostram "em breve" | Must | §7 |
 
