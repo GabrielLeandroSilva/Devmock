@@ -55,10 +55,12 @@ updated: 2026-10-10
 | v0.9.8 | 2026-10-12 | des | Built-in scenarios (AUD-10) | `fix(core): cenários default embutidos + 403/429` | ⏳ em des, em revisão |
 | v1.0.0 | 2026-10-12 | main + des | MVP — manual 100% ✅ | Manual-Teste-v1 §0–§8 todos ✅ + PR `nº 10` (merge commit) | ✅ validado, em main |
 | v1.0.1 | 2026-10-12 | des | Pós-promoção v1.0.0 (PR nº 10) | `docs(git): registra promoção v1.0.0 em main` | ✅ em des |
-| v1.1.0 | 2026-10-12 | des | Studio: painel Schema+Preview com CSS próprio | `feat(extension): studio com preview, CSP estrito` | ⏳ em des, em revisão |
-| v1.1.1 | 2026-10-12 | des | Studio: badge oculto + preview automático | `fix(extension): badge e auto-preview com debounce` | ⏳ em des, em revisão |
-| v1.1.2 | 2026-10-12 | des | Studio: remove badge de registros/seed | `fix(extension): remove badge do preview` | ⏳ em des, em revisão |
-| v1.1.3 | 2026-10-12 | des | README com comandos + exemplo | `docs(readme): comandos cli/extension + e2e` | ⏳ em des, em revisão |
+| v1.1.0 | 2026-10-12 | main + des | Studio: painel Schema+Preview com CSS próprio | `feat(extension): studio com preview, CSP estrito` + PR `nº 11` | ✅ validado, em main |
+| v1.1.1 | 2026-10-12 | main + des | Studio: badge oculto + preview automático | `fix(extension): badge e auto-preview com debounce` + PR `nº 11` | ✅ validado, em main |
+| v1.1.2 | 2026-10-12 | main + des | Studio: remove badge de registros/seed | `fix(extension): remove badge do preview` + PR `nº 11` | ✅ validado, em main |
+| v1.1.3 | 2026-10-12 | main + des | README com comandos + exemplo | `docs(readme): comandos cli/extension + e2e` + PR `nº 11` (merge commit) | ✅ validado, em main |
+| v1.1.4 | 2026-10-12 | des | Pós-promoção v1.1.3 (PR nº 11) | `docs(git): registra promoção v1.1.3 em main` | ✅ em des |
+| v1.2.0 | 2026-10-12 | des | Fecha EAP-1: picker Create API + aviso stale | `feat(extension): create-api picker + stale no export` | ⏳ em des, em revisão |
 
 ## Consulta (Dataview — notas de gestão)
 

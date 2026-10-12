@@ -46,6 +46,8 @@ updated: 2026-10-12
 - [ ] #task `DevMock: Export Contract…` → Tudo → gera `openapi/generated.json`, `generated.yaml`, `schemas.json`, `docs/types.ts`, `docs/user.md` 🏷️ fase/codigo
 - [ ] #task `types.ts` compila: `tsc --noEmit --strict docs/types.ts` sem erro 🏷️ fase/codigo
 - [ ] #task Re-export sem mudar Schema → diff vazio no git 🏷️ fase/codigo
+- [ ] #task Export após mudar Schema avisa quais artefatos estavam desatualizados e grava `openapi/.hashes.json` 🏷️ fase/codigo
+- [ ] #task `DevMock: Create API…` → From scratch abre o Studio; Import/Detect avisam "em breve" 🏷️ fase/codigo
 
 ## 7. Request Log (PRD-02)
 - [ ] #task `DevMock: Show Request Log` → OutputChannel lista método, rota, status, ms e cenário 🏷️ fase/codigo

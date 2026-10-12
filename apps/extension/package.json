@@ -18,6 +18,7 @@
       { "command": "devmock.stop", "title": "DevMock: Stop Mock Server" },
       { "command": "devmock.refresh", "title": "DevMock: Refresh View", "icon": "$(refresh)" },
       { "command": "devmock.createSchema", "title": "DevMock: New Schema…" },
+      { "command": "devmock.createApi", "title": "DevMock: Create API…" },
       { "command": "devmock.generate", "title": "DevMock: Generate Fake Data…" },
       { "command": "devmock.saveFakeData", "title": "DevMock: Save Fake Data…" },
       { "command": "devmock.switchScenario", "title": "DevMock: Switch Scenario…" },
