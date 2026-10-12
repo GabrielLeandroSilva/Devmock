@@ -47,6 +47,7 @@ updated: 2026-10-10
 | v0.9.0 | 2026-10-12 | main + des | Código EAP 1.3–1.5 — exportadores + extension | `feat(export): eap 1.5 + extension 1.3/1.4` + PR `nº 9` (merge commit) | ✅ validado, em main |
 | v0.9.1 | 2026-10-12 | main + des | Auditoria 1.5 — reload, YAML, parser real | `fix(auditoria): reload, yaml canônico, swagger-parser` + PR `nº 9` | ✅ validado, em main |
 | v0.9.2 | 2026-10-12 | des | Pós-promoção v0.9.1 (PR nº 9) | `docs(git): registra promoção v0.9.1 em main` | ✅ em des |
+| v0.9.3 | 2026-10-12 | des | Manual de teste v1.0.0 | `docs(qa): manual de teste passo a passo` | ⏳ em des, em revisão |
 
 ## Consulta (Dataview — notas de gestão)
 
@@ -80,3 +81,4 @@ SORT file.name ASC
 - [x] #task ⏫ Revisar código v0.9.0 (export + extension) 🏷️ fase/codigo
 - [x] #task 🔼 Promover v0.9.0 para main após aprovação 🏷️ fase/codigo
 - [ ] #task ⏫ Teste manual passo a passo (host VS Code real) antes da v1.0.0 🏷️ fase/codigo
+- [ ] #task ⏫ Executar Manual-Teste-v1 e preencher tabela de Resultado 🏷️ fase/codigo
