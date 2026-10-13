@@ -4,8 +4,21 @@
   const $ = (sel, root) => (root || document).querySelector(sel);
   const $$ = (sel, root) => Array.from((root || document).querySelectorAll(sel));
 
-  const state = vscode.getState() || { model: "", rows: [blankRow()] };
   function blankRow() { return { n: "", t: "string", r: false, g: "(tipo)", e: "" }; }
+
+  /** Converte Schema do host para linhas da UI (values[] -> texto vírgula). */
+  function toUi(schema) {
+    return {
+      model: schema.name || "",
+      rows: (schema.fields || []).map((f) => ({
+        n: f.name || "",
+        t: f.type || "string",
+        r: !!f.required,
+        g: f.generator || "(tipo)",
+        e: (f.values || []).join(","),
+      })),
+    };
+  }
 
   function genOptionsHtml(current) {
     return window.DM_GENERATORS.map((g) => `<option value="${g}"${g === current ? " selected" : ""}>${g}</option>`).join("");
@@ -94,8 +107,13 @@
   }
 
   // Restaura estado (sobrevive a recarregamentos do painel).
-  $("#model").value = state.model || "";
-  (state.rows && state.rows.length ? state.rows : [blankRow()]).forEach(addRow);
+  // Modo edição: DM_INITIAL (injetado pelo host) vence quando não há estado salvo.
+  const saved = vscode.getState();
+  const initial = window.DM_INITIAL;
+  const hasSaved = saved && typeof saved.model === "string" && (saved.model !== "" || (saved.rows || []).length > 0);
+  const boot = hasSaved ? saved : (initial ? toUi(initial) : { model: "", rows: [blankRow()] });
+  $("#model").value = boot.model || "";
+  (boot.rows && boot.rows.length ? boot.rows : [blankRow()]).forEach(addRow);
   $("#model").addEventListener("input", persist);
   const seedInput = $("#seed");
   if (seedInput && window.DM_SEED != null) seedInput.value = window.DM_SEED;

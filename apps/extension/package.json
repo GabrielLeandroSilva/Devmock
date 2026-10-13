@@ -18,6 +18,7 @@
       { "command": "devmock.stop", "title": "DevMock: Stop Mock Server" },
       { "command": "devmock.refresh", "title": "DevMock: Refresh View", "icon": "$(refresh)" },
       { "command": "devmock.createSchema", "title": "DevMock: New Schema…" },
+      { "command": "devmock.editSchema", "title": "DevMock: Edit Schema…" },
       { "command": "devmock.createApi", "title": "DevMock: Create API…" },
       { "command": "devmock.importApi", "title": "DevMock: Import OpenAPI…" },
       { "command": "devmock.generate", "title": "DevMock: Generate Fake Data…" },
@@ -31,6 +32,9 @@
         { "command": "devmock.refresh", "when": "view == devmock.project", "group": "navigation" },
         { "command": "devmock.createSchema", "when": "view == devmock.project", "group": "navigation" },
         { "command": "devmock.start", "when": "view == devmock.project", "group": "navigation" }
+      ],
+      "view/item/context": [
+        { "command": "devmock.editSchema", "when": "view == devmock.project && viewItem == schema", "group": "inline" }
       ]
     },
     "viewsContainers": {

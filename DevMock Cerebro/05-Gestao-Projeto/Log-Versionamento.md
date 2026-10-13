@@ -66,6 +66,7 @@ updated: 2026-10-10
 | v1.2.3 | 2026-10-12 | des | Context-Mode configurado | `docs(infra): context-mode index + config` | ✅ em des |
 | v1.3.0 | 2026-10-12 | main + des | EAP 2.1 — Import OpenAPI | `feat(import): openapi para schemas + cli + extension` + PR `nº 13` (merge commit) | ✅ validado, em main |
 | v1.3.1 | 2026-10-13 | des | Pós-promoção v1.3.0 (PR nº 13) | `docs(git): registra promoção v1.3.0 em main` | ✅ em des |
+| v1.4.0 | 2026-10-13 | des | Studio: editar Schema com rename | `feat(extension): edita schema no mesmo studio` | ⏳ em des, em revisão |
 
 ## Consulta (Dataview — notas de gestão)
 
