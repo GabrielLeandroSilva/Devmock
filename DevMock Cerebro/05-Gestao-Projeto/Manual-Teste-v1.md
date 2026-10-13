@@ -28,6 +28,8 @@ updated: 2026-10-12
 - [ ] #task Studio: preview com records/seed mostra JSON no painel antes de salvar 🏷️ fase/codigo
 - [ ] #task Studio legível em tema claro e escuro; recarregar o painel preserva o preenchido 🏷️ fase/codigo
 
+- [ ] #task Editar Schema: clique no nó (ou menu contexto) abre o Studio pré-preenchido; renomear troca o arquivo e avisa; com servidor rodando, avisa que vale após restart 🏷️ fase/codigo
+
 ## 3. Fake Data (PRD-01)
 - [x] #task `DevMock: Generate Fake Data…` → preview JSON com 20 users, CPF formatado, `balance` numérico 🏷️ fase/codigo ✅ 2026-10-12
 

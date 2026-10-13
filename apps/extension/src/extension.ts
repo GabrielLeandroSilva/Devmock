@@ -1,6 +1,6 @@
 import * as vscode from "vscode";
 import { randomBytes } from "node:crypto";
-import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import {
   DEFAULT_CONFIG,
@@ -69,6 +69,7 @@ class ProjectProvider implements vscode.TreeDataProvider<TreeNode> {
     if (el.description) item.description = el.description;
     if (el.icon) item.iconPath = new vscode.ThemeIcon(el.icon);
     if (el.command) item.command = el.command;
+    if (el.contextValue) item.contextValue = el.contextValue;
     return item;
   }
 
@@ -97,7 +98,13 @@ class ProjectProvider implements vscode.TreeDataProvider<TreeNode> {
     const schemas = listSchemas(ctx.root);
     switch (el.label) {
       case "Schemas":
-        return schemas.map((s) => ({ label: s.name, description: `${s.fields.length} campos` }));
+        return schemas.map((s) => ({
+          label: s.name,
+          description: `${s.fields.length} campos`,
+          contextValue: "schema",
+          schemaName: s.name,
+          command: { command: "devmock.editSchema", title: "Editar Schema", arguments: [s.name] },
+        }));
       case "Endpoints":
         return schemas.flatMap((s) => routesFor(s).map((r) => ({ label: r })));
       case "Scenarios": {
@@ -128,6 +135,8 @@ interface TreeNode {
   icon?: string;
   children?: boolean;
   command?: vscode.Command;
+  contextValue?: string;
+  schemaName?: string;
 }
 
 /** Escolhe um Schema válido ou avisa; usado por generate/saveFakeData. */
@@ -145,7 +154,8 @@ async function pickSchema(): Promise<{ root: string; schema: Schema } | undefine
   return schema ? { root, schema } : undefined;
 }
 
-function readConfig(root: string): typeof DEFAULT_CONFIG {  try {
+function readConfig(root: string): typeof DEFAULT_CONFIG {
+  try {
     return { ...DEFAULT_CONFIG, ...readJson<Record<string, unknown>>(join(devmockDir(root), "config.json")) };
   } catch {
     return { ...DEFAULT_CONFIG };
@@ -248,7 +258,29 @@ export function activate(context: vscode.ExtensionContext): void {
       await vscode.window.showInformationMessage("DevMock: servidor parado. Log nas últimas 50 requisições.");
     }),
     vscode.commands.registerCommand("devmock.createSchema", async () => {
-      await createFromScratch(context, refresh);
+      await createFromScratch(context, refresh, () => state.server !== undefined);
+    }),
+    vscode.commands.registerCommand("devmock.editSchema", async (node?: string | TreeNode) => {
+      const root = workspaceRoot();
+      if (!root || !existsSync(devmockDir(root))) {
+        await vscode.window.showErrorMessage("DevMock: rode `DevMock: Initialize Project` primeiro.");
+        return;
+      }
+      const schemas = listSchemas(root);
+      if (schemas.length === 0) {
+        await vscode.window.showErrorMessage("DevMock: nenhum Schema válido.");
+        return;
+      }
+      // Clique no nó passa o nome; menu de contexto passa o TreeNode.
+      const fromNode = typeof node === "object" ? (node.schemaName ?? node.label) : node;
+      const target = fromNode ?? await vscode.window.showQuickPick(schemas.map((s) => s.name), { placeHolder: "Editar Schema" });
+      if (!target) return;
+      const schema = schemas.find((s) => s.name === target);
+      if (!schema) {
+        await vscode.window.showErrorMessage(`DevMock: Schema "${target}" não encontrado.`);
+        return;
+      }
+      openSchemaForm(context, root, refresh, schema, () => state.server !== undefined);
     }),
     vscode.commands.registerCommand("devmock.createApi", async () => {
       const root = workspaceRoot();
@@ -267,7 +299,7 @@ export function activate(context: vscode.ExtensionContext): void {
       );
       if (!picked) return;
       if (picked.action === "scratch") {
-        await createFromScratch(context, refresh);
+        await createFromScratch(context, refresh, () => state.server !== undefined);
         return;
       }
       if (picked.action === "import") {
@@ -485,26 +517,35 @@ async function importApiFlow(root: string, channel: vscode.OutputChannel, refres
 async function createFromScratch(
   context: vscode.ExtensionContext,
   refresh: () => void,
+  isRunning?: () => boolean,
 ): Promise<void> {
   const root = workspaceRoot();
   if (!root || !existsSync(devmockDir(root))) {
     await vscode.window.showErrorMessage("DevMock: rode `DevMock: Initialize Project` primeiro.");
     return;
   }
-  openSchemaForm(context, root, refresh);
+  openSchemaForm(context, root, refresh, undefined, isRunning);
 }
 
 /** DevMock Studio: editor de Schema + preview de Fake Data (PRD-03 RF-04). */
-function openSchemaForm(context: vscode.ExtensionContext, root: string, refresh: () => void): void {
+function openSchemaForm(
+  context: vscode.ExtensionContext,
+  root: string,
+  refresh: () => void,
+  initial?: Schema,
+  isRunning?: () => boolean,
+): void {
   const media = vscode.Uri.joinPath(context.extensionUri, "media");
-  const panel = vscode.window.createWebviewPanel("devmockSchema", "DevMock Studio", vscode.ViewColumn.One, {
+  const title = initial ? `DevMock Studio — Editar ${initial.name}` : "DevMock Studio";
+  const panel = vscode.window.createWebviewPanel("devmockSchema", title, vscode.ViewColumn.One, {
     enableScripts: true,
     localResourceRoots: [media],
   });
   const cssUri = panel.webview.asWebviewUri(vscode.Uri.joinPath(media, "form.css"));
   const jsUri = panel.webview.asWebviewUri(vscode.Uri.joinPath(media, "form.js"));
   const csp = panel.webview.cspSource;
-  const nonce = randomBytes(16).toString("base64");  const cfg = readConfig(root);
+  const nonce = randomBytes(16).toString("base64");
+  const cfg = readConfig(root);
   panel.webview.html = `<!DOCTYPE html><html><head>
 <meta charset="UTF-8" />
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src ${csp}; script-src 'nonce-${nonce}' ${csp};" />
@@ -535,7 +576,7 @@ function openSchemaForm(context: vscode.ExtensionContext, root: string, refresh:
     <div id="msg" class="alert hidden mt"></div>
   </div>
 </div>
-<script nonce="${nonce}">window.DM_GENERATORS = ${JSON.stringify(GENERATORS)}; window.DM_TYPES = ${JSON.stringify(TYPES)}; window.DM_SEED = ${JSON.stringify(cfg.seedDefault)};</script>
+<script nonce="${nonce}">window.DM_GENERATORS = ${JSON.stringify(GENERATORS)}; window.DM_TYPES = ${JSON.stringify(TYPES)}; window.DM_SEED = ${JSON.stringify(cfg.seedDefault)}; window.DM_INITIAL = ${JSON.stringify(initial ?? null)}; window.DM_EDITING = ${JSON.stringify(initial?.name ?? null)};</script>
 <script src="${jsUri}"></script>
 </body></html>`;
 
@@ -566,7 +607,20 @@ function openSchemaForm(context: vscode.ExtensionContext, root: string, refresh:
       }
       const file = join(devmockDir(root), "schemas", `${schema.name.toLowerCase()}.json`);
       writeFileSync(file, `${JSON.stringify(schema, null, 2)}\n`);
-      void panel.webview.postMessage({ kind: "ok", text: `Salvo em schemas/${schema.name.toLowerCase()}.json` });
+      // Modo edição com rename: apaga o arquivo antigo e avisa (regra aprovada).
+      const notes: string[] = [`Salvo em schemas/${schema.name.toLowerCase()}.json`];
+      if (initial && initial.name.toLowerCase() !== schema.name.toLowerCase()) {
+        const oldFile = join(devmockDir(root), "schemas", `${initial.name.toLowerCase()}.json`);
+        if (existsSync(oldFile)) {
+          unlinkSync(oldFile);
+          notes.push(`renomeado de schemas/${initial.name.toLowerCase()}.json`);
+        }
+      }
+      // Schema em disco ≠ servidor vivo: vale após restart (sem hot-reload, por escopo).
+      if (isRunning?.()) {
+        notes.push("reinicie o servidor (stop → start) para aplicar");
+      }
+      void panel.webview.postMessage({ kind: "ok", text: notes.join(" · ") });
       refresh();
     },
     undefined,
