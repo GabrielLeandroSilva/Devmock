@@ -3,6 +3,7 @@ import { join } from "node:path";
 import {
   createMockServer,
   DEFAULT_CONFIG,
+  importOpenApi,
   validateSchema,
   type EndpointConfig,
   type Schema,
@@ -13,8 +14,9 @@ const DIRS = ["schemas", "scenarios", "docs", "openapi"];
 function usage(): void {
   console.log(`DevMock — API Contract & Mocking for Front-end
 
-Uso: devmock init       cria .devmock/ no diretório atual
-      devmock start     inicia o Mock Server (padrão :${DEFAULT_CONFIG.port})
+Uso: devmock init [dir]              cria .devmock/ no diretório
+      devmock start [dir]             inicia o Mock Server (padrão :${DEFAULT_CONFIG.port})
+      devmock import <arquivo> [dir] [--force]   importa OpenAPI → schemas/
 `);
 }
 
@@ -123,15 +125,70 @@ function loadProject(dir: string): {
 }
 
 const [cmd, ...rest] = process.argv.slice(2);
-const cwd = rest[0] ?? process.cwd();
+
+function flag(args: string[], name: string): boolean {
+  return args.includes(`--${name}`);
+}
 
 switch (cmd) {
   case "init":
-    cmdInit(cwd);
+    cmdInit(rest[0] ?? process.cwd());
     break;
   case "start":
-    void cmdStart(cwd);
+    void cmdStart(rest[0] ?? process.cwd());
+    break;
+  case "import":
+    void cmdImport(rest);
     break;
   default:
     usage();
+}
+
+/** Importa OpenAPI → schemas/*.json (PRD-06 RF-05). */
+async function cmdImport(args: string[]): Promise<void> {
+  const [file, maybeDir] = args.filter((a) => !a.startsWith("--"));
+  const force = flag(args, "force");
+  if (!file) {
+    console.error("DevMock: informe o arquivo — `devmock import openapi.json [dir] [--force]`.");
+    process.exitCode = 1;
+    return;
+  }
+  const dir = join(maybeDir ?? process.cwd(), ".devmock");
+  if (!existsSync(dir)) {
+    console.error("DevMock: sem .devmock/ — rode `devmock init` primeiro.");
+    process.exitCode = 1;
+    return;
+  }
+  let content: string;
+  try {
+    content = readFileSync(file, "utf8");
+  } catch {
+    console.error(`DevMock: não foi possível ler "${file}".`);
+    process.exitCode = 1;
+    return;
+  }
+  let imported;
+  try {
+    imported = await importOpenApi(content);
+  } catch (err) {
+    console.error(`DevMock: ${err instanceof Error ? err.message : String(err)}`);
+    process.exitCode = 1;
+    return;
+  }
+  const schemasDir = join(dir, "schemas");
+  mkdirSync(schemasDir, { recursive: true });
+  let created = 0;
+  let skipped = 0;
+  for (const s of imported.schemas) {
+    const target = join(schemasDir, `${s.name.toLowerCase()}.json`);
+    if (existsSync(target) && !force) {
+      console.log(`Pulando ${s.name} (já existe — use --force para sobrescrever).`);
+      skipped++;
+      continue;
+    }
+    writeFileSync(target, `${JSON.stringify(s, null, 2)}\n`);
+    created++;
+  }
+  for (const w of imported.warnings) console.error(`DevMock: aviso: ${w}`);
+  console.log(`DevMock: ${created} schema(s) criado(s), ${skipped} pulado(s).`);
 }

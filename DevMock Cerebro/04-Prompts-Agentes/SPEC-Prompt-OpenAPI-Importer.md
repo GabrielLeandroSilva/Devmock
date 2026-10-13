@@ -1,15 +1,17 @@
 ---
-title: "SPEC Prompt OpenAPI Importer (futuro)"
+title: "SPEC Prompt OpenAPI Importer"
 type: prompt
-status: rascunho
+status: revisao
 fase: 3
-tags: [devmock/prompt, devmock/futuro]
-related: ["[[BPM-03-Import-OpenAPI]]"]
+tags: [devmock/prompt]
+related: ["[[BPM-03-Import-OpenAPI]]", "[[PRD-06-Import-OpenAPI]]"]
 created: 2026-10-11
-updated: 2026-10-11
+updated: 2026-10-12
 ---
 
-# Spec de Prompt — OpenAPI Importer (futuro, pós-MVP)
+# Spec de Prompt — OpenAPI Importer
+
+> Implementado na v1.3.0 (`packages/core/src/import/`). Regras validadas: âncora no primeiro campo com aviso, `format` vira tipo quando existe, lacunas em `warnings[]`.
 
 ## 1. Objetivo
 Converter `openapi.yaml` do backend em Schemas + endpoints + cenários Default (stub — detalhar com PRD-06).
