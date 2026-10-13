@@ -1,15 +1,17 @@
 ---
-title: "SPEC Prompt Validator (futuro)"
+title: "SPEC Prompt Validator"
 type: prompt
-status: rascunho
+status: revisao
 fase: 3
-tags: [devmock/prompt, devmock/futuro]
-related: ["[[BPM-06-Validate-Real-API]]"]
+tags: [devmock/prompt]
+related: ["[[BPM-06-Validate-Real-API]]", "[[PRD-07-Contract-Validation]]"]
 created: 2026-10-11
-updated: 2026-10-11
+updated: 2026-10-13
 ---
 
-# Spec de Prompt — Validator (futuro, pós-MVP)
+# Spec de Prompt — Validator
+
+> Implementado na v1.5.0 (`packages/core/src/validate/`). Regras validadas: extra = Warning, required/tipo/enum = Breaking, `balance` string = Breaking clássico.
 
 ## 1. Objetivo
 Comparar respostas da API real contra o contrato e classificar `Compatible / Warning / Breaking Change` (stub — detalhar com PRD-07).

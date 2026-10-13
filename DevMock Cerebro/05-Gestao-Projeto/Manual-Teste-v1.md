@@ -57,6 +57,8 @@ updated: 2026-10-12
 
 - [ ] #task DevMock: Import OpenAPI… (ou devmock import) com YAML: schemas criados, warnings exibidos, sem sobrescrever sem confirmação 🏷️ fase/codigo
 
+- [ ] #task DevMock: Validate Real API… (ou devmock validate) contra API íntegra → compatible; contra quebrada → breaking + exit 1 🏷️ fase/codigo
+
 ## 8. Resultado
 | Data | Passo | ✅/❌ | Observação |
 |------|-------|------|------------|

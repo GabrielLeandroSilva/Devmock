@@ -6,6 +6,15 @@ export * from "./schemaStore.js";
 export { generate, generatorNames } from "./generators/index.js";
 export { importOpenApi, type ImportResult } from "./import/index.js";
 export {
+  compare,
+  validateLive,
+  summarize,
+  type Finding,
+  type Severity,
+  type EndpointReport,
+  type ValidationOptions,
+} from "./validate/index.js";
+export {
   buildJsonSchemas,
   schemaToJsonSchema,
   buildOpenApi,

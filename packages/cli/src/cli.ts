@@ -4,6 +4,8 @@ import {
   createMockServer,
   DEFAULT_CONFIG,
   importOpenApi,
+  summarize,
+  validateLive,
   validateSchema,
   type EndpointConfig,
   type Schema,
@@ -17,6 +19,7 @@ function usage(): void {
 Uso: devmock init [dir]              cria .devmock/ no diretório
       devmock start [dir]             inicia o Mock Server (padrão :${DEFAULT_CONFIG.port})
       devmock import <arquivo> [dir] [--force]   importa OpenAPI → schemas/
+      devmock validate <baseUrl> [dir]           valida a API real contra o contrato
 `);
 }
 
@@ -140,8 +143,49 @@ switch (cmd) {
   case "import":
     void cmdImport(rest);
     break;
+  case "validate":
+    void cmdValidate(rest);
+    break;
   default:
     usage();
+}
+
+/** Valida a API real contra o contrato (PRD-07 RF-06: exit 1 com breaking). */
+async function cmdValidate(args: string[]): Promise<void> {
+  const [baseUrl, maybeDir] = args.filter((a) => !a.startsWith("--"));
+  if (!baseUrl) {
+    console.error("DevMock: informe a URL — `devmock validate http://api.real [dir]`.");
+    process.exitCode = 1;
+    return;
+  }
+  const dir = join(maybeDir ?? process.cwd(), ".devmock");
+  if (!existsSync(dir)) {
+    console.error("DevMock: sem .devmock/ — rode `devmock init` primeiro.");
+    process.exitCode = 1;
+    return;
+  }
+  const { schemas, warnings } = loadProject(dir);
+  for (const w of warnings) console.error(`DevMock: aviso: ${w}`);
+  if (schemas.length === 0) {
+    console.error("DevMock: nenhum Schema válido em .devmock/schemas/.");
+    process.exitCode = 1;
+    return;
+  }
+  const reports = await validateLive(schemas, baseUrl);
+  for (const r of reports) {
+    if (r.error) {
+      console.log(`✕ ${r.endpoint} — erro: ${r.error}`);
+      continue;
+    }
+    const icon = r.breaking > 0 ? "✕" : r.warnings > 0 ? "⚠" : "✓";
+    console.log(`${icon} ${r.endpoint} — ${r.compatible} compatible, ${r.warnings} warnings, ${r.breaking} breaking (${r.checked} verificados)`);
+    for (const f of r.findings) {
+      console.log(`    ${f.severity === "breaking" ? "✕" : "⚠"} ${f.path}: esperado ${f.expected}, recebido ${f.received} — ${f.message}`);
+    }
+  }
+  const total = summarize(reports);
+  console.log(`\n${total.compatible} compatible, ${total.warnings} warnings, ${total.breaking} breaking.`);
+  if (total.breaking > 0) process.exitCode = 1;
 }
 
 /** Importa OpenAPI → schemas/*.json (PRD-06 RF-05). */
