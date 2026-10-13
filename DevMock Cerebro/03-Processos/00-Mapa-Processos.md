@@ -32,7 +32,7 @@ SORT file.name ASC
 |-----|------|------|--------|
 | BPM-01 | Init Project | MVP | [[BPM-01-Init-Project]] |
 | BPM-02 | Create From Scratch | MVP | [[BPM-02-Create-From-Scratch]] |
-| BPM-03 | Import OpenAPI | futuro | stub |
+| BPM-03 | Import OpenAPI | v1.3.0 | [[BPM-03-Import-OpenAPI]] |
 | BPM-04 | Generate Mock + Develop | MVP | [[BPM-04-Generate-Mock-Develop]] |
 | BPM-05 | Export + Share Backend | MVP | [[BPM-05-Export-Share-Backend]] |
 | BPM-06 | Validate Real API | futuro | stub |

@@ -12,6 +12,7 @@ import {
   generate,
   generatorNames,
   hashSchema,
+  importOpenApi,
   loadSchemas,
   routesFor,
   toYaml,
@@ -259,7 +260,7 @@ export function activate(context: vscode.ExtensionContext): void {
       const picked = await vscode.window.showQuickPick(
         [
           { label: "From scratch", description: "Criar Schema no Studio", action: "scratch" },
-          { label: "Import OpenAPI", description: "Em breve (PRD-06)", action: "soon" },
+          { label: "Import OpenAPI", description: "Gerar Schemas de openapi.yaml/json", action: "import" },
           { label: "Detect from project", description: "Em breve (pós-MVP)", action: "soon" },
         ],
         { placeHolder: "Create API" },
@@ -269,7 +270,19 @@ export function activate(context: vscode.ExtensionContext): void {
         await createFromScratch(context, refresh);
         return;
       }
+      if (picked.action === "import") {
+        await importApiFlow(root, channel, refresh);
+        return;
+      }
       await vscode.window.showInformationMessage(`DevMock: ${picked.label} chega em versão futura — por enquanto, use From scratch.`);
+    }),
+    vscode.commands.registerCommand("devmock.importApi", async () => {
+      const root = workspaceRoot();
+      if (!root || !existsSync(devmockDir(root))) {
+        await vscode.window.showErrorMessage("DevMock: rode `DevMock: Initialize Project` primeiro.");
+        return;
+      }
+      await importApiFlow(root, channel, refresh);
     }),
     vscode.commands.registerCommand("devmock.generate", async () => {
       const found = await pickSchema();
@@ -419,6 +432,53 @@ function readScenarios(root: string): Record<string, Record<string, never>> {
     }
   }
   return out;
+}
+
+/** Fluxo Import OpenAPI: file picker → converte → grava schemas/ (PRD-06 RF-06). */
+async function importApiFlow(root: string, channel: vscode.OutputChannel, refresh: () => void): Promise<void> {
+  const files = await vscode.window.showOpenDialog({
+    canSelectMany: false,
+    openLabel: "Importar",
+    filters: { "OpenAPI": ["yaml", "yml", "json"] },
+  });
+  if (!files || files.length === 0) return;
+  let content: string;
+  try {
+    content = readFileSync(files[0].fsPath, "utf8");
+  } catch {
+    await vscode.window.showErrorMessage("DevMock: não foi possível ler o arquivo selecionado.");
+    return;
+  }
+  let imported;
+  try {
+    imported = await importOpenApi(content);
+  } catch (err) {
+    await vscode.window.showErrorMessage(`DevMock: ${err instanceof Error ? err.message : String(err)}`);
+    return;
+  }
+  const dir = join(devmockDir(root), "schemas");
+  mkdirSync(dir, { recursive: true });
+  const existing = imported.schemas.filter((s) => existsSync(join(dir, `${s.name.toLowerCase()}.json`)));
+  if (existing.length > 0) {
+    const answer = await vscode.window.showWarningMessage(
+      `Sobrescrever ${existing.length} schema(s) existente(s)? (${existing.map((s) => s.name).join(", ")})`,
+      { modal: true },
+      "Sobrescrever",
+    );
+    if (answer !== "Sobrescrever") return;
+  }
+  for (const s of imported.schemas) {
+    writeFileSync(join(dir, `${s.name.toLowerCase()}.json`), `${JSON.stringify(s, null, 2)}\n`);
+  }
+  if (imported.warnings.length > 0) {
+    channel.clear();
+    for (const w of imported.warnings) channel.appendLine(`import: ${w}`);
+    channel.show(true);
+  }
+  await vscode.window.showInformationMessage(
+    `DevMock: ${imported.schemas.length} schema(s) importado(s)${imported.warnings.length > 0 ? ` com ${imported.warnings.length} aviso(s)` : ""}.`,
+  );
+  refresh();
 }
 
 /** Abre o Studio após garantir projeto inicializado (usado por createSchema/createApi). */

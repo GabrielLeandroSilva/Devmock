@@ -53,6 +53,8 @@ updated: 2026-10-12
 - [ ] #task `DevMock: Show Request Log` → OutputChannel lista método, rota, status, ms e cenário 🏷️ fase/codigo
 - [ ] #task `DevMock: Stop Mock Server` → para sem processo zumbi (porta 4010 libera) 🏷️ fase/codigo
 
+- [ ] #task DevMock: Import OpenAPI… (ou devmock import) com YAML: schemas criados, warnings exibidos, sem sobrescrever sem confirmação 🏷️ fase/codigo
+
 ## 8. Resultado
 | Data | Passo | ✅/❌ | Observação |
 |------|-------|------|------------|
