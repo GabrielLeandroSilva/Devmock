@@ -43,6 +43,10 @@ node packages/cli/bin/devmock.js start demo
 |---------|-----------|
 | `devmock init [dir]` | Cria `.devmock/{config.json,schemas/,scenarios/,docs/,openapi/}` (idempotente; não apaga o existente) |
 | `devmock start [dir]` | Sobe o Mock Server na porta do `config.json` (padrão `4010`); valida Schemas e ignora os inválidos com aviso |
+| `devmock import <arquivo> [dir] [--force]` | Importa OpenAPI (JSON/YAML) → `schemas/`; sem `--force` não sobrescreve |
+| `devmock validate <baseUrl> [dir]` | Valida a API real contra o contrato (exit 1 com breaking) |
+| `devmock generate <schema> [dir] [--records N] [--seed S] [--out arq]` | Fake data determinística no stdout ou arquivo |
+| `devmock export [dir]` | 5 artefatos + `.hashes.json` |
 
 ### Extension (paleta `Ctrl+Shift+P` → `DevMock: …`)
 
