@@ -15,7 +15,9 @@ import {
   importOpenApi,
   loadSchemas,
   routesFor,
+  summarize,
   toYaml,
+  validateLive,
   validateSchema,
   type MockServer,
   type Schema,
@@ -427,6 +429,56 @@ export function activate(context: vscode.ExtensionContext): void {
         channel.appendLine(`${l.method.padEnd(6)} ${l.route.padEnd(24)} ${l.status} ${l.ms}ms [${l.scenario}]`);
       }
       channel.show(true);
+    }),
+    vscode.commands.registerCommand("devmock.validate", async () => {
+      const root = workspaceRoot();
+      if (!root || !existsSync(devmockDir(root))) {
+        await vscode.window.showErrorMessage("DevMock: rode `DevMock: Initialize Project` primeiro.");
+        return;
+      }
+      const schemas = listSchemas(root);
+      if (schemas.length === 0) {
+        await vscode.window.showErrorMessage("DevMock: nenhum Schema válido.");
+        return;
+      }
+      const baseUrl = await vscode.window.showInputBox({
+        prompt: "URL base da API real (ex: https://api.minhaempresa.com)",
+        placeHolder: "https://…",
+      });
+      if (!baseUrl) return;
+      await vscode.window.withProgress(
+        { location: vscode.ProgressLocation.Notification, title: "DevMock: validando API real…" },
+        async () => {
+          const reports = await validateLive(schemas, baseUrl);
+          channel.clear();
+          for (const r of reports) {
+            if (r.error) {
+              channel.appendLine(`✕ ${r.endpoint} — erro: ${r.error}`);
+              continue;
+            }
+            const icon = r.breaking > 0 ? "✕" : r.warnings > 0 ? "⚠" : "✓";
+            channel.appendLine(
+              `${icon} ${r.endpoint} — ${r.compatible} compatible, ${r.warnings} warnings, ${r.breaking} breaking (${r.checked} verificados)`,
+            );
+            for (const f of r.findings) {
+              channel.appendLine(
+                `    ${f.severity === "breaking" ? "✕" : "⚠"} ${f.path}: esperado ${f.expected}, recebido ${f.received} — ${f.message}`,
+              );
+            }
+          }
+          const total = summarize(reports);
+          channel.appendLine(`\n${total.compatible} compatible, ${total.warnings} warnings, ${total.breaking} breaking.`);
+          channel.show(true);
+          if (total.breaking > 0) {
+            await vscode.window.showWarningMessage(
+              `DevMock: ${total.breaking} breaking change(s) na API real — ver Output.`,
+            );
+          } else {
+            await vscode.window.showInformationMessage("DevMock: API real compatível com o contrato. ✓");
+          }
+        },
+      );
+      refresh();
     }),
   );
 }

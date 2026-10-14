@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { generate } from "../src/generators/index.js";
+import { generate, generatorNames } from "../src/generators/index.js";
 import { cnpjCharValue, genCnpj } from "../src/generators/br.js";
 import { mulberry32 } from "../src/rng.js";
 import type { Schema } from "../src/types.js";
@@ -62,6 +62,59 @@ describe("generate", () => {
       expect(["ACTIVE", "BLOCKED", "PENDING"]).toContain(r.status);
     }
   });
+
+  it("cobre todos os tipos + generator inexistente + enum vazio", () => {
+    const all: Schema = {
+      name: "All",
+      fields: [
+        { name: "id", type: "uuid", required: true },
+        { name: "s", type: "string" },
+        { name: "n", type: "number" },
+        { name: "b", type: "boolean" },
+        { name: "d", type: "date" },
+        { name: "dt", type: "datetime" },
+        { name: "img", type: "image" },
+        { name: "e", type: "enum", values: [] },
+        { name: "r", type: "ref", ref: "User" },
+        { name: "a", type: "array", ref: "User" },
+        { name: "g", type: "string", generator: "nao-existe" },
+      ],
+    };
+    const [row] = generate(all, 1, 42);
+    expect(typeof row.s).toBe("string");
+    expect(typeof row.n).toBe("number");
+    expect(typeof row.b).toBe("boolean");
+    expect(typeof row.d).toBe("string");
+    expect(typeof row.dt).toBe("string");
+    expect(typeof row.img).toBe("string");
+    expect(row.e).toBeNull();
+    expect(typeof row.r).toBe("string");
+    expect(row.a).toEqual([]);
+    expect(typeof row.g).toBe("string");
+  });
+
+  it("todos os geradores br.* produzem formato válido", () => {
+    const br: Schema = {
+      name: "Br",
+      fields: [
+        { name: "id", type: "uuid", required: true },
+        { name: "cnpj", type: "string", generator: "br.cnpj" },
+        { name: "cep", type: "string", generator: "br.cep" },
+        { name: "cel", type: "string", generator: "br.celular" },
+        { name: "end", type: "string", generator: "br.endereco" },
+        { name: "pix", type: "string", generator: "br.pix" },
+        { name: "banco", type: "string", generator: "br.banco" },
+        { name: "ag", type: "string", generator: "br.agencia" },
+        { name: "conta", type: "string", generator: "br.conta" },
+        { name: "valor", type: "number", generator: "brl" },
+      ],
+    };
+    const [row] = generate(br, 1, 99);
+    expect(row.cep).toMatch(/^\d{5}-\d{3}$/);
+    expect(row.cel).toMatch(/^\(\d{2}\) 9\d{4}-\d{4}$/);
+    expect(typeof row.valor).toBe("number");
+    expect(String(row.conta)).toMatch(/^\d{6}-\d$/);
+  });
 });
 
 /** Validador espelho da regra oficial (IN RFB 2.229/2024): [A-Z0-9]{12}[0-9]{2}, DV mod 11 com ASCII-48. */
@@ -82,8 +135,7 @@ function validCnpj(masked: string): boolean {
   return dv(vals.slice(0, 12), 5) === vals[12] && dv(vals.slice(0, 13), 6) === vals[13];
 }
 
-describe("genCnpj alfanumérico (Receita, desde 31/07/2026)", () => {
-  it("gera os dois formatos coexistentes, todos com DV válido", () => {
+describe("genCnpj alfanumérico (Receita, desde 31/07/2026)", () => {  it("gera os dois formatos coexistentes, todos com DV válido", () => {
     const rand = mulberry32("cnpj-sweep");
     let numeric = 0;
     let alpha = 0;
@@ -101,5 +153,15 @@ describe("genCnpj alfanumérico (Receita, desde 31/07/2026)", () => {
     const a = genCnpj(mulberry32("x"));
     const b = genCnpj(mulberry32("x"));
     expect(a).toBe(b);
+  });
+});
+
+describe("generatorNames", () => {
+  it("lista ordenada com globais + br.*", () => {
+    const names = generatorNames();
+    expect(names).toEqual([...names].sort());
+    expect(names).toContain("br.cpf");
+    expect(names).toContain("br.cnpj");
+    expect(names).toContain("email");
   });
 });

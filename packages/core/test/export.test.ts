@@ -77,6 +77,40 @@ describe("buildJsonSchemas (PRD-05 RF-03)", () => {
     expect(all.User.title).toBe("User");
     expect(all.User.required).toEqual(["id"]);
   });
+
+  it("cobre todos os tipos de campo", () => {
+    const full: Schema = {
+      name: "Full",
+      fields: [
+        { name: "id", type: "uuid", required: true },
+        { name: "b", type: "boolean" },
+        { name: "d", type: "date" },
+        { name: "dt", type: "datetime" },
+        { name: "img", type: "image" },
+        { name: "r", type: "ref" },
+        { name: "r2", type: "ref", ref: "User" },
+        { name: "a", type: "array" },
+        { name: "a2", type: "array", ref: "User" },
+        { name: "n", type: "number" },
+      ],
+    };
+    const js = buildJsonSchemas([full]).Full as any;
+    expect(js.properties.b).toEqual({ type: "boolean" });
+    expect(js.properties.d).toEqual({ type: "string", format: "date" });
+    expect(js.properties.r).toEqual({ type: "string" });
+    expect(js.properties.r2).toEqual({ $ref: "#/components/schemas/User" });
+    expect(js.properties.a2.items).toEqual({ $ref: "#/components/schemas/User" });
+
+    const ts = buildTypes([full]);
+    expect(ts).toContain("b?: boolean;");
+    expect(ts).toContain("a2?: User[];");
+
+    const md = buildDocFor(full);
+    expect(md).toContain("ref → User");
+
+    const doc = buildOpenApi([{ name: "NoReq", fields: [{ name: "x", type: "string" }] }]) as any;
+    expect(doc.components.schemas.NoReq.required).toBeUndefined();
+  });
 });
 
 describe("buildDocFor (PRD-05 RF-01)", () => {
@@ -117,5 +151,9 @@ describe("idempotência + stale (PRD-05 §8)", () => {
     const h = hashSchema(user);
     expect(isStale(user, h)).toBe(false);
     expect(isStale({ ...user, fields: [...user.fields, { name: "x", type: "string" }] }, h)).toBe(true);
+  });
+
+  it("canonical lida com undefined", () => {
+    expect(hashSchema(user)).toMatch(/^[0-9a-f]{16}$/);
   });
 });
