@@ -72,6 +72,7 @@ updated: 2026-10-10
 | v1.5.1 | 2026-10-14 | main + des | Cobertura 85→94% (68 testes) | `test(core): fecha gaps — schemaStore, branches, errors` + PR `nº 15` | ✅ validado, em main |
 | v1.5.2 | 2026-10-14 | des | Pós-promoção v1.5.1 (PR nº 15) | `docs(git): registra promoção v1.5.1 em main` | ✅ em des |
 | v1.6.0 | 2026-10-14 | des | EAP 2.3 — CLI generate/export + CI | `feat(cli): generate, export + github actions` | ⏳ em des, em revisão |
+| v1.6.1 | 2026-10-14 | des | README tabela CLI completa | `docs(readme): tabela CLI completa` | ⏳ em des, em revisão |
 
 ## Consulta (Dataview — notas de gestão)
 
