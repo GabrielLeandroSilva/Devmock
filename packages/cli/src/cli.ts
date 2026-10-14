@@ -1,10 +1,16 @@
 import { existsSync, mkdirSync, writeFileSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import {
+  buildDocFor,
+  buildJsonSchemas,
+  buildOpenApi,
+  buildTypes,
   createMockServer,
   DEFAULT_CONFIG,
+  generate,
   importOpenApi,
   summarize,
+  toYaml,
   validateLive,
   validateSchema,
   type EndpointConfig,
@@ -20,6 +26,8 @@ Uso: devmock init [dir]              cria .devmock/ no diretório
       devmock start [dir]             inicia o Mock Server (padrão :${DEFAULT_CONFIG.port})
       devmock import <arquivo> [dir] [--force]   importa OpenAPI → schemas/
       devmock validate <baseUrl> [dir]           valida a API real contra o contrato
+      devmock generate <schema> [dir] [--records N] [--seed S] [--out arq]   gera fake data
+      devmock export [dir]            exporta o contrato (5 artefatos + hashes)
 `);
 }
 
@@ -146,6 +154,12 @@ switch (cmd) {
   case "validate":
     void cmdValidate(rest);
     break;
+  case "generate":
+    cmdGenerate(rest);
+    break;
+  case "export":
+    cmdExport(rest);
+    break;
   default:
     usage();
 }
@@ -235,4 +249,85 @@ async function cmdImport(args: string[]): Promise<void> {
   }
   for (const w of imported.warnings) console.error(`DevMock: aviso: ${w}`);
   console.log(`DevMock: ${created} schema(s) criado(s), ${skipped} pulado(s).`);
+}
+
+function opt(args: string[], name: string): string | undefined {
+  const i = args.indexOf(`--${name}`);
+  return i >= 0 ? args[i + 1] : undefined;
+}
+
+function toPositiveIntOr(value: string | undefined, fallback: number): number {
+  const n = value === undefined ? NaN : Number(value);
+  return Number.isInteger(n) && (n as number) > 0 ? (n as number) : fallback;
+}
+
+/** Gera fake data no stdout ou em arquivo (PRD-08 RF-01). */
+function cmdGenerate(args: string[]): void {
+  const positional = args.filter((a) => !a.startsWith("--"));
+  const [schemaName, maybeDir] = positional;
+  if (!schemaName) {
+    console.error("DevMock: informe o schema — `devmock generate User [dir] [--records N] [--seed S] [--out arq]`.");
+    process.exitCode = 1;
+    return;
+  }
+  const dir = join(maybeDir ?? process.cwd(), ".devmock");
+  if (!existsSync(dir)) {
+    console.error("DevMock: sem .devmock/ — rode `devmock init` primeiro.");
+    process.exitCode = 1;
+    return;
+  }
+  const { schemas, warnings } = loadProject(dir);
+  for (const w of warnings) console.error(`DevMock: aviso: ${w}`);
+  const schema = schemas.find((s) => s.name.toLowerCase() === schemaName.toLowerCase());
+  if (!schema) {
+    console.error(`DevMock: schema "${schemaName}" não encontrado em .devmock/schemas/.`);
+    process.exitCode = 1;
+    return;
+  }
+  let seed: number | string = DEFAULT_CONFIG.seedDefault;
+  try {
+    const cfg = JSON.parse(readFileSync(join(dir, "config.json"), "utf8")) as { seedDefault?: number };
+    if (typeof cfg.seedDefault === "number") seed = cfg.seedDefault;
+  } catch {
+    // config ilegível: segue com o default (start já acusa com mensagem própria).
+  }
+  const seedArg = opt(args, "seed");
+  if (seedArg !== undefined) seed = /^\d+$/.test(seedArg) ? Number(seedArg) : seedArg;
+  const rows = generate(schema, toPositiveIntOr(opt(args, "records"), 20), seed);
+  const out = opt(args, "out");
+  const text = `${JSON.stringify(rows, null, 2)}\n`;
+  if (out) {
+    writeFileSync(out, text);
+    console.log(`DevMock: ${rows.length} registro(s) em ${out} (seed ${seed}).`);
+  } else {
+    process.stdout.write(text);
+  }
+}
+
+/** Exporta o contrato: 5 artefatos + hashes (PRD-08 RF-02, paridade com a extension). */
+function cmdExport(args: string[]): void {
+  const positional = args.filter((a) => !a.startsWith("--"));
+  const dir = join(positional[0] ?? process.cwd(), ".devmock");
+  if (!existsSync(dir)) {
+    console.error("DevMock: sem .devmock/ — rode `devmock init` primeiro.");
+    process.exitCode = 1;
+    return;
+  }
+  const { schemas, warnings } = loadProject(dir);
+  for (const w of warnings) console.error(`DevMock: aviso: ${w}`);
+  if (schemas.length === 0) {
+    console.error("DevMock: nenhum Schema válido em .devmock/schemas/.");
+    process.exitCode = 1;
+    return;
+  }
+  mkdirSync(join(dir, "openapi"), { recursive: true });
+  mkdirSync(join(dir, "docs"), { recursive: true });
+  writeFileSync(join(dir, "openapi", "generated.json"), `${JSON.stringify(buildOpenApi(schemas), null, 2)}\n`);
+  writeFileSync(join(dir, "openapi", "generated.yaml"), toYaml(buildOpenApi(schemas)));
+  writeFileSync(join(dir, "openapi", "schemas.json"), `${JSON.stringify(buildJsonSchemas(schemas), null, 2)}\n`);
+  writeFileSync(join(dir, "docs", "types.ts"), buildTypes(schemas));
+  for (const s of schemas) {
+    writeFileSync(join(dir, "docs", `${s.name.toLowerCase()}.md`), buildDocFor(s));
+  }
+  console.log(`DevMock: contrato exportado (${schemas.length} schema(s), 5 artefatos).`);
 }

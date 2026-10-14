@@ -59,6 +59,8 @@ updated: 2026-10-12
 
 - [ ] #task DevMock: Validate Real API… (ou devmock validate) contra API íntegra → compatible; contra quebrada → breaking + exit 1 🏷️ fase/codigo
 
+- [ ] #task CLI: \devmock generate User --records 2 --seed 5\ determinístico (hash igual em 2 runs) + \devmock export\ gera 5 artefatos 🏷️ fase/codigo
+
 ## 8. Resultado
 | Data | Passo | ✅/❌ | Observação |
 |------|-------|------|------------|
