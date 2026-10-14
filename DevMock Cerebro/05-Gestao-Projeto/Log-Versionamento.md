@@ -71,9 +71,10 @@ updated: 2026-10-10
 | v1.5.0 | 2026-10-13 | main + des | EAP 2.2 — Contract Validation | `feat(validate): contrato contra api real + cli + extension` + PR `nº 15` (merge commit) | ✅ validado, em main |
 | v1.5.1 | 2026-10-14 | main + des | Cobertura 85→94% (68 testes) | `test(core): fecha gaps — schemaStore, branches, errors` + PR `nº 15` | ✅ validado, em main |
 | v1.5.2 | 2026-10-14 | des | Pós-promoção v1.5.1 (PR nº 15) | `docs(git): registra promoção v1.5.1 em main` | ✅ em des |
-| v1.6.0 | 2026-10-14 | des | EAP 2.3 — CLI generate/export + CI | `feat(cli): generate, export + github actions` | ⏳ em des, em revisão |
-| v1.6.1 | 2026-10-14 | des | README tabela CLI completa | `docs(readme): tabela CLI completa` | ⏳ em des, em revisão |
-| v1.6.2 | 2026-10-14 | des | Suíte E2E do CLI (6 testes) | `test(cli): e2e dos 6 comandos via spawn` | ⏳ em des, em revisão |
+| v1.6.0 | 2026-10-14 | main + des | EAP 2.3 — CLI generate/export + CI | `feat(cli): generate, export + github actions` + PR `nº 16` | ✅ validado, em main |
+| v1.6.1 | 2026-10-14 | main + des | README tabela CLI completa | `docs(readme): tabela CLI completa` + PR `nº 16` | ✅ validado, em main |
+| v1.6.2 | 2026-10-14 | main + des | Suíte E2E do CLI (6 testes) | `test(cli): e2e dos 6 comandos via spawn` + PR `nº 16` (merge commit) | ✅ validado, em main |
+| v1.6.3 | 2026-10-14 | des | Pós-promoção v1.6.2 (PR nº 16) | `docs(git): registra promoção v1.6.2 em main` | ✅ em des |
 
 ## Consulta (Dataview — notas de gestão)
 
