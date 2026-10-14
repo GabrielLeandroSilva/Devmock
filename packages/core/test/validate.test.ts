@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { createMockServer } from "../src/mock/index.js";
-import { compare, summarize, validateLive } from "../src/validate/index.js";
+import { compare, kindOf, summarize, validateLive } from "../src/validate/index.js";
 import type { Schema } from "../src/types.js";
 
 const user: Schema = {
@@ -54,6 +54,31 @@ describe("compare (PRD-07)", () => {
   it("resposta não-objeto → Breaking", () => {
     expect(compare(user, [1, 2])[0].severity).toBe("breaking");
   });
+
+  it("ref/array comparam raso: array ok, ref aceita id ou objeto", () => {
+    const s: Schema = {
+      name: "O",
+      fields: [
+        { name: "id", type: "uuid", required: true },
+        { name: "owner", type: "ref", ref: "User" },
+        { name: "tags", type: "array" },
+      ],
+    };
+    expect(compare(s, { id: "1", owner: "u1", tags: ["a"] })).toEqual([]);
+    expect(compare(s, { id: "1", owner: { id: "u1" }, tags: ["a"] })).toEqual([]);
+    expect(compare(s, { id: "1", owner: 42, tags: "x" }).filter((f) => f.severity === "breaking")).toHaveLength(2);
+  });
+});
+
+describe("kindOf", () => {
+  it("rotula todos os tipos de recebido", () => {
+    expect(kindOf(undefined)).toBe("ausente");
+    expect(kindOf(null)).toBe("null");
+    expect(kindOf([1])).toBe("array");
+    expect(kindOf(true)).toBe("boolean");
+    expect(kindOf(Symbol("s"))).toBe("symbol");
+    expect(kindOf("abc")).toContain("string");
+  });
 });
 
 describe("validateLive contra mock local", () => {
@@ -73,5 +98,29 @@ describe("validateLive contra mock local", () => {
     const reports = await validateLive([user], "http://127.0.0.1:1", { timeoutMs: 1000 });
     expect(reports[0].error).toMatch(/rede|timeout/i);
     expect(summarize(reports).breaking).toBe(1);
+  });
+
+  it("resposta não-JSON e HTTP error viram erro por endpoint", async () => {
+    const { createServer } = await import("node:http");
+    let mode: "plain" | "error" = "plain";
+    const srv = createServer((req, res) => {
+      if (mode === "plain") {
+        res.setHeader("content-type", "text/plain");
+        res.end("não-json");
+        return;
+      }
+      res.statusCode = 500;
+      res.end("{}");
+    });
+    await new Promise<void>((resolve) => srv.listen(0, "127.0.0.1", resolve));
+    const base = `http://127.0.0.1:${(srv.address() as { port: number }).port}`;
+
+    const plain = await validateLive([user], base);
+    expect(plain[0].error).toMatch(/não-JSON/);
+
+    mode = "error";
+    const failed = await validateLive([user], base);
+    expect(failed[0].error).toMatch(/HTTP 500/);
+    await new Promise<void>((resolve) => srv.close(() => resolve()));
   });
 });

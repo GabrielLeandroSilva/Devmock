@@ -80,7 +80,18 @@ export function createMockServer(schemas: Schema[], opts: MockServerOptions = {}
       });
       return;
     }
-    const rawBody = await drain(req);
+    const { text: rawBody, tooLarge } = await drain(req);
+    if (tooLarge) {
+      logAndSend(res, {
+        method,
+        route: `${method} ${req.url ?? "/"}`,
+        started,
+        status: 413,
+        scenario: "Default",
+        delayMs: 0,
+      }, { status: 413, body: { error: "PAYLOAD_TOO_LARGE", message: "Corpo acima de 1MB." } });
+      return;
+    }
 
     const url = new URL(req.url ?? "/", `http://localhost:${actualPort}`);
     const parts = url.pathname.split("/").filter(Boolean);
@@ -290,14 +301,15 @@ function sendPreflight(res: ServerResponse): void {
 }
 
 /** Lê o corpo até o fim e o devolve como texto (B1: POST/PUT/PATCH precisam dele). */
-async function drain(req: IncomingMessage): Promise<string> {
+async function drain(req: IncomingMessage): Promise<{ text: string; tooLarge: boolean }> {
   const chunks: Buffer[] = [];
   let size = 0;
+  let tooLarge = false;
   await new Promise<void>((resolve) => {
     req.on("data", (chunk: Buffer) => {
       size += chunk.length;
       if (size > MAX_BODY_BYTES) {
-        req.destroy();
+        tooLarge = true;
         return;
       }
       chunks.push(chunk);
@@ -305,7 +317,7 @@ async function drain(req: IncomingMessage): Promise<string> {
     req.on("end", resolve);
     req.on("close", resolve);
   });
-  return Buffer.concat(chunks).toString("utf8");
+  return { text: Buffer.concat(chunks).toString("utf8"), tooLarge };
 }
 
 const MAX_BODY_BYTES = 1024 * 1024;

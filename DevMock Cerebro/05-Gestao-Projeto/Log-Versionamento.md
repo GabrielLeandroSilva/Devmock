@@ -69,6 +69,7 @@ updated: 2026-10-10
 | v1.4.0 | 2026-10-13 | main + des | Studio: editar Schema com rename | `feat(extension): edita schema no mesmo studio` + PR `nº 14` (merge commit) | ✅ validado, em main |
 | v1.4.1 | 2026-10-13 | des | Pós-promoção v1.4.0 (PR nº 14) | `docs(git): registra promoção v1.4.0 em main` | ✅ em des |
 | v1.5.0 | 2026-10-13 | des | EAP 2.2 — Contract Validation | `feat(validate): contrato contra api real + cli + extension` | ⏳ em des, em revisão |
+| v1.5.1 | 2026-10-14 | des | Cobertura 85→94% (68 testes) | `test(core): fecha gaps — schemaStore, branches, errors` | ⏳ em des, em revisão |
 
 ## Consulta (Dataview — notas de gestão)
 

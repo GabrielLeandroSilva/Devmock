@@ -159,6 +159,11 @@ describe("Mock Server (integração)", () => {
     await first.close();
   });
 
+  it("porta inválida rejeita com o erro original (não-EADDRINUSE)", async () => {
+    const s = createMockServer([user], { config: { port: -1 } });
+    await expect(s.listen()).rejects.toThrow();
+  });
+
   it("aplica delayMs configurado", async () => {
     const delayServer = createMockServer([user], {
       config: EPHEMERAL,
@@ -271,5 +276,24 @@ describe("cenários (PRD-04)", () => {
     const last = logs[logs.length - 1];
     expect(last).toMatchObject({ method: "GET", route: "GET /users", status: 200 });
     expect(last.ms).toBeGreaterThanOrEqual(0);
+  });
+
+  it("OPTIONS responde preflight 204 com CORS", async () => {
+    const res = await fetch(`${base}/users`, { method: "OPTIONS" });
+    expect(res.status).toBe(204);
+    expect(res.headers.get("access-control-allow-methods")).toContain("POST");
+  });
+
+  it("corpo acima de 1MB recebe 413 JSON sem derrubar o servidor", async () => {
+    const big = "x".repeat(1024 * 1024 + 1);
+    const res = await fetch(`${base}/users`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ name: big }),
+    });
+    expect(res.status).toBe(413);
+    expect((await res.json()).error).toBe("PAYLOAD_TOO_LARGE");
+    // Servidor segue vivo.
+    expect((await get("/users")).status).toBe(200);
   });
 });
