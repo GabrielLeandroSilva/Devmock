@@ -61,6 +61,8 @@ updated: 2026-10-12
 
 - [ ] #task CLI: \devmock generate User --records 2 --seed 5\ determinístico (hash igual em 2 runs) + \devmock export\ gera 5 artefatos 🏷️ fase/codigo
 
+- [ ] #task Suite no host real: pm test --prefix apps/extension\ → 12 passing (baixa o VS Code na 1ª vez) 🏷️ fase/codigo
+
 ## 8. Resultado
 | Data | Passo | ✅/❌ | Observação |
 |------|-------|------|------------|

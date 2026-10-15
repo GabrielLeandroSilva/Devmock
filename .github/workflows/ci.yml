@@ -18,13 +18,35 @@ jobs:
         with:
           node-version: ${{ matrix.node }}
           cache: npm
-          cache-dependency-path: |
-            package-lock.json
-            packages/*/package-lock.json
+          cache-dependency-path: package-lock.json
       - run: npm ci
-      - run: npm run build --workspaces
+      # Ordem importa (core → cli → extension): o script raiz já ordena; NÃO usar --workspaces aqui.
+      - run: npm run build
       - run: npx --prefix packages/core tsc -p packages/core/tsconfig.check.json
       - run: npx --prefix packages/cli tsc -p packages/cli/tsconfig.check.json
       - run: npx --prefix apps/extension tsc -p apps/extension/tsconfig.json --noEmit
       - run: npx --prefix packages/core vitest run --root packages/core
       - run: npx --prefix packages/cli vitest run --root packages/cli
+
+  vscode-integration:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+        node: [22]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - name: Start Xvfb (Linux)
+        if: matrix.os == 'ubuntu-latest'
+        run: Xvfb :99 &
+      - run: npm ci
+      # Ordem importa (core → cli → extension): o script raiz já ordena; NÃO usar --workspaces aqui.
+      - run: npm run build
+      - run: npm test --prefix apps/extension
+        env:
+          DISPLAY: ${{ matrix.os == 'ubuntu-latest' && ':99' || '' }}

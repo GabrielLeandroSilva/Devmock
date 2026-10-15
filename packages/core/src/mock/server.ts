@@ -170,7 +170,7 @@ export function createMockServer(schemas: Schema[], opts: MockServerOptions = {}
       const rows = store.rows.slice(0, cfg.records);
       const p = url.searchParams;
       const wantsPagination =
-        cfg.pagination?.enabled || (p.has("page") && p.has("limit"));
+        cfg.pagination?.enabled || p.has("page") || p.has("limit");
       if (wantsPagination) {
         // B3: page/limit inválidos caem para os defaults em vez de NaN.
         const page = toPositiveInt(p.get("page") ?? cfg.pagination?.page, 1);

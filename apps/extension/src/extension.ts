@@ -1,27 +1,33 @@
 import * as vscode from "vscode";
 import { randomBytes } from "node:crypto";
-import { existsSync, mkdirSync, readdirSync, readFileSync, unlinkSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import {
   DEFAULT_CONFIG,
-  buildDocFor,
-  buildJsonSchemas,
-  buildOpenApi,
-  buildTypes,
   createMockServer,
-  generate,
   generatorNames,
-  hashSchema,
-  importOpenApi,
-  loadSchemas,
   routesFor,
-  summarize,
-  toYaml,
-  validateLive,
-  validateSchema,
   type MockServer,
   type Schema,
 } from "@devmock/core";
+import { handleStudioMessage } from "./studio.js";
+import {
+  doExport,
+  doGeneratePreview,
+  doImportContent,
+  doSaveFakeData,
+  doSwitchScenario,
+  doValidate,
+} from "./ops.js";
+import {
+  devmockDir,
+  listSchemas,
+  readConfig,
+  readScenarios,
+  recordExportHashes,
+  staleSinceLastExport,
+  writeConfig,
+} from "./project.js";
 
 const DIRS = ["schemas", "scenarios", "docs", "openapi"];
 const GENERATORS = ["(tipo)", ...generatorNames()];
@@ -37,24 +43,6 @@ interface Ctx {
 
 function workspaceRoot(): string | undefined {
   return vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
-}
-
-function devmockDir(root: string): string {
-  return join(root, ".devmock");
-}
-
-function readJson<T>(path: string): T {
-  return JSON.parse(readFileSync(path, "utf8")) as T;
-}
-
-function listSchemas(root: string): Schema[] {
-  const dir = join(devmockDir(root), "schemas");
-  if (!existsSync(dir)) return [];
-  try {
-    return loadSchemas(dir);
-  } catch {
-    return [];
-  }
 }
 
 class ProjectProvider implements vscode.TreeDataProvider<TreeNode> {
@@ -147,25 +135,13 @@ async function pickSchema(): Promise<{ root: string; schema: Schema } | undefine
   if (!root) return undefined;
   const schemas = listSchemas(root);
   if (schemas.length === 0) {
-    await vscode.window.showErrorMessage("DevMock: nenhum Schema válido.");
+    void vscode.window.showErrorMessage("DevMock: nenhum Schema válido.");
     return undefined;
   }
   const picked = await vscode.window.showQuickPick(schemas.map((s) => s.name), { placeHolder: "Schema" });
   if (!picked) return undefined;
   const schema = schemas.find((s) => s.name === picked);
   return schema ? { root, schema } : undefined;
-}
-
-function readConfig(root: string): typeof DEFAULT_CONFIG {
-  try {
-    return { ...DEFAULT_CONFIG, ...readJson<Record<string, unknown>>(join(devmockDir(root), "config.json")) };
-  } catch {
-    return { ...DEFAULT_CONFIG };
-  }
-}
-
-function writeConfig(root: string, cfg: unknown): void {
-  writeFileSync(join(devmockDir(root), "config.json"), `${JSON.stringify(cfg, null, 2)}\n`);
 }
 
 export function activate(context: vscode.ExtensionContext): void {
@@ -204,7 +180,7 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.commands.registerCommand("devmock.init", async () => {
       const root = workspaceRoot();
       if (!root) {
-        await vscode.window.showErrorMessage("DevMock: abra uma pasta primeiro.");
+        void vscode.window.showErrorMessage("DevMock: abra uma pasta primeiro.");
         return;
       }
       const dir = devmockDir(root);
@@ -212,21 +188,21 @@ export function activate(context: vscode.ExtensionContext): void {
       for (const d of DIRS) mkdirSync(join(dir, d), { recursive: true });
       if (!existsSync(join(dir, "config.json"))) writeConfig(root, DEFAULT_CONFIG);
       refresh();
-      await vscode.window.showInformationMessage("DevMock: projeto inicializado em .devmock/");
+      void vscode.window.showInformationMessage("DevMock: projeto inicializado em .devmock/");
     }),
     vscode.commands.registerCommand("devmock.start", async () => {
       const root = workspaceRoot();
       if (!root || !existsSync(devmockDir(root))) {
-        await vscode.window.showErrorMessage("DevMock: rode `DevMock: Initialize Project` primeiro.");
+        void vscode.window.showErrorMessage("DevMock: rode `DevMock: Initialize Project` primeiro.");
         return;
       }
       if (state.server) {
-        await vscode.window.showInformationMessage(`DevMock já roda em http://localhost:${state.port}.`);
+        void vscode.window.showInformationMessage(`DevMock já roda em http://localhost:${state.port}.`);
         return;
       }
       const schemas = listSchemas(root);
       if (schemas.length === 0) {
-        await vscode.window.showErrorMessage("DevMock: nenhum Schema válido em .devmock/schemas/.");
+        void vscode.window.showErrorMessage("DevMock: nenhum Schema válido em .devmock/schemas/.");
         return;
       }
       const cfg = readConfig(root);
@@ -236,15 +212,15 @@ export function activate(context: vscode.ExtensionContext): void {
         state.port = await state.server.listen();
       } catch (err) {
         state.server = undefined;
-        await vscode.window.showErrorMessage(`DevMock: ${err instanceof Error ? err.message : String(err)}`);
+        void vscode.window.showErrorMessage(`DevMock: ${err instanceof Error ? err.message : String(err)}`);
         return;
       }
       refresh();
-      await vscode.window.showInformationMessage(`DevMock 🟢 http://localhost:${state.port}`);
+      void vscode.window.showInformationMessage(`DevMock 🟢 http://localhost:${state.port}`);
     }),
     vscode.commands.registerCommand("devmock.stop", async () => {
       if (!state.server) {
-        await vscode.window.showInformationMessage("DevMock: nada em execução.");
+        void vscode.window.showInformationMessage("DevMock: nada em execução.");
         return;
       }
       const logs = state.server.logs();
@@ -257,7 +233,7 @@ export function activate(context: vscode.ExtensionContext): void {
       }
       channel.show(true);
       refresh();
-      await vscode.window.showInformationMessage("DevMock: servidor parado. Log nas últimas 50 requisições.");
+      void vscode.window.showInformationMessage("DevMock: servidor parado. Log nas últimas 50 requisições.");
     }),
     vscode.commands.registerCommand("devmock.createSchema", async () => {
       await createFromScratch(context, refresh, () => state.server !== undefined);
@@ -265,12 +241,12 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.commands.registerCommand("devmock.editSchema", async (node?: string | TreeNode) => {
       const root = workspaceRoot();
       if (!root || !existsSync(devmockDir(root))) {
-        await vscode.window.showErrorMessage("DevMock: rode `DevMock: Initialize Project` primeiro.");
+        void vscode.window.showErrorMessage("DevMock: rode `DevMock: Initialize Project` primeiro.");
         return;
       }
       const schemas = listSchemas(root);
       if (schemas.length === 0) {
-        await vscode.window.showErrorMessage("DevMock: nenhum Schema válido.");
+        void vscode.window.showErrorMessage("DevMock: nenhum Schema válido.");
         return;
       }
       // Clique no nó passa o nome; menu de contexto passa o TreeNode.
@@ -279,7 +255,7 @@ export function activate(context: vscode.ExtensionContext): void {
       if (!target) return;
       const schema = schemas.find((s) => s.name === target);
       if (!schema) {
-        await vscode.window.showErrorMessage(`DevMock: Schema "${target}" não encontrado.`);
+        void vscode.window.showErrorMessage(`DevMock: Schema "${target}" não encontrado.`);
         return;
       }
       openSchemaForm(context, root, refresh, schema, () => state.server !== undefined);
@@ -287,7 +263,7 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.commands.registerCommand("devmock.createApi", async () => {
       const root = workspaceRoot();
       if (!root || !existsSync(devmockDir(root))) {
-        await vscode.window.showErrorMessage("DevMock: rode `DevMock: Initialize Project` primeiro.");
+        void vscode.window.showErrorMessage("DevMock: rode `DevMock: Initialize Project` primeiro.");
         return;
       }
       // PRD-03 RF-06: só From scratch no MVP; demais sinalizam o futuro.
@@ -308,12 +284,12 @@ export function activate(context: vscode.ExtensionContext): void {
         await importApiFlow(root, channel, refresh);
         return;
       }
-      await vscode.window.showInformationMessage(`DevMock: ${picked.label} chega em versão futura — por enquanto, use From scratch.`);
+      void vscode.window.showInformationMessage(`DevMock: ${picked.label} chega em versão futura — por enquanto, use From scratch.`);
     }),
     vscode.commands.registerCommand("devmock.importApi", async () => {
       const root = workspaceRoot();
       if (!root || !existsSync(devmockDir(root))) {
-        await vscode.window.showErrorMessage("DevMock: rode `DevMock: Initialize Project` primeiro.");
+        void vscode.window.showErrorMessage("DevMock: rode `DevMock: Initialize Project` primeiro.");
         return;
       }
       await importApiFlow(root, channel, refresh);
@@ -321,9 +297,7 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.commands.registerCommand("devmock.generate", async () => {
       const found = await pickSchema();
       if (!found) return;
-      const { root, schema } = found;
-      const cfg = readConfig(root);
-      const rows = generate(schema, 20, cfg.seedDefault);
+      const rows = doGeneratePreview(found.root, found.schema.name);
       const doc = await vscode.workspace.openTextDocument({
         content: JSON.stringify(rows.slice(0, 20), null, 2),
         language: "json",
@@ -334,27 +308,27 @@ export function activate(context: vscode.ExtensionContext): void {
       const found = await pickSchema();
       if (!found) return;
       const { root, schema } = found;
-      const cfg = readConfig(root);
       const input = await vscode.window.showInputBox({
         prompt: "Quantos registros?",
         value: "20",
         validateInput: (v) => (/^\d+$/.test(v) && Number(v) > 0 ? undefined : "Informe um inteiro positivo."),
       });
       if (!input) return;
-      const rows = generate(schema, Number(input), cfg.seedDefault);
-      const dir = join(devmockDir(root), "docs", "examples");
-      mkdirSync(dir, { recursive: true });
-      const file = join(dir, `${schema.name.toLowerCase()}.json`);
-      writeFileSync(file, `${JSON.stringify(rows, null, 2)}\n`);
-      await vscode.window.showInformationMessage(
-        `DevMock: ${rows.length} registros salvos em docs/examples/${schema.name.toLowerCase()}.json (seed ${cfg.seedDefault}).`,
-      );
+      try {
+        const saved = doSaveFakeData(root, schema.name, Number(input));
+        void vscode.window.showInformationMessage(
+          `DevMock: ${saved.count} registros salvos em docs/examples/${schema.name.toLowerCase()}.json (seed ${saved.seed}).`,
+        );
+      } catch (err) {
+        void vscode.window.showErrorMessage(`DevMock: ${err instanceof Error ? err.message : String(err)}`);
+        return;
+      }
       refresh();
     }),
     vscode.commands.registerCommand("devmock.switchScenario", async () => {
       const root = workspaceRoot();
       if (!root || !existsSync(devmockDir(root))) {
-        await vscode.window.showErrorMessage("DevMock: rode `DevMock: Initialize Project` primeiro.");
+        void vscode.window.showErrorMessage("DevMock: rode `DevMock: Initialize Project` primeiro.");
         return;
       }
       const schemas = listSchemas(root);
@@ -366,22 +340,19 @@ export function activate(context: vscode.ExtensionContext): void {
         { placeHolder: `Cenário para ${endpoint}` },
       );
       if (!scenario) return;
-      const cfg = readConfig(root);
-      cfg.activeScenarios = { ...cfg.activeScenarios, [endpoint]: scenario };
-      writeConfig(root, cfg);
+      doSwitchScenario(root, endpoint, scenario);
       if (state.server) {
         // Aplica sem restart (PRD-04): recarrega cenários no servidor vivo.
-        state.server.reload({ config: cfg, scenarios: readScenarios(root) });
-        await vscode.window.showInformationMessage(`Cenário ${scenario} ativo em ${endpoint}.`);
+        state.server.reload({ config: readConfig(root), scenarios: readScenarios(root) });
+        void vscode.window.showInformationMessage(`Cenário ${scenario} ativo em ${endpoint}.`);
       }
       refresh();
     }),
     vscode.commands.registerCommand("devmock.export", async () => {
       const root = workspaceRoot();
       if (!root) return;
-      const schemas = listSchemas(root);
-      if (schemas.length === 0) {
-        await vscode.window.showErrorMessage("DevMock: nenhum Schema válido.");
+      if (listSchemas(root).length === 0) {
+        void vscode.window.showErrorMessage("DevMock: nenhum Schema válido.");
         return;
       }
       const picked = await vscode.window.showQuickPick(
@@ -389,35 +360,21 @@ export function activate(context: vscode.ExtensionContext): void {
         { placeHolder: "Artefatos", canPickMany: false },
       );
       if (!picked) return;
-      const want = (name: string): boolean => picked === "Tudo" || picked.startsWith(name);
-      const dir = devmockDir(root);
-      // (d) staleDetector: avisa quais Schemas mudaram desde o último export.
-      const stale = staleSinceLastExport(root, schemas);
-      if (stale.length > 0) {
-        await vscode.window.showWarningMessage(
-          `DevMock: artefatos desatualizados para: ${stale.join(", ")}. Exportando agora para sincronizar.`,
+      let result;
+      try {
+        result = doExport(root, picked);
+      } catch (err) {
+        void vscode.window.showErrorMessage(`DevMock: ${err instanceof Error ? err.message : String(err)}`);
+        return;
+      }
+      // (d) staleDetector: avisa quais Schemas estavam desatualizados (agora sincronizados).
+      if (result.stale.length > 0) {
+        void vscode.window.showWarningMessage(
+          `DevMock: artefatos estavam desatualizados para: ${result.stale.join(", ")} — sincronizados neste export.`,
         );
       }
-      if (want("OpenAPI JSON")) {
-        const doc = buildOpenApi(schemas);
-        writeFileSync(join(dir, "openapi", "generated.json"), `${JSON.stringify(doc, null, 2)}\n`);
-      }
-      if (picked === "Tudo" || picked === "OpenAPI YAML") {
-        const doc = buildOpenApi(schemas);
-        writeFileSync(join(dir, "openapi", "generated.yaml"), toYaml(doc));
-      }
-      if (want("JSON Schema")) {
-        writeFileSync(join(dir, "openapi", "schemas.json"), `${JSON.stringify(buildJsonSchemas(schemas), null, 2)}\n`);
-      }
-      if (want("TypeScript")) {
-        writeFileSync(join(dir, "docs", "types.ts"), buildTypes(schemas));
-      }
-      if (want("Markdown")) {
-        for (const s of schemas) writeFileSync(join(dir, "docs", `${s.name.toLowerCase()}.md`), buildDocFor(s));
-      }
-      recordExportHashes(root, schemas);
       refresh();
-      await vscode.window.showInformationMessage(`DevMock: contrato exportado (${picked}).`);
+      void vscode.window.showInformationMessage(`DevMock: contrato exportado (${picked}).`);
     }),
     vscode.commands.registerCommand("devmock.showLog", () => {
       if (!state.server) {
@@ -433,12 +390,11 @@ export function activate(context: vscode.ExtensionContext): void {
     vscode.commands.registerCommand("devmock.validate", async () => {
       const root = workspaceRoot();
       if (!root || !existsSync(devmockDir(root))) {
-        await vscode.window.showErrorMessage("DevMock: rode `DevMock: Initialize Project` primeiro.");
+        void vscode.window.showErrorMessage("DevMock: rode `DevMock: Initialize Project` primeiro.");
         return;
       }
-      const schemas = listSchemas(root);
-      if (schemas.length === 0) {
-        await vscode.window.showErrorMessage("DevMock: nenhum Schema válido.");
+      if (listSchemas(root).length === 0) {
+        void vscode.window.showErrorMessage("DevMock: nenhum Schema válido.");
         return;
       }
       const baseUrl = await vscode.window.showInputBox({
@@ -449,7 +405,7 @@ export function activate(context: vscode.ExtensionContext): void {
       await vscode.window.withProgress(
         { location: vscode.ProgressLocation.Notification, title: "DevMock: validando API real…" },
         async () => {
-          const reports = await validateLive(schemas, baseUrl);
+          const { reports, total } = await doValidate(root, baseUrl);
           channel.clear();
           for (const r of reports) {
             if (r.error) {
@@ -466,56 +422,20 @@ export function activate(context: vscode.ExtensionContext): void {
               );
             }
           }
-          const total = summarize(reports);
           channel.appendLine(`\n${total.compatible} compatible, ${total.warnings} warnings, ${total.breaking} breaking.`);
           channel.show(true);
           if (total.breaking > 0) {
-            await vscode.window.showWarningMessage(
+            void vscode.window.showWarningMessage(
               `DevMock: ${total.breaking} breaking change(s) na API real — ver Output.`,
             );
           } else {
-            await vscode.window.showInformationMessage("DevMock: API real compatível com o contrato. ✓");
+            void vscode.window.showInformationMessage("DevMock: API real compatível com o contrato. ✓");
           }
         },
       );
       refresh();
     }),
   );
-}
-
-const HASHES_FILE = ".hashes.json";
-
-/** Schemas cujo hash mudou desde o último export (vazio = tudo sincronizado). */
-function staleSinceLastExport(root: string, schemas: Schema[]): string[] {
-  let stored: Record<string, string> = {};
-  try {
-    stored = readJson<Record<string, string>>(join(devmockDir(root), "openapi", HASHES_FILE));
-  } catch {
-    return [];
-  }
-  return schemas.filter((s) => stored[s.name] !== hashSchema(s)).map((s) => s.name);
-}
-
-/** Grava o hash atual de cada Schema após exportar. */
-function recordExportHashes(root: string, schemas: Schema[]): void {
-  const hashes: Record<string, string> = {};
-  for (const s of schemas) hashes[s.name] = hashSchema(s);
-  writeFileSync(join(devmockDir(root), "openapi", HASHES_FILE), `${JSON.stringify(hashes, null, 2)}\n`);
-}
-
-function readScenarios(root: string): Record<string, Record<string, never>> {
-  const out: Record<string, Record<string, never>> = {};
-  const dir = join(devmockDir(root), "scenarios");
-  if (!existsSync(dir)) return out;
-  for (const f of readdirSync(dir).filter((x) => x.endsWith(".json"))) {
-    try {
-      const file = readJson<Record<string, Record<string, never>>>(join(dir, f));
-      for (const [endpoint, map] of Object.entries(file)) out[endpoint] = { ...(out[endpoint] ?? {}), ...map };
-    } catch {
-      // Arquivo inválido: ignora (o validador do Core acusa no generate/export).
-    }
-  }
-  return out;
 }
 
 /** Fluxo Import OpenAPI: file picker → converte → grava schemas/ (PRD-06 RF-06). */
@@ -530,37 +450,33 @@ async function importApiFlow(root: string, channel: vscode.OutputChannel, refres
   try {
     content = readFileSync(files[0].fsPath, "utf8");
   } catch {
-    await vscode.window.showErrorMessage("DevMock: não foi possível ler o arquivo selecionado.");
+    void vscode.window.showErrorMessage("DevMock: não foi possível ler o arquivo selecionado.");
     return;
   }
   let imported;
   try {
-    imported = await importOpenApi(content);
+    imported = await doImportContent(root, content, false);
   } catch (err) {
-    await vscode.window.showErrorMessage(`DevMock: ${err instanceof Error ? err.message : String(err)}`);
+    void vscode.window.showErrorMessage(`DevMock: ${err instanceof Error ? err.message : String(err)}`);
     return;
   }
-  const dir = join(devmockDir(root), "schemas");
-  mkdirSync(dir, { recursive: true });
-  const existing = imported.schemas.filter((s) => existsSync(join(dir, `${s.name.toLowerCase()}.json`)));
-  if (existing.length > 0) {
+  if (imported.skipped.length > 0) {
     const answer = await vscode.window.showWarningMessage(
-      `Sobrescrever ${existing.length} schema(s) existente(s)? (${existing.map((s) => s.name).join(", ")})`,
+      `Sobrescrever ${imported.skipped.length} schema(s) existente(s)? (${imported.skipped.join(", ")})`,
       { modal: true },
       "Sobrescrever",
     );
     if (answer !== "Sobrescrever") return;
-  }
-  for (const s of imported.schemas) {
-    writeFileSync(join(dir, `${s.name.toLowerCase()}.json`), `${JSON.stringify(s, null, 2)}\n`);
+    const forced = await doImportContent(root, content, true);
+    imported = forced;
   }
   if (imported.warnings.length > 0) {
     channel.clear();
     for (const w of imported.warnings) channel.appendLine(`import: ${w}`);
     channel.show(true);
   }
-  await vscode.window.showInformationMessage(
-    `DevMock: ${imported.schemas.length} schema(s) importado(s)${imported.warnings.length > 0 ? ` com ${imported.warnings.length} aviso(s)` : ""}.`,
+  void vscode.window.showInformationMessage(
+    `DevMock: ${imported.created.length} schema(s) importado(s)${imported.warnings.length > 0 ? ` com ${imported.warnings.length} aviso(s)` : ""}.`,
   );
   refresh();
 }
@@ -573,7 +489,7 @@ async function createFromScratch(
 ): Promise<void> {
   const root = workspaceRoot();
   if (!root || !existsSync(devmockDir(root))) {
-    await vscode.window.showErrorMessage("DevMock: rode `DevMock: Initialize Project` primeiro.");
+    void vscode.window.showErrorMessage("DevMock: rode `DevMock: Initialize Project` primeiro.");
     return;
   }
   openSchemaForm(context, root, refresh, undefined, isRunning);
@@ -634,46 +550,15 @@ function openSchemaForm(
 
   panel.webview.onDidReceiveMessage(
     (msg: { kind: string; model: string; fields: Record<string, unknown>[]; records?: number; seed?: number | string; silent?: boolean }) => {
-      const schema = { name: (msg.model || "").trim(), fields: msg.fields } as unknown as Schema;
-      const diags = validateSchema(schema);
-      const errors = diags.filter((d) => d.severity === "error");
-      if (msg.kind === "preview") {
-        // Preview silencioso (auto): sem erros válidos, sem resposta — nunca polui a tela.
-        if (errors.length > 0) {
-          if (!msg.silent) {
-            void panel.webview.postMessage({ kind: "error", text: errors.map((d) => `${d.field}: ${d.message}`).join("\n") });
-          }
-          return;
-        }
-        const seed = msg.seed === undefined || msg.seed === "" ? cfg.seedDefault : msg.seed;
-        const rows = generate(schema, msg.records ?? 5, seed);
-        void panel.webview.postMessage({
-          kind: "previewResult",
-          text: JSON.stringify(rows, null, 2),
-        });
-        return;
-      }
-      if (errors.length > 0) {
-        void panel.webview.postMessage({ kind: "error", text: errors.map((d) => `${d.field}: ${d.message}`).join("\n") });
-        return;
-      }
-      const file = join(devmockDir(root), "schemas", `${schema.name.toLowerCase()}.json`);
-      writeFileSync(file, `${JSON.stringify(schema, null, 2)}\n`);
-      // Modo edição com rename: apaga o arquivo antigo e avisa (regra aprovada).
-      const notes: string[] = [`Salvo em schemas/${schema.name.toLowerCase()}.json`];
-      if (initial && initial.name.toLowerCase() !== schema.name.toLowerCase()) {
-        const oldFile = join(devmockDir(root), "schemas", `${initial.name.toLowerCase()}.json`);
-        if (existsSync(oldFile)) {
-          unlinkSync(oldFile);
-          notes.push(`renomeado de schemas/${initial.name.toLowerCase()}.json`);
-        }
-      }
-      // Schema em disco ≠ servidor vivo: vale após restart (sem hot-reload, por escopo).
-      if (isRunning?.()) {
-        notes.push("reinicie o servidor (stop → start) para aplicar");
-      }
-      void panel.webview.postMessage({ kind: "ok", text: notes.join(" · ") });
-      refresh();
+      const reply = handleStudioMessage(msg, {
+        root,
+        seedDefault: cfg.seedDefault,
+        initial,
+        isRunning,
+        onSaved: refresh,
+      });
+      if (reply.kind === "noop") return;
+      void panel.webview.postMessage(reply);
     },
     undefined,
     context.subscriptions,

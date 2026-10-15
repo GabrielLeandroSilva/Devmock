@@ -42,6 +42,7 @@ Dev precisa de experiência visual simples (TreeView) + edição direta dos arqu
 | RF-04 | Form de Schema com tipos + geradores BR em dropdown; v1.1.0: painel Studio com preview (records/seed) e erros inline; v1.4.0: modo edição no mesmo Studio (clique no nó, menu contexto ou comando) | Must | §7 |
 | RF-05 | Edição manual de JSON recarrega a Tree sem restart | Should | §6 |
 | RF-06 | `Create API: From scratch / Import / Detect` — MVP só habilita From scratch, demais mostram "em breve" | Must | §7 |
+| RF-07 | Testabilidade: lógica dos comandos em `ops.ts`/`studio.ts` puros (sem vscode); notificações puras fire-and-forget (nunca `await` que trave o comando); `?limit` sozinho pagina | Must | — |
 
 ## 5. Requisitos Não-Funcionais
 - Ativação <500ms; Tree atualiza em <200ms após salvar arquivo

@@ -46,6 +46,11 @@ Todo fim de passo, antes do Guardião abrir o PR: `feat/*` ou `fix/*` pronto em 
 | AUD-08 | Extension CJS com `require()` de Core ESM — host VS Code rejeita; Core virou CJS | v0.9.5 core package.json (achado no teste manual F5) |
 | AUD-09 | `plural()` duplicando "s" em model já plural (`Users` → `/userss`) | v0.9.7 routes.ts (achado no teste manual Switch Scenario) |
 | AUD-10 | Cenário ativo sem definição caía no default silenciosamente; faltavam built-ins + 403/429 | v0.9.8 routes.ts (achado no teste manual: Empty retornava os 20) |
+| AUD-11 | `exclude: src/test` no tsconfig prod herdado pelo de teste — suíte compilava stale sem o teste novo | v1.7.0 (achado na rodada host: smoke ausente do out/) |
+| AUD-12 | `await` em `showInformationMessage` trava `executeCommand` no host (só resolve no clique) — notificações puras viraram fire-and-forget | v1.7.0 (4 timeouts na rodada host) |
+| AUD-13 | `?limit` sozinho não paginava (exigia page+limit) | v1.7.0 (teste host esperava `data[2]`) |
+| AUD-14 | `npm run build --workspaces` compilava CLI antes do `dist/` do Core existir — CI vermelho desde a criação, falso verde local | v1.7.1 (logs do Actions; fix: build ordenado core → cli → extension) |
+| AUD-15 | Workflow chamava `npm run build --workspaces`, que o npm interpreta como "em cada workspace" — ignorou o script ordenado da raiz; fix: `npm run build` | v1.7.2 (2ª rodada vermelha; mesma causa, camada errada) |
 
 ## 6. Inputs
 - Diff do passo (`git diff main...des` ou arquivos listados), PRD/RNF correspondentes, métricas de [[05-Metricas-Sucesso]]
