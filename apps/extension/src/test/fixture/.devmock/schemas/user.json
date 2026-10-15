@@ -1,0 +1,8 @@
+{
+  "name": "User",
+  "fields": [
+    { "name": "id", "type": "uuid", "required": true },
+    { "name": "name", "type": "string", "generator": "br.nome" },
+    { "name": "status", "type": "enum", "values": ["ACTIVE", "BLOCKED"] }
+  ]
+}

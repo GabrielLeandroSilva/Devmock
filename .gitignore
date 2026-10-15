@@ -26,6 +26,8 @@ Thumbs.db
 # Node / build futuro (quando o código DevMock nascer)
 node_modules/
 dist/
+out/
+.vscode-test/
 build/
 coverage/
 .env

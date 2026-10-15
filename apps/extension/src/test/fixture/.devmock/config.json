@@ -1,0 +1,6 @@
+{
+  "port": 4123,
+  "seedDefault": 7,
+  "localeDefault": "pt-BR",
+  "activeScenarios": {}
+}

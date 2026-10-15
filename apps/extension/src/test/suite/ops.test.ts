@@ -1,0 +1,109 @@
+import * as assert from "node:assert";
+import { cpSync, existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
+import { createMockServer } from "@devmock/core";
+import { handleStudioMessage } from "../../studio.js";
+import { doExport, doGeneratePreview, doImportContent, doSaveFakeData, doSwitchScenario, doValidate } from "../../ops.js";
+import { devmockDir, readConfig } from "../../project.js";
+
+suite("ops no host (fs real, sem mocks)", () => {
+  let root = "";
+  const fixtureDotDevmock = join(__dirname, "..", "fixture", ".devmock");
+
+  setup(() => {
+    root = mkdtempSync(join(tmpdir(), "devmock-host-"));
+    cpSync(fixtureDotDevmock, join(root, ".devmock"), { recursive: true });
+  });
+
+  teardown(() => {
+    rmSync(root, { recursive: true, force: true });
+  });
+
+  test("save + generate determinístico em disco", () => {
+    const saved = doSaveFakeData(root, "User", 4);
+    assert.strictEqual(saved.count, 4);
+    assert.ok(existsSync(saved.file));
+    const again = doGeneratePreview(root, "User", 4);
+    assert.deepStrictEqual(JSON.parse(readFileSync(saved.file, "utf8")), again);
+  });
+
+  test("switch grava activeScenarios", () => {
+    doSwitchScenario(root, "GET /users", "Empty");
+    assert.strictEqual(readConfig(root).activeScenarios["GET /users"], "Empty");
+  });
+
+  test("export gera 5 artefatos + stale detecta mudança", () => {
+    const first = doExport(root, "Tudo");
+    assert.strictEqual(first.files.length, 5);
+    assert.deepStrictEqual(first.stale, []);
+    // Muda o schema e exporta de novo: avisa stale e sincroniza.
+    const schemaPath = join(devmockDir(root), "schemas", "user.json");
+    const schema = JSON.parse(readFileSync(schemaPath, "utf8"));
+    schema.fields.push({ name: "novo", type: "string" });
+    writeFileSync(schemaPath, JSON.stringify(schema));
+    const second = doExport(root, "Tudo");
+    assert.deepStrictEqual(second.stale, ["User"]);
+  });
+
+  test("import cria, pula sem overwrite e sobrescreve com flag", async () => {
+    const yaml = "openapi: 3.0.3\ninfo:\n  title: L\n  version: '1'\npaths: {}\ncomponents:\n  schemas:\n    Customer:\n      type: object\n      required: [id]\n      properties:\n        id:\n          type: string\n";
+    const r1 = await doImportContent(root, yaml, false);
+    assert.deepStrictEqual(r1.created, ["Customer"]);
+    const r2 = await doImportContent(root, yaml, false);
+    assert.deepStrictEqual(r2.skipped, ["Customer"]);
+    const r3 = await doImportContent(root, yaml, true);
+    assert.deepStrictEqual(r3.created, ["Customer"]);
+  });
+
+  test("validate contra mock real: compatível e quebrado", async () => {
+    const server = createMockServer(
+      [{ name: "User", fields: [{ name: "id", type: "uuid", required: true }] }],
+      { config: { port: 0 } },
+    );
+    const port = await server.listen();
+    try {
+      const ok = await doValidate(root, `http://127.0.0.1:${port}`);
+      assert.strictEqual(ok.total.breaking, 0);
+      const bad = await doValidate(root, "http://127.0.0.1:1");
+      assert.ok(bad.reports[0].error);
+    } finally {
+      await server.close();
+    }
+  });
+
+  test("studio: save, preview, erro e rename com fs real", () => {
+    const fields = [
+      { name: "id", type: "uuid", required: true },
+      { name: "name", type: "string", generator: "br.nome" },
+    ];
+    const saved = handleStudioMessage(
+      { kind: "save", model: "User", fields },
+      { root, seedDefault: 7, onSaved: () => {} },
+    );
+    assert.strictEqual(saved.kind, "ok");
+
+    const preview = handleStudioMessage(
+      { kind: "preview", model: "User", fields, records: 2, seed: 7 },
+      { root, seedDefault: 7 },
+    );
+    assert.strictEqual(preview.kind, "previewResult");
+    if (preview.kind === "previewResult") {
+      assert.strictEqual(JSON.parse(preview.text).length, 2);
+    }
+
+    const bad = handleStudioMessage(
+      { kind: "save", model: "", fields: [] },
+      { root, seedDefault: 7 },
+    );
+    assert.strictEqual(bad.kind, "error");
+
+    const renamed = handleStudioMessage(
+      { kind: "save", model: "Users", fields },
+      { root, seedDefault: 7, initial: { name: "User", fields: [] } },
+    );
+    assert.strictEqual(renamed.kind, "ok");
+    assert.ok(existsSync(join(devmockDir(root), "schemas", "users.json")));
+    assert.ok(!existsSync(join(devmockDir(root), "schemas", "user.json")));
+  });
+});
