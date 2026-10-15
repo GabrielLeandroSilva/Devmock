@@ -5,7 +5,7 @@
   "description": "DevMock — API Contract & Mocking for Front-end (monorepo)",
   "workspaces": ["packages/*", "apps/*"],
   "scripts": {
-    "build": "npm run build --workspaces",
+    "build": "npm run build -w @devmock/core && npm run build -w devmock-cli && npm run build -w devmock-vscode",
     "test": "npm run test --workspaces --if-present",
     "lint": "npm run lint --workspaces --if-present"
   },

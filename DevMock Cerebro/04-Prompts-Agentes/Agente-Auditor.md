@@ -49,6 +49,7 @@ Todo fim de passo, antes do Guardião abrir o PR: `feat/*` ou `fix/*` pronto em 
 | AUD-11 | `exclude: src/test` no tsconfig prod herdado pelo de teste — suíte compilava stale sem o teste novo | v1.7.0 (achado na rodada host: smoke ausente do out/) |
 | AUD-12 | `await` em `showInformationMessage` trava `executeCommand` no host (só resolve no clique) — notificações puras viraram fire-and-forget | v1.7.0 (4 timeouts na rodada host) |
 | AUD-13 | `?limit` sozinho não paginava (exigia page+limit) | v1.7.0 (teste host esperava `data[2]`) |
+| AUD-14 | `npm run build --workspaces` compilava CLI antes do `dist/` do Core existir — CI vermelho desde a criação, falso verde local | v1.7.1 (logs do Actions; fix: build ordenado core → cli → extension) |
 
 ## 6. Inputs
 - Diff do passo (`git diff main...des` ou arquivos listados), PRD/RNF correspondentes, métricas de [[05-Metricas-Sucesso]]
