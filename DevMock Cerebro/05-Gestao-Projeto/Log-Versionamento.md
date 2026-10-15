@@ -75,9 +75,10 @@ updated: 2026-10-10
 | v1.6.1 | 2026-10-14 | main + des | README tabela CLI completa | `docs(readme): tabela CLI completa` + PR `nº 16` | ✅ validado, em main |
 | v1.6.2 | 2026-10-14 | main + des | Suíte E2E do CLI (6 testes) | `test(cli): e2e dos 6 comandos via spawn` + PR `nº 16` (merge commit) | ✅ validado, em main |
 | v1.6.3 | 2026-10-14 | des | Pós-promoção v1.6.2 (PR nº 16) | `docs(git): registra promoção v1.6.2 em main` | ✅ em des |
-| v1.7.0 | 2026-10-15 | des | Rodada real no host (12 testes, AUD-11–13) | `test(extension): suite test-electron + ops puros` | ⏳ em des, em revisão |
-| v1.7.1 | 2026-10-15 | des | Fix build ordenado (CI vermelho) | `fix(build): core antes dos dependentes` | ⏳ em des, em revisão |
-| v1.7.2 | 2026-10-15 | des | Fix workflow: npm run build (sem --workspaces) | `fix(ci): chama script raiz ordenado` | ⏳ em des, em revisão |
+| v1.7.0 | 2026-10-15 | main + des | Rodada real no host (12 testes, AUD-11–13) | `test(extension): suite test-electron + ops puros` + PR `nº 17` | ✅ validado, em main |
+| v1.7.1 | 2026-10-15 | main + des | Fix build ordenado (CI vermelho) | `fix(build): core antes dos dependentes` + PR `nº 17` | ✅ validado, em main |
+| v1.7.2 | 2026-10-15 | main + des | Fix workflow: npm run build (sem --workspaces) | `fix(ci): chama script raiz ordenado` + PR `nº 17` (merge commit) | ✅ validado, em main |
+| v1.7.3 | 2026-10-15 | des | Pós-promoção v1.7.2 (PR nº 17) | `docs(git): registra promoção v1.7.2 em main` | ✅ em des |
 
 ## Consulta (Dataview — notas de gestão)
 
