@@ -82,7 +82,8 @@ updated: 2026-10-10
 | v1.8.0 | 2026-10-15 | main + des | Prontidão Marketplace + Docs-Keeper | `feat(release): vsix 1.0.0, publish CI, keeper` + PR `nº 18` (merge commit) | ✅ validado, em main |
 | v1.8.1 | 2026-10-16 | des | Pós-promoção v1.8.0 (PR nº 18) | `docs(git): registra promoção v1.8.0 em main` | ✅ em des |
 | v1.8.2 | 2026-10-16 | des | README de usuário + publicação | `docs(readme): foco usuário + tag ext-v1.0.0` | ⏳ em des, em revisão |
-| v1.8.3 | 2026-10-16 | des | Fix publish: cwd da extension + dispatch manual | `fix(ci): vsce no diretorio certo` | ⏳ em des, em revisão |
+| v1.8.3 | 2026-10-16 | main + des | Fix publish: cwd + dispatch | `fix(ci)` + PRs `nº 20` e `nº 21` | ✅ validado, em main |
+| ext-v1.0.0 | 2026-10-16 | tag em main | 🎉 PUBLICADO na Marketplace | `Published devmock.devmock-vscode v1.0.0` via publish.yml | ✅ ao vivo |
 
 ## Consulta (Dataview — notas de gestão)
 
