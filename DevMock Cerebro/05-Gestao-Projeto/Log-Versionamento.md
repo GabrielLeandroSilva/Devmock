@@ -85,6 +85,7 @@ updated: 2026-10-10
 | v1.8.3 | 2026-10-16 | main + des | Fix publish: cwd + dispatch | `fix(ci)` + PRs `nº 20` e `nº 21` | ✅ validado, em main |
 | ext-v1.0.0 | 2026-10-16 | tag em main | 🎉 PUBLICADO na Marketplace | `Published devmock.devmock-vscode v1.0.0` via publish.yml | ✅ ao vivo |
 | v1.8.4 | 2026-10-16 | des | About do repo + Agente LinkedIn | `docs(divulg): about + agente-linkedin` | ⏳ em des, em revisão |
+| — | 2026-10-16 | — | 📣 Post de lançamento publicado no LinkedIn (texto do Agente-LinkedIn, postagem manual) + About verificado na API | marco de divulgação, sem versão | ✅ no ar |
 
 ## Consulta (Dataview — notas de gestão)
 
