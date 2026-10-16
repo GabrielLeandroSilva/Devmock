@@ -2,89 +2,45 @@
 
 > Build your frontend without waiting for the backend.
 
-Defina o contrato uma vez e use-o para desenvolver, testar, documentar, compartilhar e validar a API. O Schema é a fonte única da verdade.
+Defina o contrato da API uma vez e desenvolva o front sem esperar o backend: mock local, dados realistas (incluindo brasileiros), cenários de erro, documentação, OpenAPI e tipos TypeScript — tudo derivado do Schema.
 
-Documentação viva (PRDs, arquitetura, BPMs, EAP, ADRs, manual de teste): [`DevMock Cerebro`](./DevMock%20Cerebro/00-Home.md) (vault Obsidian).
+## Instalação
 
-## O que o MVP (v1.0.0) faz
+Na [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemName=devmock.devmock-vscode): procure **DevMock** na aba Extensions (`Ctrl+Shift+X`) e instale. Sem configuração adicional.
 
-- **Schema + Fake Data** — modelos tipados com geradores realistas, incluindo brasileiros (`br.cpf`, `br.cnpj` numérico e alfanumérico, `br.cep`, `br.celular`, `br.pix`, BRL como `number`); geração determinística por `seed`
-- **Mock Server local** (`:4010`) — CRUD gerado por Schema, paginação `{data,total,page,limit}`, `delayMs`, cenários (Default, Empty, 401/403/500/429, Slow) com troca sem restart, request log
-- **VS Code Extension** — TreeView do projeto, `Initialize Project`, formulário de Schema, Generate/Save Fake Data, Switch Scenario, Export Contract, tudo sobre o mesmo Core
-- **Export do contrato** — OpenAPI JSON + YAML, JSON Schema, `types.ts` (compila limpo), Markdown
-- **CLI** — `devmock init` / `devmock start`
+## Começo rápido (5 min)
 
-## Layout
+1. Abra seu projeto e rode `DevMock: Initialize Project` (`Ctrl+Shift+P`).
+2. `DevMock: New Schema…` — crie o model `User` (o Studio mostra preview dos dados na hora).
+3. `DevMock: Start Mock Server` → `🟢 http://localhost:4010`.
+4. Aponte sua `baseURL` para `http://localhost:4010` e desenvolva.
 
-```text
-packages/core     @devmock/core — schema, validação, fake data, mock server, export
-packages/cli      devmock — init/start sobre o Core
-apps/extension    devmock-vscode — TreeView, comandos, form, watcher (F5 para depurar)
-DevMock Cerebro   vault Obsidian — PRDs, arquitetura, BPMs, EAP, ADRs, manual de teste
-```
-
-## Uso rápido
-
-```bash
-npm run build --workspaces   # compila core + cli + extension
-npm run test --workspaces    # vitest no core (37 testes)
-
-# ou via CLI:
-node packages/cli/bin/devmock.js init demo
-node packages/cli/bin/devmock.js start demo
-# GET http://localhost:4010/users?page=1&limit=5
-```
-
-## Comandos
-
-### CLI (`devmock`)
+## Comandos (`Ctrl+Shift+P` → `DevMock: …`)
 
 | Comando | O que faz |
-|---------|-----------|
-| `devmock init [dir]` | Cria `.devmock/{config.json,schemas/,scenarios/,docs/,openapi/}` (idempotente; não apaga o existente) |
-| `devmock start [dir]` | Sobe o Mock Server na porta do `config.json` (padrão `4010`); valida Schemas e ignora os inválidos com aviso |
-| `devmock import <arquivo> [dir] [--force]` | Importa OpenAPI (JSON/YAML) → `schemas/`; sem `--force` não sobrescreve |
-| `devmock validate <baseUrl> [dir]` | Valida a API real contra o contrato (exit 1 com breaking) |
-| `devmock generate <schema> [dir] [--records N] [--seed S] [--out arq]` | Fake data determinística no stdout ou arquivo |
-| `devmock export [dir]` | 5 artefatos + `.hashes.json` |
+|---|---|
+| Initialize Project | Cria `.devmock/` versionável no projeto |
+| New Schema… / Edit Schema… | Studio: edita campos, preview com seed, salva |
+| Create API… | From scratch ou Import OpenAPI |
+| Import OpenAPI… | Gera Schemas de `openapi.yaml/json` |
+| Generate / Save Fake Data… | Preview em aba ou salva em `docs/examples/` |
+| Start / Stop Mock Server | Sobe/derruba `:4010`; Stop mostra o request log |
+| Switch Scenario… | Default, Empty, 401/403/500/429, Slow — sem restart |
+| Export Contract… | OpenAPI JSON+YAML, JSON Schema, `types.ts`, Markdown |
+| Validate Real API… | Compara a API real com o contrato (Compatible/Warning/Breaking) |
+| Show Request Log | Método, rota, status, ms e cenário |
 
-### Extension (paleta `Ctrl+Shift+P` → `DevMock: …`)
+Prefere terminal? Há CLI equivalente: `devmock init|start|generate|export|import|validate` (ver `packages/cli`).
 
-| Comando | O que faz |
-|---------|-----------|
-| Initialize Project | Igual ao `init`, dentro do VS Code |
-| Start / Stop Mock Server | Sobe/derruba o server; Stop mostra o request log |
-| New Schema… | Abre o Studio: edita campos, preview com seed e salva em `schemas/` |
-| Generate / Save Fake Data… | Preview em aba ou salva em `docs/examples/<model>.json` |
-| Switch Scenario… | Troca o cenário do endpoint **sem restart** |
-| Export Contract… | Gera OpenAPI JSON/YAML, JSON Schema, `types.ts` e Markdown |
-| Show Request Log | Exibe método, rota, status, ms e cenário |
-| Refresh View | Recarrega a Tree |
-
-## Exemplo de ponta a ponta
+## Exemplo
 
 ```bash
-# 1. Inicializa e cria um Schema
-node packages/cli/bin/devmock.js init demo
-# (crie demo/.devmock/schemas/user.json — veja o exemplo abaixo)
-
-# 2. Sobe o mock
-node packages/cli/bin/devmock.js start demo
-# DevMock 🟢 http://localhost:4010
-
-# 3. Usa como se fosse a API real
+# com o servidor rodando:
 curl "http://localhost:4010/users?page=1&limit=5"
 curl -X POST http://localhost:4010/users -H "Content-Type: application/json" -d "{}"
-
-# 4. Testa o estado vazio sem restart: em
-#    demo/.devmock/config.json, defina
-#    "activeScenarios": { "GET /users": "Empty" }
-#    ...e recarregue (a extension aplica via reload; no CLI, reinicie)
-curl http://localhost:4010/users
-# {"data":[],"total":0}
 ```
 
-`demo/.devmock/schemas/user.json` mínimo:
+Schema mínimo (`.devmock/schemas/user.json`):
 
 ```json
 {
@@ -97,7 +53,12 @@ curl http://localhost:4010/users
 }
 ```
 
-## Branches e versões
+## Links
 
-- `des` — desenvolvimento diário · `main` — estável, só via Pull Request (ruleset ativo, sem bypass)
-- Tags por entrega (`v0.x`); `v1.0.0` = MVP com manual de teste 100% ✅. Histórico em `DevMock Cerebro/05-Gestao-Projeto/Log-Versionamento.md`.
+- [Wiki — guia completo](https://github.com/GabrielLeandroSilva/Devmock/wiki)
+- [Reportar bug](https://github.com/GabrielLeandroSilva/Devmock/issues)
+- [Changelog](apps/extension/CHANGELOG.md)
+
+## Desenvolvimento
+
+Este repo é o monorepo (`packages/core`, `packages/cli`, `apps/extension`) + vault Obsidian de docs (`DevMock Cerebro`).Branches: `des` (diário) e `main` (estável, só via PR). Ver `package.json` (scripts `build`/`test`) e `.github/workflows/`.
