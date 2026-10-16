@@ -19,6 +19,7 @@ jobs:
       - run: npm ci
       - run: npm run build
       - name: Confere tag x package.json
+        if: startsWith(github.ref, 'refs/tags/')
         run: test "${GITHUB_REF_NAME}" = "ext-v$(node -p "require('./apps/extension/package.json').version")"
       - name: Start Xvfb (Linux)
         run: Xvfb :99 &
