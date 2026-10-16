@@ -79,7 +79,9 @@ updated: 2026-10-10
 | v1.7.1 | 2026-10-15 | main + des | Fix build ordenado (CI vermelho) | `fix(build): core antes dos dependentes` + PR `nº 17` | ✅ validado, em main |
 | v1.7.2 | 2026-10-15 | main + des | Fix workflow: npm run build (sem --workspaces) | `fix(ci): chama script raiz ordenado` + PR `nº 17` (merge commit) | ✅ validado, em main |
 | v1.7.3 | 2026-10-15 | des | Pós-promoção v1.7.2 (PR nº 17) | `docs(git): registra promoção v1.7.2 em main` | ✅ em des |
-| v1.8.0 | 2026-10-15 | des | Prontidão Marketplace + Docs-Keeper | `feat(release): vsix 1.0.0, publish CI, keeper` | ⏳ em des, em revisão |
+| v1.8.0 | 2026-10-15 | main + des | Prontidão Marketplace + Docs-Keeper | `feat(release): vsix 1.0.0, publish CI, keeper` + PR `nº 18` (merge commit) | ✅ validado, em main |
+| v1.8.1 | 2026-10-16 | des | Pós-promoção v1.8.0 (PR nº 18) | `docs(git): registra promoção v1.8.0 em main` | ✅ em des |
+| v1.8.2 | 2026-10-16 | des | README de usuário + publicação | `docs(readme): foco usuário + tag ext-v1.0.0` | ⏳ em des, em revisão |
 
 ## Consulta (Dataview — notas de gestão)
 
