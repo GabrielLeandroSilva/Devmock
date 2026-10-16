@@ -1,0 +1,29 @@
+name: Publish Extension
+
+on:
+  push:
+    tags:
+      - "ext-v*"
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: package-lock.json
+      - run: npm ci
+      - run: npm run build
+      - name: Confere tag x package.json
+        run: test "${GITHUB_REF_NAME}" = "ext-v$(node -p "require('./apps/extension/package.json').version")"
+      - name: Start Xvfb (Linux)
+        run: Xvfb :99 &
+      - run: npm test --prefix apps/extension
+        env:
+          DISPLAY: ":99"
+      - run: npx --prefix apps/extension vsce publish --no-dependencies
+        env:
+          VSCE_PAT: ${{ secrets.VSCE_PAT }}

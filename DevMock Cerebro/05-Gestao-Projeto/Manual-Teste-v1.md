@@ -63,6 +63,8 @@ updated: 2026-10-12
 
 - [ ] #task Suite no host real: pm test --prefix apps/extension\ → 12 passing (baixa o VS Code na 1ª vez) 🏷️ fase/codigo
 
+- [ ] #task Instalar o .vsix (\code --install-extension devmock-vscode-<versao>.vsix\) e repetir §1–§7 contra a versão empacotada 🏷️ fase/codigo
+
 ## 8. Resultado
 | Data | Passo | ✅/❌ | Observação |
 |------|-------|------|------------|
