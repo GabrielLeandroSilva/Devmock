@@ -4,6 +4,7 @@ on:
   push:
     tags:
       - "ext-v*"
+  workflow_dispatch:
 
 jobs:
   publish:
@@ -24,6 +25,7 @@ jobs:
       - run: npm test --prefix apps/extension
         env:
           DISPLAY: ":99"
-      - run: npx --prefix apps/extension vsce publish --no-dependencies
+      - run: npx vsce publish --no-dependencies
+        working-directory: apps/extension
         env:
           VSCE_PAT: ${{ secrets.VSCE_PAT }}
