@@ -2,13 +2,23 @@
   "name": "devmock-vscode",
   "displayName": "DevMock",
   "description": "API Contract & Mocking for Front-end — build without waiting for the backend.",
-  "version": "0.9.0",
+  "version": "1.0.0",
   "publisher": "devmock",
-  "private": true,
+  "license": "MIT",
+  "icon": "images/icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/GabrielLeandroSilva/Devmock.git"
+  },
+  "homepage": "https://github.com/GabrielLeandroSilva/Devmock#readme",
+  "bugs": {
+    "url": "https://github.com/GabrielLeandroSilva/Devmock/issues"
+  },
   "engines": {
     "vscode": "^1.90.0"
   },
   "categories": ["Other"],
+  "keywords": ["mock", "api", "openapi", "contract", "frontend", "faker", "brasil"],
   "activationEvents": ["onStartupFinished"],
   "main": "./dist/extension.js",
   "contributes": {
@@ -46,10 +56,11 @@
     }
   },
   "scripts": {
-    "build": "tsc -p tsconfig.json",
+    "build": "npm run lint && node ./scripts/bundle.js",
     "lint": "tsc -p tsconfig.json --noEmit",
     "pretest": "npm run build && npm --prefix ../../packages/core run build && tsc -p test/tsconfig.test.json",
-    "test": "node ./out/test/runTest.js"
+    "test": "node ./out/test/runTest.js",
+    "package": "vsce package --no-dependencies"
   },
   "dependencies": {
     "@devmock/core": "*"
@@ -59,6 +70,8 @@
     "@types/node": "^22.0.0",
     "@types/vscode": "^1.90.0",
     "@vscode/test-electron": "^2.4.0",
+    "@vscode/vsce": "^3.2.0",
+    "esbuild": "0.21.5",
     "glob": "^11.0.0",
     "mocha": "^10.7.0",
     "typescript": "^5.6.0"
