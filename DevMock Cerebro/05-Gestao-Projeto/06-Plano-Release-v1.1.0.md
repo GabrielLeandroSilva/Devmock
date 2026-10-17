@@ -81,7 +81,7 @@ Detalhe e matriz de rastreabilidade em [[07-Estrategia-Testes]].
 - [x] CHANGELOG da extension + `package.json` = `1.1.0`
 - [x] README (raiz + extension) e wiki sincronizados
 - [x] `Log-Versionamento` atualizado
-- [ ] Tag `ext-v1.1.0` (trava `tag == versão`) → `publish.yml`
+- [x] Tag `ext-v1.1.0` (trava `tag == versão`) → `publish.yml` — publicada ✅
 - [ ] Post de lançamento (Agente-LinkedIn, postagem manual)
 
 > **Regra:** nenhum push de tag `ext-v1.1.0` antes de todas as caixas acima.
