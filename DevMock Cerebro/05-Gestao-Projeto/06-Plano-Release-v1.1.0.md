@@ -28,7 +28,7 @@ Tudo abaixo foi levantado do vault e **verificado no código** (coluna Status). 
 | M3 | Request log com **body** (request + response, truncado) | [[03-MVP-Scope]] Should | Parcial — `RequestLogEntry` só tem `method/route/status/ms/scenario` (`routes.ts:25-31`); body lido/gerado mas não logado (`server.ts:83,142-193`) |
 | M4 | `staleDetector` completo (por artefato + CLI grava hashes) | [[03-MVP-Scope]] Should; [[05-Integracoes-OpenAPI-TS]] | Parcial — 1 snapshot/schema (`export/stale.ts:20-25`); export parcial marca tudo como ok (`ops.ts:89`); CLI promete "+ hashes" mas não grava (`packages/cli/src/cli.ts:307-332`) |
 | S1 | Cenários por header/query | [[PRD-04-Scenarios]] Fora (v1.1) | Ausente — **stretch**, pode escorregar p/ 1.1.1 |
-| I1 | Gate de cobertura no CI | (achado) | Ausente — `ci.yml:28-29` roda `vitest run` sem `--coverage`; `@vitest/coverage-v8` já instalado |
+| I1 | Suítes de teste + CI (regressão AUD, consolidação, cobertura) | [[07-Estrategia-Testes]] | Ausente — `ci.yml:28-29` roda `vitest run` sem `--coverage`; **0** testes citam `AUD-xx`; `@vitest/coverage-v8` já instalado |
 
 ## 3. Escopo
 
@@ -41,8 +41,12 @@ Tudo abaixo foi levantado do vault e **verificado no código** (coluna Status). 
 ### Should (stretch — pode ir para 1.1.1)
 - **S1** — Cenários condicionais por header/query no CRUD de cenário.
 
-### Infra
-- **I1** — Habilitar `--coverage` no CI com threshold (baseline atual ≈94% no core); falhar PR abaixo do threshold.
+### Infra — Suítes de teste (workstream I1, dono [[Agente-QA-Testes]])
+Detalhe e matriz de rastreabilidade em [[07-Estrategia-Testes]].
+- **S1** — `regression.test.ts` por pacote: 1 `it('AUD-xx — …')` por entrada do catálogo (11 unit/integração + guard tests).
+- **S2** — Consolidar a pirâmide e preencher a matriz `RF do PRD → teste`, zerando aceites órfãos.
+- **S3** — `--coverage` no CI com threshold (core ≥90%, cli ≥80%) + artefato; suíte de regressão como *check* obrigatório.
+- **Guards** de infra: build-order (AUD-14), `tsconfig` outDir/exclude (AUD-06/11), cjs-esm (AUD-08), ci-build (AUD-15).
 
 ### Fora do escopo → v1.2.0
 - **Detect from project** (hoje placeholder em `apps/extension/src/extension.ts:274`) — exige **PRD-09** novo.
@@ -53,10 +57,13 @@ Tudo abaixo foi levantado do vault e **verificado no código** (coluna Status). 
 - **M2** `errorRate: 50` com seed fixa → distribuição reproduzível; `0` mantém comportamento atual. Teste unitário no core.
 - **M3** Log expõe bodies truncados; body > limite marca `truncated: true`. Teste unitário.
 - **M4** Exportar só Markdown não marca OpenAPI como sincronizado; `devmock export` gera `.hashes.json`. Testes por artefato + suite CLI.
-- **I1** CI publica cobertura e falha abaixo do threshold.
+- **I1** Matriz `AUD → teste` 100% verde (15/15 com teste nomeado); CI publica cobertura e falha abaixo do threshold; guards de infra rodando.
 
 ## 5. Passos de execução (checklist ordenado)
-- [ ] #task 🔼 Configurar gate de cobertura no CI (I1) 🏷️ fase/codigo
+- [ ] #task 🔼 S1 — `regression.test.ts` por pacote (1 `it` por AUD-xx) 🏷️ fase/codigo
+- [ ] #task 🔼 S2 — matriz `RF → teste` e aceites órfãos zero 🏷️ fase/codigo
+- [ ] #task 🔼 S3 — cobertura + threshold + artefato no CI 🏷️ fase/codigo
+- [ ] #task 🔼 Guards de infra (build-order, tsconfig, cjs-esm, ci-build) 🏷️ fase/codigo
 - [ ] #task ⏫ M1 — expõe 403/429 na UI da extension 🏷️ fase/codigo
 - [ ] #task ⏫ M2 — `errorRate` no core + UI/config 🏷️ fase/codigo
 - [ ] #task ⏫ M3 — request log com body truncado 🏷️ fase/codigo
@@ -69,7 +76,7 @@ Tudo abaixo foi levantado do vault e **verificado no código** (coluna Status). 
 
 ## 6. Gate de Release (apto a commitar a versão)
 - [ ] Manual-Teste 100% ✅ (incluindo casos de M1–M4)
-- [ ] `vitest run` verde + cobertura ≥ threshold (I1)
+- [ ] `vitest run` verde + cobertura ≥ threshold (I1) + matriz `AUD → teste` 100%
 - [ ] `tsc --noEmit` limpo em todos os workspaces
 - [ ] CHANGELOG da extension + `package.json` = `1.1.0`
 - [ ] README (raiz + extension) e wiki sincronizados
@@ -89,4 +96,5 @@ Tudo abaixo foi levantado do vault e **verificado no código** (coluna Status). 
 - Escopo MoSCoW: [[03-MVP-Scope]] | EAP: [[01-EAP]] | Métricas: [[05-Metricas-Sucesso]] | Riscos: [[04-Riscos]]
 - PRDs: [[PRD-02-Mock-Server]] · [[PRD-03-VSCode-Extension]] · [[PRD-04-Scenarios]] · [[PRD-05-Docs-Export]]
 - Arquitetura: [[05-Integracoes-OpenAPI-TS]]
+- Qualidade/suítes: [[07-Estrategia-Testes]] · [[Agente-QA-Testes]] | Catálogo: [[Agente-Auditor]]
 - Próxima rodada: **v1.2.0** — Detect from project (PRD-09) + HTML docs

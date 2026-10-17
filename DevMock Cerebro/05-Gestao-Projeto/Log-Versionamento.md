@@ -87,6 +87,7 @@ updated: 2026-10-10
 | v1.8.4 | 2026-10-16 | des | About do repo + Agente LinkedIn | `docs(divulg): about + agente-linkedin` | ⏳ em des, em revisão |
 | — | 2026-10-16 | — | 📣 Post de lançamento publicado no LinkedIn (texto do Agente-LinkedIn, postagem manual) + About verificado na API | marco de divulgação, sem versão | ✅ no ar |
 | v1.8.5 | 2026-10-17 | des | Planejamento da release v1.1.0 (fechar Should do MVP) | `docs(release): plano v1.1.0 + rastreabilidade de pendências` | ⏳ em des, em revisão |
+| v1.8.6 | 2026-10-17 | des | Agente-QA-Testes + estratégia de suítes (S1/S2/S3) | `docs(qa): agente qa-testes + estrategia de suites` | ⏳ em des, em revisão |
 
 ## Consulta (Dataview — notas de gestão)
 
@@ -123,3 +124,4 @@ SORT file.name ASC
 - [x] #task ⏫ Executar Manual-Teste-v1 e preencher tabela de Resultado 🏷️ fase/codigo
 - [x] #task 🔼 Promover v1.0.0 para main após manual 100% (PR nº 10) 🏷️ fase/codigo
 - [ ] #task ⏫ Executar o plano da v1.1.0 (M1–M4 + gate de cobertura) 🏷️ fase/codigo
+- [ ] #task ⏫ Levantar suítes de teste (S1 regressão AUD + S2 consolidação + S3 CI) 🏷️ fase/codigo
