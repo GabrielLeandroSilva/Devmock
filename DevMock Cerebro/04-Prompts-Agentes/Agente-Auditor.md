@@ -51,6 +51,7 @@ Todo fim de passo, antes do Guardião abrir o PR: `feat/*` ou `fix/*` pronto em 
 | AUD-13 | `?limit` sozinho não paginava (exigia page+limit) | v1.7.0 (teste host esperava `data[2]`) |
 | AUD-14 | `npm run build --workspaces` compilava CLI antes do `dist/` do Core existir — CI vermelho desde a criação, falso verde local | v1.7.1 (logs do Actions; fix: build ordenado core → cli → extension) |
 | AUD-15 | Workflow chamava `npm run build --workspaces`, que o npm interpreta como "em cada workspace" — ignorou o script ordenado da raiz; fix: `npm run build` | v1.7.2 (2ª rodada vermelha; mesma causa, camada errada) |
+| AUD-16 | `close()` do Mock Server esperava conexões **keep-alive** (navegador/fetch, ~5s) — Stop lento; fix: `server.closeAllConnections()` | v1.1.1 server.ts (achado no teste manual: Stop demorava) |
 
 ## 6. Inputs
 - Diff do passo (`git diff main...des` ou arquivos listados), PRD/RNF correspondentes, métricas de [[05-Metricas-Sucesso]]

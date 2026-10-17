@@ -103,6 +103,7 @@ updated: 2026-10-10
 | ext-v1.1.0 | 2026-10-17 | tag em main | 🎉 PUBLICADO na Marketplace | `Published devmock.devmock-vscode v1.1.0` via publish.yml (run 39055951657) | ✅ ao vivo |
 | — | 2026-10-17 | — | 📣 Post de lançamento v1.1.0 (texto do [[Agente-LinkedIn]], postagem manual) | marco de divulgação, sem versão | ✅ entregue |
 | v1.9.9 | 2026-10-17 | des | ✅ Gate da v1.1.0 fechado — release concluída (M1–M4 + suítes S1–S3) | `docs(release): fecha gate da v1.1.0` | ✅ concluído |
+| v1.9.10 | 2026-10-17 | des | Planejamento v1.2.0 (+v1.1.1): PRD-09 Detect, plano 08, RFs Tree UX, HTML docs, AUD-16 | `docs(release): planeja v1.2.0 + prd-09 detect` | ⏳ em des, em revisão |
 
 ## Consulta (Dataview — notas de gestão)
 

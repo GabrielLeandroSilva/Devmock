@@ -24,8 +24,9 @@ updated: 2026-10-10
 - [ ] **Fase 5 — Extras + Costura** → `06-Extras/` (`v0.6.0` em `des`, em revisão)
 
 ## Roadmap pós-v1
-- **v1.1.0** — fechar Should do MVP (cenários 403/429, `errorRate`, log com body, `staleDetector` completo) → [[06-Plano-Release-v1.1.0]]
-- **v1.2.0** — Detect from project (PRD-09) + HTML docs
+- **v1.1.0** — ✅ publicada (cenários 403/429, `errorRate`, log com body, `staleDetector` por artefato) → [[06-Plano-Release-v1.1.0]]
+- **v1.1.1** — patch: Stop lento (AUD-16) → [[08-Plano-Release-v1.2.0]] (Parte 0)
+- **v1.2.0** — Tree UX (errorRate/cenário/abrir GET/Start-Stop) + Detect from project ([[PRD-09-Detect-From-Project]]) + HTML docs → [[08-Plano-Release-v1.2.0]]
 
 ## Status geral (Dataview)
 
