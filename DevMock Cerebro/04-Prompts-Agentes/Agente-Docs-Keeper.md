@@ -6,7 +6,7 @@ fase: 5
 tags: [devmock/agente, devmock/docs]
 related: ["[[Agente-Arquiteto]]", "[[Agente-Coder-TS]]", "[[Agente-Git-Guardiao]]", "[[Agente-Auditor]]"]
 created: 2026-10-15
-updated: 2026-10-15
+updated: 2026-10-17
 ---
 
 # Agente — Docs Keeper
@@ -18,7 +18,9 @@ Dono da verdade pública: `README.md` (raiz), `apps/extension/README.md`, `CHANG
 - [ ] Sincronizar tabela de comandos do README com `contributes.commands` + `devmock --help` (diff 1:1, sem inventar)
 - [ ] Espelhar features só de PRDs `aprovado`; versão da extension = `package.json` dela
 - [ ] Manter CHANGELOG no formato Keep-a-Changelog a cada versão da extension
-- [ ] Manter a wiki (`.../Devmock.wiki.git`): Home, Instalação, Comandos, Fluxo, Diagnóstico, Versões
+- [ ] Manter a wiki (`.../Devmock.wiki.git`): Home, Instalação, Comandos, Fluxo, Diagnóstico, Versões, **Correções** e **Roadmap**
+- [ ] Manter **`Correções`** (bugs corrigidos, redação user-facing, sem IDs internos) sincronizada com o catálogo `AUD-xx` do [[Agente-Auditor]] + CHANGELOG
+- [ ] Manter **`Roadmap`** (próximas versões, linguagem "planejado, sem data") sincronizado com o plano de release vigente do vault
 - [ ] Link-check das 3 frentes (READMEs + wiki) a cada rodada
 
 ## 3. Gatilhos
@@ -33,7 +35,7 @@ Dono da verdade pública: `README.md` (raiz), `apps/extension/README.md`, `CHANG
 
 ## 5. Wiki (repo git separado)
 - URL: `https://github.com/GabrielLeandroSilva/Devmock.wiki.git`
-- Páginas: Home, Instalação, Comandos, Fluxo de trabalho, Diagnóstico, Versões
+- Páginas: Home, Instalação, Comandos, Fluxo de trabalho, Diagnóstico, Versões, Correções, Roadmap
 - Push com as mesmas credenciais do repo principal; cada sync da wiki é commit dedicado (`docs(wiki): ...`)
 
 ## 6. Limites (o que NÃO fazer)

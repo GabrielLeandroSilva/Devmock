@@ -21,6 +21,11 @@ updated: 2026-10-11
 > - **PRDs — Aceites** (`path includes 01-PRDs`)
 > Base query global exclui `_Templates/` e `99-Anexos/`.
 
+## Convenção de status
+- **`[/]` (In Progress) = trabalho planejado para executar.** Toda task de um plano de release entra já em In Progress (aparece no board como planejado).
+- **`[x]` (Done) = DoD cumprido**, com evidência (teste verde/gate). Nunca marcar por intenção.
+- `[ ]` (Todo) = ainda não priorizado · `[-]` = cancelado/adiado.
+
 ## A fazer
 ```tasks
 not done

@@ -32,6 +32,14 @@ CLI equivalente: `devmock init|start|generate|export|import|validate` (pacote `d
 
 VS Code `^1.90.0`. Sem telemetria, 100% local, tudo em arquivos versionáveis.
 
+## Em breve (v1.2.0)
+
+- Editar `errorRate` e ver o cenário ativo direto na Tree; clique em endpoint GET abre no navegador; ícones Start/Stop
+- **Detect from project** — criar Schemas a partir do seu código
+- **HTML docs** — documentação em página única
+
+Veja o [Roadmap](https://github.com/GabrielLeandroSilva/Devmock/wiki/Roadmap) e o histórico em [Correções](https://github.com/GabrielLeandroSilva/Devmock/wiki/Corre%C3%A7%C3%B5es).
+
 ## Links
 
 - Repositório e docs vivas: [GabrielLeandroSilva/Devmock](https://github.com/GabrielLeandroSilva/Devmock)
