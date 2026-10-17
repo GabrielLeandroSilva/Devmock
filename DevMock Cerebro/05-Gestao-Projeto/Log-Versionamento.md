@@ -93,6 +93,7 @@ updated: 2026-10-10
 | v1.8.9 | 2026-10-17 | des | S3 — gate de cobertura no Core (≥90/80) + artefato no CI | `ci(qa): cobertura do core com threshold + artefato` | ⏳ em des, em revisão |
 | v1.9.0 | 2026-10-17 | des | M1 — UI expõe 403/429 via fonte única `SCENARIO_NAMES` (core 87 ✅, host 13 ✅) | `feat(ui): expoe forbidden e rate limited no switch` | ⏳ em des, em revisão |
 | v1.9.1 | 2026-10-17 | des | M2 — `errorRate` 0–100 determinístico por seed (core 89 ✅) | `feat(mock): errorRate deterministica + settings` | ⏳ em des, em revisão |
+| v1.9.2 | 2026-10-17 | des | M3 — request log com body truncado 1KB (core 90 ✅, host 14 ✅) | `feat(log): request log com body truncado` | ⏳ em des, em revisão |
 
 ## Consulta (Dataview — notas de gestão)
 

@@ -11,6 +11,7 @@ import {
   toYaml,
   validateLive,
   type EndpointReport,
+  type RequestLogEntry,
   type Schema,
 } from "@devmock/core";
 import {
@@ -132,4 +133,15 @@ function findSchema(root: string, schemaName: string): Schema {
   const schema = listSchemas(root).find((s) => s.name.toLowerCase() === schemaName.toLowerCase());
   if (!schema) throw new Error(`DevMock: schema "${schemaName}" não encontrado.`);
   return schema;
+}
+
+/** Formata uma entrada de log para o OutputChannel (PRD-02 logs com body truncado). */
+export function formatLogEntry(l: RequestLogEntry): string[] {
+  const lines = [
+    `${l.method.padEnd(6)} ${l.route.padEnd(24)} ${l.status} ${l.ms}ms [${l.scenario}]`,
+  ];
+  const mark = l.truncated ? " …(truncado)" : "";
+  if (l.requestBody) lines.push(`  → ${l.requestBody}${mark}`);
+  if (l.responseBody) lines.push(`  ← ${l.responseBody}${mark}`);
+  return lines;
 }

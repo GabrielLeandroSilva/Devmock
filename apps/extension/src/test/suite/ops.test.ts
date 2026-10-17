@@ -4,7 +4,7 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { createMockServer } from "@devmock/core";
 import { handleStudioMessage } from "../../studio.js";
-import { doExport, doGeneratePreview, doImportContent, doSaveFakeData, doSwitchScenario, doValidate } from "../../ops.js";
+import { doExport, doGeneratePreview, doImportContent, doSaveFakeData, doSwitchScenario, doValidate, formatLogEntry } from "../../ops.js";
 import { devmockDir, readConfig } from "../../project.js";
 
 suite("ops no host (fs real, sem mocks)", () => {
@@ -105,5 +105,33 @@ suite("ops no host (fs real, sem mocks)", () => {
     assert.strictEqual(renamed.kind, "ok");
     assert.ok(existsSync(join(devmockDir(root), "schemas", "users.json")));
     assert.ok(!existsSync(join(devmockDir(root), "schemas", "user.json")));
+  });
+
+  test("M3 — formatLogEntry mostra bodies e marca truncado", () => {
+    const withBodies = formatLogEntry({
+      method: "POST",
+      route: "POST /users",
+      status: 201,
+      ms: 3,
+      scenario: "Default",
+      requestBody: '{"a":1}',
+      responseBody: '{"id":"x"}',
+      truncated: false,
+    });
+    assert.strictEqual(withBodies.length, 3);
+    assert.ok(withBodies[1].includes("→"));
+    assert.ok(withBodies[2].includes("←"));
+
+    const cut = formatLogEntry({
+      method: "GET",
+      route: "GET /users",
+      status: 200,
+      ms: 1,
+      scenario: "Default",
+      responseBody: "y".repeat(1024),
+      truncated: true,
+    });
+    assert.strictEqual(cut.length, 2);
+    assert.ok(cut[1].includes("truncado"));
   });
 });

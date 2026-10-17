@@ -30,6 +30,12 @@ export interface RequestLogEntry {
   status: number;
   ms: number;
   scenario: string;
+  /** Corpo da requisição, truncado em 1KB (PRD-02 logs com body). */
+  requestBody?: string;
+  /** Corpo da resposta, truncado em 1KB. */
+  responseBody?: string;
+  /** true se algum corpo foi cortado no limite de 1KB. */
+  truncated?: boolean;
 }
 
 export interface Envelope<T> {

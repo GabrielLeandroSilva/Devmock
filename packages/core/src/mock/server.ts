@@ -38,6 +38,7 @@ interface Ctx {
   scenario: string;
   delayMs: number;
   headers?: Record<string, string>;
+  reqBody?: string;
 }
 
 interface Reply {
@@ -102,6 +103,7 @@ export function createMockServer(schemas: Schema[], opts: MockServerOptions = {}
         status: 413,
         scenario: "Default",
         delayMs: 0,
+        reqBody: rawBody,
       }, { status: 413, body: { error: "PAYLOAD_TOO_LARGE", message: "Corpo acima de 1MB." } });
       return;
     }
@@ -119,6 +121,7 @@ export function createMockServer(schemas: Schema[], opts: MockServerOptions = {}
         status: 404,
         scenario: "Default",
         delayMs: 0,
+        reqBody: rawBody,
       }, { status: 404, body: NOT_FOUND_BODY });
       return;
     }
@@ -139,6 +142,7 @@ export function createMockServer(schemas: Schema[], opts: MockServerOptions = {}
         scenario,
         delayMs: cfg.delayMs,
         headers: cfg.headers,
+        reqBody: rawBody,
       },
       reply,
     );
@@ -239,12 +243,18 @@ export function createMockServer(schemas: Schema[], opts: MockServerOptions = {}
       } else {
         res.end(JSON.stringify(reply.body));
       }
+      const responseText = reply.body === undefined ? undefined : JSON.stringify(reply.body);
+      const req = truncateBody(ctx.reqBody);
+      const resBody = truncateBody(responseText);
       entries.push({
         method: ctx.method,
         route: ctx.route,
         status: res.statusCode,
         ms: Date.now() - ctx.started,
         scenario: ctx.scenario,
+        requestBody: req.text,
+        responseBody: resBody.text,
+        truncated: req.truncated || resBody.truncated,
       });
     };
     if (ctx.delayMs && ctx.delayMs > 0) setTimeout(send, ctx.delayMs);
@@ -335,3 +345,11 @@ async function drain(req: IncomingMessage): Promise<{ text: string; tooLarge: bo
 }
 
 const MAX_BODY_BYTES = 1024 * 1024;
+const MAX_LOG_BODY = 1024;
+
+/** Trunca o corpo do log em 1KB, sinalizando corte (PRD-02 logs com body). */
+function truncateBody(text: string | undefined): { text: string | undefined; truncated: boolean } {
+  if (!text) return { text: undefined, truncated: false };
+  if (text.length <= MAX_LOG_BODY) return { text, truncated: false };
+  return { text: text.slice(0, MAX_LOG_BODY), truncated: true };
+}

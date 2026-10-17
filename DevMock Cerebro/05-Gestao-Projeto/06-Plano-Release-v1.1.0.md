@@ -66,7 +66,7 @@ Detalhe e matriz de rastreabilidade em [[07-Estrategia-Testes]].
 - [x] #task 🔼 Guards de infra (build-order, tsconfig, cjs-esm, ci-build) 🏷️ fase/codigo
 - [x] #task ⏫ M1 — expõe 403/429 na UI da extension 🏷️ fase/codigo
 - [x] #task ⏫ M2 — `errorRate` no core + UI/config 🏷️ fase/codigo
-- [/] #task ⏫ M3 — request log com body truncado 🏷️ fase/codigo
+- [x] #task ⏫ M3 — request log com body truncado 🏷️ fase/codigo
 - [/] #task ⏫ M4 — staleDetector por artefato + CLI grava hashes 🏷️ fase/codigo
 - [ ] #task 🔼 S1 (stretch) — cenários por header/query 🏷️ fase/codigo
 - [ ] #task 🔼 Atualizar Manual-Teste com os casos novos 🏷️ fase/codigo

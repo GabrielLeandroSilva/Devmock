@@ -98,6 +98,36 @@ describe("rastreabilidade de PRD", () => {
       await s.close();
     }
   });
+
+  it("M3 — request log captura bodies e trunca em 1KB", async () => {
+    const s = createMockServer([user], {
+      config: { port: 0 },
+      endpoints: { "GET /users": { delayMs: 0 }, "POST /users": { delayMs: 0 } },
+    });
+    const port = await s.listen();
+    try {
+      const ok = await fetch(`http://127.0.0.1:${port}/users?limit=1`);
+      await ok.arrayBuffer();
+      const big = await fetch(`http://127.0.0.1:${port}/users`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ name: "x".repeat(2000) }),
+      });
+      await big.arrayBuffer();
+
+      const logs = s.logs();
+      const get = logs.find((l) => l.method === "GET")!;
+      expect(get.responseBody).toBeDefined();
+      expect(get.truncated).toBe(false);
+
+      const post = logs.find((l) => l.method === "POST")!;
+      expect(post.requestBody).toBeDefined();
+      expect(post.requestBody!.length).toBe(1024);
+      expect(post.truncated).toBe(true);
+    } finally {
+      await s.close();
+    }
+  });
 });
 
 /** Conta respostas 500 em N requisições com uma errorRate/seed dadas. */

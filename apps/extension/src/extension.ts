@@ -19,6 +19,7 @@ import {
   doSaveFakeData,
   doSwitchScenario,
   doValidate,
+  formatLogEntry,
 } from "./ops.js";
 import {
   devmockDir,
@@ -231,7 +232,7 @@ export function activate(context: vscode.ExtensionContext): void {
       state.port = undefined;
       channel.clear();
       for (const l of logs.slice(-50)) {
-        channel.appendLine(`${l.method.padEnd(6)} ${l.route.padEnd(24)} ${l.status} ${l.ms}ms [${l.scenario}]`);
+        for (const line of formatLogEntry(l)) channel.appendLine(line);
       }
       channel.show(true);
       refresh();
@@ -385,7 +386,7 @@ export function activate(context: vscode.ExtensionContext): void {
       }
       channel.clear();
       for (const l of state.server.logs().slice(-100)) {
-        channel.appendLine(`${l.method.padEnd(6)} ${l.route.padEnd(24)} ${l.status} ${l.ms}ms [${l.scenario}]`);
+        for (const line of formatLogEntry(l)) channel.appendLine(line);
       }
       channel.show(true);
     }),
