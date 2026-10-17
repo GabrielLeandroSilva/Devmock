@@ -78,4 +78,4 @@ Princípios: Schema First, Reproducible, Git Friendly. Português PT-BR, termos 
 ## 11. Links
 - Parceiros: [[Agente-Auditor]] (acha bugs), [[Agente-Coder-TS]] (implementa), [[Agente-Git-Guardiao]] (versiona)
 - Estratégia: [[07-Estrategia-Testes]] | Release: [[06-Plano-Release-v1.1.0]] | Métricas: [[05-Metricas-Sucesso]]
-- Subagente executável: `.opencode/agent/qa-testes.md`
+- Subagente executável: `.opencode/agent/qa-testes.md` (modelo `opencode-go/gpt-6-luna`)

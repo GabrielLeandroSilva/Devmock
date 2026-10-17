@@ -4,6 +4,7 @@ description: >-
   suítes de teste, garantir rastreabilidade de regressão (catálogo AUD-xx),
   cobertura e gates de CI. Não altera código de produção.
 mode: subagent
+model: opencode-go/gpt-6-luna
 temperature: 0.1
 permission:
   edit: allow
