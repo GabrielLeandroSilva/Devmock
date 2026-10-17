@@ -4,7 +4,7 @@ type: gestao
 status: revisao
 fase: 4
 tags: [devmock/gestao, devmock/eap]
-related: ["[[00-Project-Charter]]", "[[03-MVP-Scope]]"]
+related: ["[[00-Project-Charter]]", "[[03-MVP-Scope]]", "[[06-Plano-Release-v1.1.0]]"]
 created: 2026-10-11
 updated: 2026-10-11
 ---
@@ -40,6 +40,9 @@ Decompor o MVP até pacotes de trabalho auditáveis (cada pacote = 1 PRD ou 1 en
 ├── 2.1 Import OpenAPI (PRD-06)
 ├── 2.2 Contract Validation (PRD-07)
 └── 2.3 CLI + CI/CD (PRD-08)
+3. Pós-v1.x (roadmap de releases)
+├── 3.1 v1.1.0 — fechar Should do MVP: cenários 403/429, errorRate, log com body, staleDetector completo + gate de cobertura → [[06-Plano-Release-v1.1.0]]
+└── 3.2 v1.2.0 — Detect from project (PRD-09) + HTML docs
 ```
 
 Critério de pacote pronto: aceites do PRD em `aprovado` + testes do Coder verdes + docs exportadas sem diff espúrio.
@@ -55,4 +58,4 @@ sort by priority
 ```
 
 ## 5. Links
-- Cronograma: [[02-Cronograma-Fases]] | Riscos: [[04-Riscos]]
+- Cronograma: [[02-Cronograma-Fases]] | Riscos: [[04-Riscos]] | Release v1.1.0: [[06-Plano-Release-v1.1.0]]
