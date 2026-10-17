@@ -4,9 +4,9 @@ type: prd
 status: revisao
 fase: 1
 tags: [devmock/mvp, devmock/docs]
-related: ["[[PRD-01-Core-Schema-Data]]", "[[DevMock-Produto-e-Fluxos]]"]
+related: ["[[PRD-01-Core-Schema-Data]]", "[[08-Plano-Release-v1.2.0]]", "[[DevMock-Produto-e-Fluxos]]"]
 created: 2026-10-10
-updated: 2026-10-10
+updated: 2026-10-17
 ---
 
 # PRD-05 — Documentação e Export do Contrato
@@ -27,8 +27,12 @@ Sem contrato compartilhável, o backend não sabe o que implementar e o front n�
 - Tipos TS: `export interface User { id: string; ...; status: "ACTIVE"\|"BLOCKED"\|"PENDING"; balance: number }`
 - Regeneração idempotente: re-export com mesmo Schema gera diff mínimo
 
+### Dentro (v1.2.0)
+- **HTML docs**: página única com âncoras por recurso, **CSS inline** (offline, sem CDN), gerada ao lado do Markdown em `.devmock/docs/index.html`
+- Novo artefato `html` no export → entra no `staleDetector` por artefato
+
 ### Fora (futuro)
-- HTML docs, import OpenAPI (PRD-06), validação real (PRD-07)
+- Import OpenAPI (PRD-06) ✅ · validação real (PRD-07) ✅
 
 ## 4. Requisitos Funcionais
 | ID | Requisito | Prioridade | Origem |
@@ -38,6 +42,7 @@ Sem contrato compartilhável, o backend não sabe o que implementar e o front n�
 | RF-03 | Exportar JSON Schema por model | Must | §16 |
 | RF-04 | Gerar `types.ts` com enums como union e `balance: number` | Must | §16 |
 | RF-05 | Comando único `Export Contract` com checklist de artefatos | Must | §16 |
+| RF-06 | Gerar `docs/index.html` (página única, âncoras, CSS inline/offline) | Should | v1.2.0 |
 
 ## 5. Requisitos Não-Funcionais
 - OpenAPI gerado valida sem erros em `swagger-parser`
@@ -52,6 +57,7 @@ Sem contrato compartilhável, o backend não sabe o que implementar e o front n�
 - [ ] #task ⏫ OpenAPI valida sem erros e importa no Postman/Swagger UI 🏷️ fase/1
 - [ ] #task ⏫ `types.ts` compila limpo e reflete o enum de status 🏷️ fase/1
 - [ ] #task 🔼 Re-export sem mudança no Schema gera diff vazio 🏷️ fase/1
+- [ ] #task 🔼 **[v1.2.0]** HTML docs: página única abre offline (sem rede) e re-export é idempotente 🏷️ fase/codigo
 
 ## 8. Riscos e Dependências
 - Depende de PRD-01 (Schema + tipos de campo)

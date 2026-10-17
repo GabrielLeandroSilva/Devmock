@@ -2,6 +2,10 @@
 
 Formato [Keep a Changelog](https://keepachangelog.com/). Versões da extension são independentes das tags do monorepo.
 
+## [1.1.1] — 2026-10-17 — Patch: Stop rápido
+### Fixed
+- **Stop do Mock Server** não demora mais ~5s: `close()` passou a encerrar as conexões **keep-alive** (navegador/`fetch`) imediatamente — `server.closeAllConnections()` (AUD-16)
+
 ## [1.1.0] — 2026-10-17 — Cenários completos + observabilidade
 ### Added
 - Switch Scenario agora expõe os **7 cenários** embutidos (inclui **Forbidden 403** e **Rate Limited 429**); nomes vêm de uma fonte única no Core (`SCENARIO_NAMES`)

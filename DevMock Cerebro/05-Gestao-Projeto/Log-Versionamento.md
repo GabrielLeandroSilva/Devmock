@@ -99,6 +99,12 @@ updated: 2026-10-10
 | v1.9.5 | 2026-10-17 | des | Fechamento v1.1.0: Manual-Teste-v1.1, versão `1.1.0`, README+wiki, gate (core 92/cob 94% · cli 7 · host 15) | `docs(release): fecha v1.1.0 — manual, versao e docs` | ⏳ em des, em revisão |
 | v1.9.6 | 2026-10-17 | des | Fix F5: task usa `npm run build:host` (evita yarn) | `fix(dev): task do F5 usa npm explicito (evita yarn)` | ⏳ em des, em revisão |
 | v1.9.7 | 2026-10-17 | des | Manual v1.1.0 100% ✅ no host (M1–M4 + regressão §1–§7) | `docs(qa): manual v1.1.0 100% aprovado no host` | ⏳ em des → promove |
+| v1.9.8 | 2026-10-17 | main + des | 🚀 Promoção v1.1.0 (PR nº 23) + tag `ext-v1.1.0` | merge `42e8466` + tag `ext-v1.1.0` | ✅ validado, em main |
+| ext-v1.1.0 | 2026-10-17 | tag em main | 🎉 PUBLICADO na Marketplace | `Published devmock.devmock-vscode v1.1.0` via publish.yml (run 39055951657) | ✅ ao vivo |
+| — | 2026-10-17 | — | 📣 Post de lançamento v1.1.0 (texto do [[Agente-LinkedIn]], postagem manual) | marco de divulgação, sem versão | ✅ entregue |
+| v1.9.9 | 2026-10-17 | des | ✅ Gate da v1.1.0 fechado — release concluída (M1–M4 + suítes S1–S3) | `docs(release): fecha gate da v1.1.0` | ✅ concluído |
+| v1.9.10 | 2026-10-17 | des | Planejamento v1.2.0 (+v1.1.1): PRD-09 Detect, plano 08, RFs Tree UX, HTML docs, AUD-16 | `docs(release): planeja v1.2.0 + prd-09 detect` | ⏳ em des, em revisão |
+| v1.9.11 | 2026-10-17 | des | v1.1.1 — fix Stop lento (AUD-16): `closeAllConnections` (core 93 ✅) + versão `1.1.1` | `fix(mock): stop encerra conexoes keep-alive (AUD-16)` | ⏳ em des, em revisão |
 
 ## Consulta (Dataview — notas de gestão)
 

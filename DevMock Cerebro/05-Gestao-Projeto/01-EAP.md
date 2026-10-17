@@ -41,8 +41,9 @@ Decompor o MVP até pacotes de trabalho auditáveis (cada pacote = 1 PRD ou 1 en
 ├── 2.2 Contract Validation (PRD-07)
 └── 2.3 CLI + CI/CD (PRD-08)
 3. Pós-v1.x (roadmap de releases)
-├── 3.1 v1.1.0 — fechar Should do MVP: cenários 403/429, errorRate, log com body, staleDetector completo + gate de cobertura → [[06-Plano-Release-v1.1.0]]
-└── 3.2 v1.2.0 — Detect from project (PRD-09) + HTML docs
+├── 3.1 v1.1.0 — ✅ fechar Should do MVP: cenários 403/429, errorRate, log com body, staleDetector completo + gate de cobertura → [[06-Plano-Release-v1.1.0]]
+├── 3.2 v1.1.1 — patch: Stop lento (AUD-16)
+└── 3.3 v1.2.0 — Tree UX + Detect from project (PRD-09) + HTML docs → [[08-Plano-Release-v1.2.0]]
 ```
 
 Critério de pacote pronto: aceites do PRD em `aprovado` + testes do Coder verdes + docs exportadas sem diff espúrio.
