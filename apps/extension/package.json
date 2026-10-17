@@ -57,6 +57,7 @@
   },
   "scripts": {
     "build": "npm run lint && node ./scripts/bundle.js",
+    "build:host": "npm --prefix ../../packages/core run build && npm run build",
     "lint": "tsc -p tsconfig.json --noEmit",
     "pretest": "npm run build && npm --prefix ../../packages/core run build && tsc -p test/tsconfig.test.json",
     "test": "node ./out/test/runTest.js",
