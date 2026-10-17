@@ -5,7 +5,7 @@ import { join } from "node:path";
 import { createMockServer } from "@devmock/core";
 import { handleStudioMessage } from "../../studio.js";
 import { doExport, doGeneratePreview, doImportContent, doSaveFakeData, doSwitchScenario, doValidate, formatLogEntry } from "../../ops.js";
-import { devmockDir, readConfig } from "../../project.js";
+import { devmockDir, listSchemas, readConfig, staleSinceLastExport } from "../../project.js";
 
 suite("ops no host (fs real, sem mocks)", () => {
   let root = "";
@@ -105,6 +105,24 @@ suite("ops no host (fs real, sem mocks)", () => {
     assert.strictEqual(renamed.kind, "ok");
     assert.ok(existsSync(join(devmockDir(root), "schemas", "users.json")));
     assert.ok(!existsSync(join(devmockDir(root), "schemas", "user.json")));
+  });
+
+  test("M4 — export parcial não sincroniza os demais artefatos", () => {
+    doExport(root, "Tudo");
+    assert.deepStrictEqual(staleSinceLastExport(root, listSchemas(root)), []);
+
+    const schemaPath = join(devmockDir(root), "schemas", "user.json");
+    const schema = JSON.parse(readFileSync(schemaPath, "utf8"));
+    schema.fields.push({ name: "novo", type: "string" });
+    writeFileSync(schemaPath, JSON.stringify(schema));
+
+    // Exporta SÓ Markdown: OpenAPI/types/jsonSchema seguem stale.
+    doExport(root, "Markdown");
+    assert.deepStrictEqual(staleSinceLastExport(root, listSchemas(root)), ["User"]);
+
+    // Exporta tudo de novo → sincroniza.
+    doExport(root, "Tudo");
+    assert.deepStrictEqual(staleSinceLastExport(root, listSchemas(root)), []);
   });
 
   test("M3 — formatLogEntry mostra bodies e marca truncado", () => {

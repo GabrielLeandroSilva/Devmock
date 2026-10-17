@@ -67,7 +67,7 @@ Detalhe e matriz de rastreabilidade em [[07-Estrategia-Testes]].
 - [x] #task ⏫ M1 — expõe 403/429 na UI da extension 🏷️ fase/codigo
 - [x] #task ⏫ M2 — `errorRate` no core + UI/config 🏷️ fase/codigo
 - [x] #task ⏫ M3 — request log com body truncado 🏷️ fase/codigo
-- [/] #task ⏫ M4 — staleDetector por artefato + CLI grava hashes 🏷️ fase/codigo
+- [x] #task ⏫ M4 — staleDetector por artefato + CLI grava hashes 🏷️ fase/codigo
 - [ ] #task 🔼 S1 (stretch) — cenários por header/query 🏷️ fase/codigo
 - [ ] #task 🔼 Atualizar Manual-Teste com os casos novos 🏷️ fase/codigo
 - [ ] #task 🔼 CHANGELOG + `package.json` → `1.1.0` 🏷️ fase/codigo

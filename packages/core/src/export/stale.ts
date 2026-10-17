@@ -24,3 +24,47 @@ export function hashSchema(schema: Schema): string {
 export function isStale(schema: Schema, exportedHash: string): boolean {
   return hashSchema(schema) !== exportedHash;
 }
+
+/** Artefatos exportáveis, chaveados no `.hashes.json`. */
+export type ArtifactKey = "openapi" | "jsonSchema" | "types" | "markdown";
+
+/** Conjunto completo do contrato: um artefato ausente conta como desatualizado. */
+export const ALL_ARTIFACTS: ArtifactKey[] = ["openapi", "jsonSchema", "types", "markdown"];
+
+/** Hash do Schema no momento em que cada artefato foi gerado: `{ schema: { artefato: hash } }`. */
+export type ExportHashes = Record<string, Partial<Record<ArtifactKey, string>>>;
+
+/**
+ * Registra, por artefato, o hash do Schema que o gerou. Só toca os artefatos
+ * informados — um export parcial não marca os demais como sincronizados (M4).
+ */
+export function mergeExportHashes(
+  prev: ExportHashes | undefined,
+  schemas: Schema[],
+  artifacts: ArtifactKey[],
+): ExportHashes {
+  const out: ExportHashes = { ...(prev ?? {}) };
+  for (const s of schemas) {
+    const entry = { ...(out[s.name] ?? {}) };
+    const h = hashSchema(s);
+    for (const a of artifacts) entry[a] = h;
+    out[s.name] = entry;
+  }
+  return out;
+}
+
+/**
+ * Schemas com o contrato desatualizado: qualquer artefato esperado sem hash
+ * registrado (nunca gerado) OU com hash diferente do Schema atual.
+ * Sem registro algum (nada exportado) → [] (nada a avisar).
+ */
+export function staleSchemas(schemas: Schema[], stored: ExportHashes | undefined): string[] {
+  if (!stored) return [];
+  return schemas
+    .filter((s) => {
+      const entry = stored[s.name] ?? {};
+      const current = hashSchema(s);
+      return ALL_ARTIFACTS.some((a) => entry[a] !== current);
+    })
+    .map((s) => s.name);
+}

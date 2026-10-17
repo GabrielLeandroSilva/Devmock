@@ -1,12 +1,15 @@
 import { describe, expect, it } from "vitest";
 import SwaggerParser from "@apidevtools/swagger-parser";
 import {
+  ALL_ARTIFACTS,
   buildDocFor,
   buildJsonSchemas,
   buildOpenApi,
   buildTypes,
   hashSchema,
   isStale,
+  mergeExportHashes,
+  staleSchemas,
   toYaml,
 } from "../src/export/index.js";
 import type { Schema } from "../src/types.js";
@@ -155,5 +158,27 @@ describe("idempotência + stale (PRD-05 §8)", () => {
 
   it("canonical lida com undefined", () => {
     expect(hashSchema(user)).toMatch(/^[0-9a-f]{16}$/);
+  });
+
+  it("M4 — stale é por artefato: export parcial não marca o resto como sincronizado", () => {
+    expect(staleSchemas([user], undefined)).toEqual([]); // nada exportado
+    const full = mergeExportHashes(undefined, [user], ALL_ARTIFACTS);
+    expect(staleSchemas([user], full)).toEqual([]);
+
+    // Exportou só Markdown: OpenAPI/types/jsonSchema seguem desatualizados.
+    const onlyMd = mergeExportHashes(undefined, [user], ["markdown"]);
+    expect(staleSchemas([user], onlyMd)).toEqual(["User"]);
+
+    // Schema mudou → todos os artefatos ficam stale.
+    const changed: Schema = { ...user, fields: [...user.fields, { name: "x", type: "string" }] };
+    expect(staleSchemas([changed], full)).toEqual(["User"]);
+  });
+
+  it("M4 — mergeExportHashes só toca os artefatos exportados", () => {
+    const start = mergeExportHashes(undefined, [user], ["markdown"]);
+    const after = mergeExportHashes(start, [user], ["openapi"]);
+    expect(after.User.markdown).toBeDefined();
+    expect(after.User.openapi).toBe(after.User.markdown);
+    expect(after.User.types).toBeUndefined();
   });
 });

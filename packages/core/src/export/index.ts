@@ -3,4 +3,13 @@ export { buildOpenApi } from "./openapi.js";
 export { buildTypes } from "./ts.js";
 export { buildDocFor, buildDocs } from "./md.js";
 export { toYaml } from "./yaml.js";
-export { canonical, hashSchema, isStale } from "./stale.js";
+export {
+  canonical,
+  hashSchema,
+  isStale,
+  mergeExportHashes,
+  staleSchemas,
+  ALL_ARTIFACTS,
+  type ArtifactKey,
+  type ExportHashes,
+} from "./stale.js";

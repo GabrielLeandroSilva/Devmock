@@ -94,6 +94,7 @@ updated: 2026-10-10
 | v1.9.0 | 2026-10-17 | des | M1 — UI expõe 403/429 via fonte única `SCENARIO_NAMES` (core 87 ✅, host 13 ✅) | `feat(ui): expoe forbidden e rate limited no switch` | ⏳ em des, em revisão |
 | v1.9.1 | 2026-10-17 | des | M2 — `errorRate` 0–100 determinístico por seed (core 89 ✅) | `feat(mock): errorRate deterministica + settings` | ⏳ em des, em revisão |
 | v1.9.2 | 2026-10-17 | des | M3 — request log com body truncado 1KB (core 90 ✅, host 14 ✅) | `feat(log): request log com body truncado` | ⏳ em des, em revisão |
+| v1.9.3 | 2026-10-17 | des | M4 — staleDetector por artefato + CLI grava `.hashes.json` (core 92 ✅, cli 7 ✅, host 15 ✅) | `fix(export): stale por artefato + cli grava hashes` | ⏳ em des, em revisão |
 
 ## Consulta (Dataview — notas de gestão)
 

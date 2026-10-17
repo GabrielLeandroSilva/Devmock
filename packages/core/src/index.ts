@@ -23,7 +23,12 @@ export {
   buildDocs,
   hashSchema,
   isStale,
+  mergeExportHashes,
+  staleSchemas,
+  ALL_ARTIFACTS,
   toYaml,
+  type ArtifactKey,
+  type ExportHashes,
 } from "./export/index.js";
 export {
   createMockServer,
