@@ -55,8 +55,8 @@ updated: 2026-10-17
 - **W3** HTML único, offline, determinístico (re-export → diff zero); novo artefato entra no stale por artefato.
 
 ## 3. Passos de execução (checklist)
-- [ ] #task ⏫ P0 — Core `close()` + regressão `AUD-16` 🏷️ fase/codigo
-- [ ] #task 🔼 P0 — versão `1.1.1` + CHANGELOG + Manual §7 + gate + tag `ext-v1.1.1` 🏷️ fase/codigo
+- [x] #task ⏫ P0 — Core `close()` + regressão `AUD-16` 🏷️ fase/codigo
+- [/] #task 🔼 P0 — versão `1.1.1` + CHANGELOG + Manual §7 + gate + tag `ext-v1.1.1` 🏷️ fase/codigo
 - [ ] #task ⏫ W1.1 — `devmock.setErrorRate` + Settings clicável 🏷️ fase/codigo
 - [ ] #task ⏫ W1.2 — cenário ativo no Schema e nos Endpoints 🏷️ fase/codigo
 - [ ] #task ⏫ W1.3 — `devmock.openEndpoint` (só GET) 🏷️ fase/codigo

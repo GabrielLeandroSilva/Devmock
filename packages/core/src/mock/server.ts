@@ -312,6 +312,8 @@ export function createMockServer(schemas: Schema[], opts: MockServerOptions = {}
     close: () =>
       new Promise<void>((resolve) => {
         server.close(() => resolve());
+        // AUD-16: encerra conexões keep-alive (navegador/fetch) para o stop não travar ~5s.
+        server.closeAllConnections();
       }),
   };
 }

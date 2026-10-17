@@ -197,4 +197,13 @@ describe("regressão — catálogo AUD", () => {
       await server.close();
     }
   });
+
+  it("AUD-16 — close() encerra conexões keep-alive (Stop não trava)", async () => {
+    const { server, req } = await boot();
+    // Abre uma conexão keep-alive (fetch/undici mantém o socket no pool).
+    expect((await req("/users?limit=1")).status).toBe(200);
+    const started = Date.now();
+    await server.close();
+    expect(Date.now() - started).toBeLessThan(1000);
+  });
 });
