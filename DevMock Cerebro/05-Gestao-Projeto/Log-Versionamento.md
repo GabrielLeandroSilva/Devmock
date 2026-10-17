@@ -97,6 +97,8 @@ updated: 2026-10-10
 | v1.9.3 | 2026-10-17 | des | M4 — staleDetector por artefato + CLI grava `.hashes.json` (core 92 ✅, cli 7 ✅, host 15 ✅) | `fix(export): stale por artefato + cli grava hashes` | ⏳ em des, em revisão |
 | v1.9.4 | 2026-10-17 | des | Fixa modelo `opencode-go/gpt-6-luna` no subagente qa-testes | `chore(qa): fixa modelo gpt-6-luna no subagente qa-testes` | ⏳ em des, em revisão |
 | v1.9.5 | 2026-10-17 | des | Fechamento v1.1.0: Manual-Teste-v1.1, versão `1.1.0`, README+wiki, gate (core 92/cob 94% · cli 7 · host 15) | `docs(release): fecha v1.1.0 — manual, versao e docs` | ⏳ em des, em revisão |
+| v1.9.6 | 2026-10-17 | des | Fix F5: task usa `npm run build:host` (evita yarn) | `fix(dev): task do F5 usa npm explicito (evita yarn)` | ⏳ em des, em revisão |
+| v1.9.7 | 2026-10-17 | des | Manual v1.1.0 100% ✅ no host (M1–M4 + regressão §1–§7) | `docs(qa): manual v1.1.0 100% aprovado no host` | ⏳ em des → promove |
 
 ## Consulta (Dataview — notas de gestão)
 
