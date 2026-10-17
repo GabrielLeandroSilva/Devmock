@@ -2,7 +2,7 @@
   "name": "devmock-vscode",
   "displayName": "DevMock",
   "description": "API Contract & Mocking for Front-end — build without waiting for the backend.",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "publisher": "devmock",
   "license": "MIT",
   "icon": "images/icon.png",

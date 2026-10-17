@@ -28,9 +28,11 @@ Na [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemNa
 | Switch Scenario… | Default, Empty, 401/403/500/429, Slow — sem restart |
 | Export Contract… | OpenAPI JSON+YAML, JSON Schema, `types.ts`, Markdown |
 | Validate Real API… | Compara a API real com o contrato (Compatible/Warning/Breaking) |
-| Show Request Log | Método, rota, status, ms e cenário |
+| Show Request Log | Método, rota, status, ms, cenário e bodies (request/response, truncados em 1KB) |
 
 Prefere terminal? Há CLI equivalente: `devmock init|start|generate|export|import|validate` (ver `packages/cli`).
+
+Quer testar instabilidade? Defina **`errorRate`** (0–100) em `.devmock/config.json` para injetar falhas 500 de forma determinística — e use o Switch Scenario para os estados `403/429/slow`.
 
 ## Exemplo
 

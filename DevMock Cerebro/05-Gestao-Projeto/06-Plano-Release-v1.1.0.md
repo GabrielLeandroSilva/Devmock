@@ -69,18 +69,18 @@ Detalhe e matriz de rastreabilidade em [[07-Estrategia-Testes]].
 - [x] #task ⏫ M3 — request log com body truncado 🏷️ fase/codigo
 - [x] #task ⏫ M4 — staleDetector por artefato + CLI grava hashes 🏷️ fase/codigo
 - [ ] #task 🔼 S1 (stretch) — cenários por header/query 🏷️ fase/codigo
-- [ ] #task 🔼 Atualizar Manual-Teste com os casos novos 🏷️ fase/codigo
-- [ ] #task 🔼 CHANGELOG + `package.json` → `1.1.0` 🏷️ fase/codigo
-- [ ] #task 🔼 Sincronizar README + wiki (Docs-Keeper) 🏷️ fase/codigo
-- [ ] #task ⏫ Rodar Gate de Release (§6) 🏷️ fase/codigo
+- [x] #task 🔼 Atualizar Manual-Teste com os casos novos 🏷️ fase/codigo
+- [x] #task 🔼 CHANGELOG + `package.json` → `1.1.0` 🏷️ fase/codigo
+- [x] #task 🔼 Sincronizar README + wiki (Docs-Keeper) 🏷️ fase/codigo
+- [/] #task ⏫ Rodar Gate de Release (§6) — automático ✅; falta host (UI) 🏷️ fase/codigo
 
 ## 6. Gate de Release (apto a commitar a versão)
-- [ ] Manual-Teste 100% ✅ (incluindo casos de M1–M4)
-- [ ] `vitest run` verde + cobertura ≥ threshold (I1) + matriz `AUD → teste` 100%
-- [ ] `tsc --noEmit` limpo em todos os workspaces
-- [ ] CHANGELOG da extension + `package.json` = `1.1.0`
-- [ ] README (raiz + extension) e wiki sincronizados
-- [ ] `Log-Versionamento` atualizado
+- [ ] Manual-Teste 100% ✅ (incluindo casos de M1–M4) — pendente validação no host
+- [x] `vitest run` verde + cobertura ≥ threshold (I1) + matriz `AUD → teste` 100%
+- [x] `tsc --noEmit` limpo em todos os workspaces
+- [x] CHANGELOG da extension + `package.json` = `1.1.0`
+- [x] README (raiz + extension) e wiki sincronizados
+- [x] `Log-Versionamento` atualizado
 - [ ] Tag `ext-v1.1.0` (trava `tag == versão`) → `publish.yml`
 - [ ] Post de lançamento (Agente-LinkedIn, postagem manual)
 

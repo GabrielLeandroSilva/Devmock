@@ -95,6 +95,8 @@ updated: 2026-10-10
 | v1.9.1 | 2026-10-17 | des | M2 — `errorRate` 0–100 determinístico por seed (core 89 ✅) | `feat(mock): errorRate deterministica + settings` | ⏳ em des, em revisão |
 | v1.9.2 | 2026-10-17 | des | M3 — request log com body truncado 1KB (core 90 ✅, host 14 ✅) | `feat(log): request log com body truncado` | ⏳ em des, em revisão |
 | v1.9.3 | 2026-10-17 | des | M4 — staleDetector por artefato + CLI grava `.hashes.json` (core 92 ✅, cli 7 ✅, host 15 ✅) | `fix(export): stale por artefato + cli grava hashes` | ⏳ em des, em revisão |
+| v1.9.4 | 2026-10-17 | des | Fixa modelo `opencode-go/gpt-6-luna` no subagente qa-testes | `chore(qa): fixa modelo gpt-6-luna no subagente qa-testes` | ⏳ em des, em revisão |
+| v1.9.5 | 2026-10-17 | des | Fechamento v1.1.0: Manual-Teste-v1.1, versão `1.1.0`, README+wiki, gate (core 92/cob 94% · cli 7 · host 15) | `docs(release): fecha v1.1.0 — manual, versao e docs` | ⏳ em des, em revisão |
 
 ## Consulta (Dataview — notas de gestão)
 
