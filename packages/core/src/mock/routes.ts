@@ -70,6 +70,12 @@ export const BUILTIN_SCENARIOS: Record<string, EndpointConfig> = {
   "Rate Limited": { status: 429 },
 };
 
+/**
+ * Nomes dos cenários embutidos, na ordem de exibição da UI (PRD-04).
+ * Fonte única para a Extension não divergir do Core (evita lista duplicada).
+ */
+export const SCENARIO_NAMES: string[] = Object.keys(BUILTIN_SCENARIOS);
+
 export function plural(name: string): string {
   const lower = name.toLowerCase();
   if (lower === "person") return "people";

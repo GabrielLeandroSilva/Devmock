@@ -30,6 +30,7 @@ export {
   routesFor,
   paginate,
   DEFAULT_ENDPOINT,
+  SCENARIO_NAMES,
   type MockServer,
   type MockServerOptions,
   type EndpointConfig,

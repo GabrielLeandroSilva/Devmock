@@ -4,6 +4,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import {
   DEFAULT_CONFIG,
+  SCENARIO_NAMES,
   createMockServer,
   generatorNames,
   routesFor,
@@ -99,7 +100,7 @@ class ProjectProvider implements vscode.TreeDataProvider<TreeNode> {
         return schemas.flatMap((s) => routesFor(s).map((r) => ({ label: r })));
       case "Scenarios": {
         const cfg = readConfig(ctx.root);
-        return ["Default", "Empty", "Unauthorized", "Server Error", "Slow Network"].map((name) => ({
+        return SCENARIO_NAMES.map((name) => ({
           label: (Object.values(cfg.activeScenarios ?? {}).includes(name) ? "✓ " : "") + name,
         }));
       }
@@ -336,7 +337,7 @@ export function activate(context: vscode.ExtensionContext): void {
       const endpoint = await vscode.window.showQuickPick(endpoints, { placeHolder: "Endpoint" });
       if (!endpoint) return;
       const scenario = await vscode.window.showQuickPick(
-        ["Default", "Empty", "Unauthorized", "Server Error", "Slow Network"],
+        SCENARIO_NAMES,
         { placeHolder: `Cenário para ${endpoint}` },
       );
       if (!scenario) return;

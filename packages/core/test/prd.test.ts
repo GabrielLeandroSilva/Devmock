@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { createMockServer } from "../src/mock/index.js";
-import { BUILTIN_SCENARIOS, resolveEndpoint } from "../src/mock/routes.js";
+import { BUILTIN_SCENARIOS, resolveEndpoint, SCENARIO_NAMES } from "../src/mock/routes.js";
 import { generate } from "../src/generators/index.js";
 import { DEFAULT_CONFIG, type Schema } from "../src/types.js";
 
@@ -60,5 +60,18 @@ describe("rastreabilidade de PRD", () => {
     });
     expect(BUILTIN_SCENARIOS["Slow Network"].delayMs).toBe(5000);
     expect(cfg.delayMs).toBe(5000);
+  });
+
+  it("M1 — SCENARIO_NAMES expõe os 7 cenários (inclui 403 e 429) na UI", () => {
+    expect(SCENARIO_NAMES).toEqual([
+      "Default",
+      "Empty",
+      "Unauthorized",
+      "Forbidden",
+      "Server Error",
+      "Slow Network",
+      "Rate Limited",
+    ]);
+    expect(SCENARIO_NAMES).toEqual(Object.keys(BUILTIN_SCENARIOS));
   });
 });

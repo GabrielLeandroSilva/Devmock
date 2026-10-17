@@ -63,11 +63,11 @@ Detalhe e matriz de rastreabilidade em [[07-Estrategia-Testes]].
 - [x] #task 🔼 S1 — `regression.test.ts` por pacote (1 `it` por AUD-xx) 🏷️ fase/codigo
 - [x] #task 🔼 S2 — matriz `RF → teste` e aceites órfãos zero 🏷️ fase/codigo
 - [x] #task 🔼 S3 — cobertura + threshold + artefato no CI 🏷️ fase/codigo
-- [ ] #task 🔼 Guards de infra (build-order, tsconfig, cjs-esm, ci-build) 🏷️ fase/codigo
-- [ ] #task ⏫ M1 — expõe 403/429 na UI da extension 🏷️ fase/codigo
-- [ ] #task ⏫ M2 — `errorRate` no core + UI/config 🏷️ fase/codigo
-- [ ] #task ⏫ M3 — request log com body truncado 🏷️ fase/codigo
-- [ ] #task ⏫ M4 — staleDetector por artefato + CLI grava hashes 🏷️ fase/codigo
+- [x] #task 🔼 Guards de infra (build-order, tsconfig, cjs-esm, ci-build) 🏷️ fase/codigo
+- [x] #task ⏫ M1 — expõe 403/429 na UI da extension 🏷️ fase/codigo
+- [/] #task ⏫ M2 — `errorRate` no core + UI/config 🏷️ fase/codigo
+- [/] #task ⏫ M3 — request log com body truncado 🏷️ fase/codigo
+- [/] #task ⏫ M4 — staleDetector por artefato + CLI grava hashes 🏷️ fase/codigo
 - [ ] #task 🔼 S1 (stretch) — cenários por header/query 🏷️ fase/codigo
 - [ ] #task 🔼 Atualizar Manual-Teste com os casos novos 🏷️ fase/codigo
 - [ ] #task 🔼 CHANGELOG + `package.json` → `1.1.0` 🏷️ fase/codigo

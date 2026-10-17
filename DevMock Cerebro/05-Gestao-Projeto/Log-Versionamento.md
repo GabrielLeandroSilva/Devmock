@@ -91,6 +91,7 @@ updated: 2026-10-10
 | v1.8.7 | 2026-10-17 | des | S1 — regressão por AUD (15/15) + 5 guards (core 82 ✅, host 13 ✅) | `test(qa): suites de regressao AUD-01..15 + guards de infra` | ⏳ em des, em revisão |
 | v1.8.8 | 2026-10-17 | des | S2 — matriz RF→teste dos 8 PRDs + 4 órfãos fechados (core 86 ✅, cli 7 ✅) | `test(qa): matriz rf->teste + testes de aceite de PRD` | ⏳ em des, em revisão |
 | v1.8.9 | 2026-10-17 | des | S3 — gate de cobertura no Core (≥90/80) + artefato no CI | `ci(qa): cobertura do core com threshold + artefato` | ⏳ em des, em revisão |
+| v1.9.0 | 2026-10-17 | des | M1 — UI expõe 403/429 via fonte única `SCENARIO_NAMES` (core 87 ✅, host 13 ✅) | `feat(ui): expoe forbidden e rate limited no switch` | ⏳ em des, em revisão |
 
 ## Consulta (Dataview — notas de gestão)
 
