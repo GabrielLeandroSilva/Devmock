@@ -101,6 +101,8 @@ updated: 2026-10-10
 | v1.9.7 | 2026-10-17 | des | Manual v1.1.0 100% ✅ no host (M1–M4 + regressão §1–§7) | `docs(qa): manual v1.1.0 100% aprovado no host` | ⏳ em des → promove |
 | v1.9.8 | 2026-10-17 | main + des | 🚀 Promoção v1.1.0 (PR nº 23) + tag `ext-v1.1.0` | merge `42e8466` + tag `ext-v1.1.0` | ✅ validado, em main |
 | ext-v1.1.0 | 2026-10-17 | tag em main | 🎉 PUBLICADO na Marketplace | `Published devmock.devmock-vscode v1.1.0` via publish.yml (run 39055951657) | ✅ ao vivo |
+| — | 2026-10-17 | — | 📣 Post de lançamento v1.1.0 (texto do [[Agente-LinkedIn]], postagem manual) | marco de divulgação, sem versão | ✅ entregue |
+| v1.9.9 | 2026-10-17 | des | ✅ Gate da v1.1.0 fechado — release concluída (M1–M4 + suítes S1–S3) | `docs(release): fecha gate da v1.1.0` | ✅ concluído |
 
 ## Consulta (Dataview — notas de gestão)
 

@@ -68,7 +68,7 @@ Detalhe e matriz de rastreabilidade em [[07-Estrategia-Testes]].
 - [x] #task ⏫ M2 — `errorRate` no core + UI/config 🏷️ fase/codigo
 - [x] #task ⏫ M3 — request log com body truncado 🏷️ fase/codigo
 - [x] #task ⏫ M4 — staleDetector por artefato + CLI grava hashes 🏷️ fase/codigo
-- [ ] #task 🔼 S1 (stretch) — cenários por header/query 🏷️ fase/codigo
+- [ ] #task 🔼 S1 (stretch) — cenários por header/query — **não entrou na 1.1.0**; candidato a v1.2.0 🏷️ fase/codigo
 - [x] #task 🔼 Atualizar Manual-Teste com os casos novos 🏷️ fase/codigo
 - [x] #task 🔼 CHANGELOG + `package.json` → `1.1.0` 🏷️ fase/codigo
 - [x] #task 🔼 Sincronizar README + wiki (Docs-Keeper) 🏷️ fase/codigo
@@ -82,7 +82,7 @@ Detalhe e matriz de rastreabilidade em [[07-Estrategia-Testes]].
 - [x] README (raiz + extension) e wiki sincronizados
 - [x] `Log-Versionamento` atualizado
 - [x] Tag `ext-v1.1.0` (trava `tag == versão`) → `publish.yml` — publicada ✅
-- [ ] Post de lançamento (Agente-LinkedIn, postagem manual)
+- [x] Post de lançamento (texto do [[Agente-LinkedIn]], postagem manual) ✅
 
 > **Regra:** nenhum push de tag `ext-v1.1.0` antes de todas as caixas acima.
 
