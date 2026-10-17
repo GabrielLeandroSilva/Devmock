@@ -74,4 +74,48 @@ describe("rastreabilidade de PRD", () => {
     ]);
     expect(SCENARIO_NAMES).toEqual(Object.keys(BUILTIN_SCENARIOS));
   });
+
+  it("M2 — errorRate é determinístico por seed; 0 mantém o comportamento", async () => {
+    const a = await countErrors(42, 50, 100);
+    const b = await countErrors(42, 50, 100);
+    expect(a).toBe(b); // mesma seed → mesma distribuição
+    expect(a).toBeGreaterThan(0);
+    expect(a).toBeLessThan(100);
+    expect(await countErrors(42, 0, 50)).toBe(0);
+  });
+
+  it("M2 — cenário ativo tem precedência sobre errorRate", async () => {
+    const s = createMockServer([user], {
+      config: { port: 0, seedDefault: 42, errorRate: 100, activeScenarios: { "GET /users": "Empty" } },
+      endpoints: { "GET /users": { delayMs: 0 } },
+    });
+    const port = await s.listen();
+    try {
+      const res = await fetch(`http://127.0.0.1:${port}/users`);
+      expect(res.status).toBe(200);
+      expect(await res.json()).toEqual({ data: [], total: 0 });
+    } finally {
+      await s.close();
+    }
+  });
 });
+
+/** Conta respostas 500 em N requisições com uma errorRate/seed dadas. */
+async function countErrors(seed: number, errorRate: number, n: number): Promise<number> {
+  const server = createMockServer([user], {
+    config: { port: 0, seedDefault: seed, errorRate },
+    endpoints: { "GET /users": { delayMs: 0 } },
+  });
+  const port = await server.listen();
+  try {
+    let errors = 0;
+    for (let i = 0; i < n; i++) {
+      const res = await fetch(`http://127.0.0.1:${port}/users?limit=1`);
+      if (res.status === 500) errors++;
+      await res.arrayBuffer();
+    }
+    return errors;
+  } finally {
+    await server.close();
+  }
+}

@@ -1,6 +1,7 @@
 import { createServer, type IncomingMessage, type Server, type ServerResponse } from "node:http";
 import { randomUUID } from "node:crypto";
 import { generate } from "../generators/index.js";
+import { mulberry32 } from "../rng.js";
 import { DEFAULT_CONFIG, type DevMockConfig, type Schema } from "../types.js";
 import {
   ERROR_BODY,
@@ -65,6 +66,18 @@ export function createMockServer(schemas: Schema[], opts: MockServerOptions = {}
   const server: Server = createServer((req, res) => void handle(req, res));
   let actualPort = config.port;
 
+  // RNG dedicado à errorRate — determinístico por seedDefault, sem tocar no RNG de dados.
+  const errorRng = mulberry32(`error-rate:${config.seedDefault}`);
+
+  /** Injeção de falha determinística: só sobre o Default (cenário ativo tem precedência). */
+  function applyErrorRate(reply: Reply, errorRate: number, scenario: string): Reply {
+    if (errorRate <= 0 || scenario !== "Default") return reply;
+    if (errorRng() * 100 < errorRate) {
+      return { status: 500, body: ERROR_BODY[500] };
+    }
+    return reply;
+  }
+
   async function handle(req: IncomingMessage, res: ServerResponse): Promise<void> {
     const started = Date.now();
     const method = (req.method ?? "GET").toUpperCase();
@@ -113,7 +126,8 @@ export function createMockServer(schemas: Schema[], opts: MockServerOptions = {}
     // B2: routeKey sempre em minúsculas para casar com a config ("GET /users").
     const route = `${method} /${parts[0].toLowerCase()}` + (parts.length >= 2 ? "/:id" : "");
     const { cfg, scenario } = resolveEndpoint(route, liveOpts);
-    const reply = buildReply(method, parts, store, url, cfg, rawBody);
+    const errorRate = cfg.errorRate ?? liveOpts.config?.errorRate ?? 0;
+    const reply = applyErrorRate(buildReply(method, parts, store, url, cfg, rawBody), errorRate, scenario);
 
     logAndSend(
       res,

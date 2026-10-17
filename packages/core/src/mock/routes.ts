@@ -12,6 +12,8 @@ export interface EndpointConfig {
   body?: unknown;
   /** Cenário indicativo para o log da Extension (Default, Empty, Unauthorized…). */
   label?: string;
+  /** Taxa de falha 0–100 (%) só sobre o Default; cenário ativo tem precedência. */
+  errorRate?: number;
 }
 
 export interface MockServerOptions {

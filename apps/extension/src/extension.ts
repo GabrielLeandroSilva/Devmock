@@ -112,6 +112,7 @@ class ProjectProvider implements vscode.TreeDataProvider<TreeNode> {
           { label: `port: ${cfg.port}` },
           { label: `seedDefault: ${cfg.seedDefault}` },
           { label: `localeDefault: ${cfg.localeDefault}` },
+          { label: `errorRate: ${cfg.errorRate}` },
         ];
       }
       default:
