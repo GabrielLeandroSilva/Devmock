@@ -89,6 +89,7 @@ updated: 2026-10-10
 | v1.8.5 | 2026-10-17 | des | Planejamento da release v1.1.0 (fechar Should do MVP) | `docs(release): plano v1.1.0 + rastreabilidade de pendências` | ⏳ em des, em revisão |
 | v1.8.6 | 2026-10-17 | des | Agente-QA-Testes + estratégia de suítes (S1/S2/S3) | `docs(qa): agente qa-testes + estrategia de suites` | ⏳ em des, em revisão |
 | v1.8.7 | 2026-10-17 | des | S1 — regressão por AUD (15/15) + 5 guards (core 82 ✅, host 13 ✅) | `test(qa): suites de regressao AUD-01..15 + guards de infra` | ⏳ em des, em revisão |
+| v1.8.8 | 2026-10-17 | des | S2 — matriz RF→teste dos 8 PRDs + 4 órfãos fechados (core 86 ✅, cli 7 ✅) | `test(qa): matriz rf->teste + testes de aceite de PRD` | ⏳ em des, em revisão |
 
 ## Consulta (Dataview — notas de gestão)
 

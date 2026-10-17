@@ -16,6 +16,7 @@ Transformar a cobertura atual (que existe mas **não é rastreável**) em suíte
 
 **Baseline hoje (2026-10-17):** 11 arquivos de teste, ~86 casos. Referências a `AUD-xx`: **0**.
 **S1 entregue (2026-10-17):** +3 arquivos (`regression.test.ts` core e extension + `guards.test.ts`), 15/15 AUD rastreáveis; suíte core 82 testes verdes, host 13 verdes. Configuração/threshold de cobertura (S3): **pendente**.
+**S2 entregue (2026-10-17):** matriz `RF → teste` dos 8 PRDs preenchida; 4 órfãos fechados com testes novos (`prd.test.ts` + `cli.test.ts`); core 86 verdes, CLI 7 verdes. Restam 5 órfãos documentados (§5) — 4 dependem de seam de UI, 1 é o fix M4.
 
 ## 2. Pirâmide e onde cada suíte mora
 
@@ -57,7 +58,57 @@ Status atual: **✅ rastreável** — S1 entregue (15/15). Baseline original (pr
 **Meta v1.1.0:** 15/15 com teste nomeado (11 unit/integração + 4 guards). **Atingida em 2026-10-17.**
 
 ## 5. Matriz de rastreabilidade — `RF do PRD → teste`
-Fechar os critérios de aceite sem teste. Cada PRD ([[Indice-PRDs]]) tem seção "7. Critérios de Aceite"; a matriz lista `PRD / RF` → arquivo de teste. Tarefa: preencher e zerar órfãos antes do Gate de Release.
+Cada PRD ([[Indice-PRDs]]) confrontado com os testes existentes. **S2 entregue em 2026-10-17:** 4 órfãos fechados com testes novos (`packages/core/test/prd.test.ts` + 1 em `cli.test.ts`); 4 órfãos de UI do host e 1 de CLI ficam registrados com motivo (abaixo).
+
+| PRD | Requisito / Aceite | Teste | Status |
+|-----|--------------------|-------|--------|
+| 01 | RF-01 CRUD de Schema (arquivo + Studio) | `schemaStore.test.ts` · `ops.test.ts` "studio: …rename" | ✅ |
+| 01 | RF-02 Validar Schema por campo | `validator.test.ts` (8 casos) | ✅ |
+| 01 | RF-03 `generate` determinístico | `dataGenerator.test.ts` "é determinístico" · `cli.test.ts` "generate …" | ✅ |
+| 01 | RF-04 Geradores BR formato válido | `dataGenerator.test.ts` · `regression.test.ts` AUD-07 | ✅ |
+| 01 | RF-05 `ref` entre Schemas | `dataGenerator.test.ts` "cobre todos os tipos" · `validator.test.ts` "aceita ref conhecida" | ✅ |
+| 01 | RF-06 Preview na Extension | `ops.test.ts` "studio: …preview" · `commands.test.ts` "painel Studio abre" | ✅ |
+| 01 | RF-07 `config.json` defaults (4010/pt-BR) | `prd.test.ts` "PRD-01 RF-07" · `cli.test.ts` "init grava config.json" | ✅ |
+| 01 | §7 1000 registros < 2s | `prd.test.ts` "PRD-01 §7" | ✅ |
+| 02 | RF-01 CRUD REST automático | `mockServer.test.ts` "gera CRUD completo" | ✅ |
+| 02 | RF-02 `delayMs` por endpoint | `mockServer.test.ts` "aplica delayMs configurado" | ✅ |
+| 02 | RF-03 Paginação envelope | `mockServer.test.ts` "envelope paginado" · "GET /users retorna 20" | ✅ |
+| 02 | RF-04 Request log | `mockServer.test.ts` "request log registra método, rota, status e ms" | ✅ |
+| 02 | RF-05 Start/stop pelo painel | `commands.test.ts` "start sobe HTTP real; stop derruba" | ✅ |
+| 02 | RF-06 `GET /:id` inexistente → 404 | `mockServer.test.ts` "GET /users/:id … 404" | ✅ |
+| 02 | RF-07 Porta em uso acionável | `mockServer.test.ts` "porta ocupada…" · `regression.test.ts` AUD-05 | ✅ |
+| 02 | §7 Trocar porta + restart sem resíduo | `prd.test.ts` "PRD-02 §7" | ✅ |
+| 03 | RF-01 Init idempotente | `commands.test.ts` "init é idempotente" · `00-smoke.test.ts` | ✅ |
+| 03 | RF-03 Start/Stop painel | `commands.test.ts` "start sobe HTTP real" | ✅ |
+| 03 | RF-04 Studio preview/erro/rename | `ops.test.ts` "studio: save, preview, erro e rename" | ✅ |
+| 03 | RF-07 Testabilidade (ops puros, fire-and-forget, `?limit`) | `ops.test.ts` · `regression.test.ts` AUD-12 · AUD-13 | ✅ |
+| 03 | RF-02 TreeView lista Schemas/Endpoints | — | ⚠️ órfão (a) |
+| 03 | RF-05 Edição manual do JSON recarrega a Tree | — | ⚠️ órfão (a) |
+| 03 | RF-06 Create API (From scratch/Import/Detect) | — | ⚠️ órfão (b) |
+| 03 | §7 CTA sem `.devmock/` | — | ⚠️ órfão (a) |
+| 04 | RF-01 CRUD de cenário | `ops.test.ts` "switch grava activeScenarios" | ✅ |
+| 04 | RF-02 Troca <500ms sem restart | `mockServer.test.ts` "troca de cenário sem restart" | ✅ |
+| 04 | RF-03 `Empty` → 200 `{data:[],total:0}` | `mockServer.test.ts` "Empty retorna envelope vazio com 200" | ✅ |
+| 04 | RF-04 401/500 body padrão | `mockServer.test.ts` "401 e 500 retornam body padrão" | ✅ |
+| 04 | RF-05 Versionável em arquivos | `mockServer.test.ts` "arquivo tem precedência sobre o embutido" | ✅ |
+| 04 | §7 `Slow Network` ~5s | `prd.test.ts` "PRD-04 §7" | ✅ |
+| 05 | RF-01 Markdown por recurso | `export.test.ts` "segue o template do §15" | ✅ |
+| 05 | RF-02 OpenAPI JSON+YAML válidos | `export.test.ts` "gera documento 3.x" · "valida em swagger-parser" | ✅ |
+| 05 | RF-03 JSON Schema por model | `export.test.ts` "gera draft-07 com required" | ✅ |
+| 05 | RF-04 `types.ts` (enum union, BRL number) | `export.test.ts` "enum vira union, BRL vira number" | ✅ |
+| 05 | RF-05 Export Contract (comando único) | `ops.test.ts` · `cli.test.ts` "export gera 5 artefatos" | ✅ |
+| 05 | §8 Re-export idempotente | `export.test.ts` "re-export do mesmo Schema gera saída idêntica" | ✅ |
+| 06 | RF-01…05 Import OpenAPI (fixture, warnings, YAML, --force) | `import.test.ts` (4) · `cli.test.ts` "import yaml…" · `ops.test.ts` "import cria…" | ✅ |
+| 07 | RF-01…06 Contract Validation | `validate.test.ts` (11) · `cli.test.ts` "validate…" · `ops.test.ts` "validate contra mock real" | ✅ |
+| 08 | RF-01 `generate` (records/seed/--out) | `cli.test.ts` "generate é determinístico e --out grava" | ✅ |
+| 08 | RF-02 `export` 5 artefatos **+ `.hashes.json`** | `cli.test.ts` "export gera 5 artefatos" (sem hashes) | ⚠️ órfão (c) |
+| 08 | RF-03 CI verde no PR | `guards.test.ts` AUD-15 · `.github/workflows/ci.yml` | ✅ |
+| 08 | RF-04 Erro acionável + exit codes | `cli.test.ts` "generate sem schema → exit 1" | ✅ |
+
+**Órfãos conscientes (não são falhas silenciosas):**
+- **(a) UI do host — TreeView/watch/CTA (PRD-03 RF-02, RF-05, §7):** o `ProjectProvider` é interno ao `extension.ts` e o VS Code não expõe providers registrados. Fechar exige um *seam*: extrair o construtor da Tree para uma função pura (sem tipos `vscode`) e testá-lo. **Ação:** tarefa abaixo; sem teste "falso" enquanto o seam não existir.
+- **(b) Create API (PRD-03 RF-06):** depende de interação de `QuickPick`; "Detect" é placeholder → será feature real na v1.2.0 (PRD-09), quando ganha teste próprio.
+- **(c) CLI `export` sem `.hashes.json` (PRD-08 RF-02):** **bug de produto**, não de teste — tratado em **M4** do [[06-Plano-Release-v1.1.0]] (staleDetector completo + CLI grava hashes); o teste é adicionado junto do fix.
 
 ## 6. Guard tests (bugs de infra)
 Não são unit-testáveis; vivem em `packages/core/test/guards.test.ts` e falham o CI se o invariante quebrar:
@@ -86,7 +137,9 @@ Regra: o CI **falha** abaixo do threshold. Novo código não pode **baixar** a c
 ## 9. Tasks
 - [x] #task ⏫ Definir agentes: criar [[Agente-QA-Testes]] (vault + `.opencode/agent/qa-testes.md`) 🏷️ fase/codigo
 - [x] #task ⏫ S1 — `regression.test.ts` por pacote (1 `it` por AUD-xx) 🏷️ fase/codigo
-- [ ] #task ⏫ S2 — preencher matriz `RF → teste` e zerar aceites órfãos 🏷️ fase/codigo
+- [x] #task ⏫ S2 — preencher matriz `RF → teste` e zerar aceites órfãos 🏷️ fase/codigo
+- [ ] #task 🔼 Seam de testabilidade da Tree (extrair builder puro) — fecha PRD-03 RF-02/RF-05/§7 🏷️ fase/codigo
+- [ ] #task 🔼 Teste de `.hashes.json` no CLI export — junto do fix M4 🏷️ fase/codigo
 - [ ] #task 🔼 S3 — `--coverage` + threshold + artefato no CI 🏷️ fase/codigo
 - [x] #task 🔼 Guards de infra (build-order, tsconfig, cjs-esm, ci-build) 🏷️ fase/codigo
 - [ ] #task 🔼 Rodar varredura de flaky e remover `skip` silencioso 🏷️ fase/codigo
