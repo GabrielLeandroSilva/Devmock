@@ -4,8 +4,8 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { createMockServer } from "@devmock/core";
 import { handleStudioMessage } from "../../studio.js";
-import { doExport, doGeneratePreview, doImportContent, doSaveFakeData, doSwitchScenario, doValidate } from "../../ops.js";
-import { devmockDir, readConfig } from "../../project.js";
+import { doExport, doGeneratePreview, doImportContent, doSaveFakeData, doSwitchScenario, doValidate, formatLogEntry } from "../../ops.js";
+import { devmockDir, listSchemas, readConfig, staleSinceLastExport } from "../../project.js";
 
 suite("ops no host (fs real, sem mocks)", () => {
   let root = "";
@@ -105,5 +105,51 @@ suite("ops no host (fs real, sem mocks)", () => {
     assert.strictEqual(renamed.kind, "ok");
     assert.ok(existsSync(join(devmockDir(root), "schemas", "users.json")));
     assert.ok(!existsSync(join(devmockDir(root), "schemas", "user.json")));
+  });
+
+  test("M4 — export parcial não sincroniza os demais artefatos", () => {
+    doExport(root, "Tudo");
+    assert.deepStrictEqual(staleSinceLastExport(root, listSchemas(root)), []);
+
+    const schemaPath = join(devmockDir(root), "schemas", "user.json");
+    const schema = JSON.parse(readFileSync(schemaPath, "utf8"));
+    schema.fields.push({ name: "novo", type: "string" });
+    writeFileSync(schemaPath, JSON.stringify(schema));
+
+    // Exporta SÓ Markdown: OpenAPI/types/jsonSchema seguem stale.
+    doExport(root, "Markdown");
+    assert.deepStrictEqual(staleSinceLastExport(root, listSchemas(root)), ["User"]);
+
+    // Exporta tudo de novo → sincroniza.
+    doExport(root, "Tudo");
+    assert.deepStrictEqual(staleSinceLastExport(root, listSchemas(root)), []);
+  });
+
+  test("M3 — formatLogEntry mostra bodies e marca truncado", () => {
+    const withBodies = formatLogEntry({
+      method: "POST",
+      route: "POST /users",
+      status: 201,
+      ms: 3,
+      scenario: "Default",
+      requestBody: '{"a":1}',
+      responseBody: '{"id":"x"}',
+      truncated: false,
+    });
+    assert.strictEqual(withBodies.length, 3);
+    assert.ok(withBodies[1].includes("→"));
+    assert.ok(withBodies[2].includes("←"));
+
+    const cut = formatLogEntry({
+      method: "GET",
+      route: "GET /users",
+      status: 200,
+      ms: 1,
+      scenario: "Default",
+      responseBody: "y".repeat(1024),
+      truncated: true,
+    });
+    assert.strictEqual(cut.length, 2);
+    assert.ok(cut[1].includes("truncado"));
   });
 });

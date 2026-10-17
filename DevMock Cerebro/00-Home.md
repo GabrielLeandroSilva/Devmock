@@ -23,6 +23,10 @@ updated: 2026-10-10
 - [x] **Fase 4 — Gestão (EAP + Cronograma)** → [[Indice-Gestao]] (`v0.5.1` em main)
 - [ ] **Fase 5 — Extras + Costura** → `06-Extras/` (`v0.6.0` em `des`, em revisão)
 
+## Roadmap pós-v1
+- **v1.1.0** — fechar Should do MVP (cenários 403/429, `errorRate`, log com body, `staleDetector` completo) → [[06-Plano-Release-v1.1.0]]
+- **v1.2.0** — Detect from project (PRD-09) + HTML docs
+
 ## Status geral (Dataview)
 
 ```dataview

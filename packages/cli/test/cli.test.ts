@@ -67,6 +67,14 @@ describe("devmock cli (E2E)", () => {
     }
   });
 
+  it("init grava config.json com os defaults (PRD-01 RF-07 / PRD-03 RF-01)", async () => {
+    freshDir();
+    const r = await cli("init", dir);
+    expect(r.code).toBe(0);
+    const cfg = JSON.parse(readFileSync(join(dir, ".devmock", "config.json"), "utf8"));
+    expect(cfg).toMatchObject({ port: 4010, seedDefault: 12345, localeDefault: "pt-BR" });
+  });
+
   it("generate é determinístico e --out grava", async () => {
     await initWithUser();
     const a = await cli("generate", "User", dir, "--records", "3", "--seed", "42", "--out", "a.json");
@@ -88,7 +96,7 @@ describe("devmock cli (E2E)", () => {
     await initWithUser();
     const r = await cli("export", dir);
     expect(r.code).toBe(0);
-    for (const f of ["openapi/generated.json", "openapi/generated.yaml", "openapi/schemas.json", "docs/types.ts", "docs/user.md"]) {
+    for (const f of ["openapi/generated.json", "openapi/generated.yaml", "openapi/schemas.json", "docs/types.ts", "docs/user.md", "openapi/.hashes.json"]) {
       expect(existsSync(join(dir, ".devmock", f))).toBe(true);
     }
   });

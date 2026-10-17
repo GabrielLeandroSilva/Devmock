@@ -10,7 +10,9 @@ import {
   summarize,
   toYaml,
   validateLive,
+  type ArtifactKey,
   type EndpointReport,
+  type RequestLogEntry,
   type Schema,
 } from "@devmock/core";
 import {
@@ -67,26 +69,32 @@ export function doExport(root: string, picked: string): ExportResult {
   mkdirSync(join(dir, "docs"), { recursive: true });
   const stale = staleSinceLastExport(root, schemas);
   const files: string[] = [];
+  const artifacts = new Set<ArtifactKey>();
   const write = (rel: string, content: string): void => {
     writeFileSync(join(dir, rel), content);
     files.push(rel);
   };
   if (want("OpenAPI JSON")) {
     write("openapi/generated.json", `${JSON.stringify(buildOpenApi(schemas), null, 2)}\n`);
+    artifacts.add("openapi");
   }
   if (picked === "Tudo" || picked === "OpenAPI YAML") {
     write("openapi/generated.yaml", toYaml(buildOpenApi(schemas)));
+    artifacts.add("openapi");
   }
   if (want("JSON Schema")) {
     write("openapi/schemas.json", `${JSON.stringify(buildJsonSchemas(schemas), null, 2)}\n`);
+    artifacts.add("jsonSchema");
   }
   if (want("TypeScript")) {
     write("docs/types.ts", buildTypes(schemas));
+    artifacts.add("types");
   }
   if (want("Markdown")) {
     for (const s of schemas) write(`docs/${s.name.toLowerCase()}.md`, buildDocFor(s));
+    artifacts.add("markdown");
   }
-  recordExportHashes(root, schemas);
+  recordExportHashes(root, schemas, [...artifacts]);
   return { files, stale };
 }
 
@@ -132,4 +140,15 @@ function findSchema(root: string, schemaName: string): Schema {
   const schema = listSchemas(root).find((s) => s.name.toLowerCase() === schemaName.toLowerCase());
   if (!schema) throw new Error(`DevMock: schema "${schemaName}" não encontrado.`);
   return schema;
+}
+
+/** Formata uma entrada de log para o OutputChannel (PRD-02 logs com body truncado). */
+export function formatLogEntry(l: RequestLogEntry): string[] {
+  const lines = [
+    `${l.method.padEnd(6)} ${l.route.padEnd(24)} ${l.status} ${l.ms}ms [${l.scenario}]`,
+  ];
+  const mark = l.truncated ? " …(truncado)" : "";
+  if (l.requestBody) lines.push(`  → ${l.requestBody}${mark}`);
+  if (l.responseBody) lines.push(`  ← ${l.responseBody}${mark}`);
+  return lines;
 }

@@ -42,6 +42,8 @@ export interface DevMockConfig {
   seedDefault: number;
   localeDefault: string;
   activeScenarios: Record<string, string>;
+  /** Taxa de falha simulada 0–100 (% das requisições viram 500). Determinística por seed. */
+  errorRate: number;
 }
 
 export const DEFAULT_CONFIG: DevMockConfig = {
@@ -49,4 +51,5 @@ export const DEFAULT_CONFIG: DevMockConfig = {
   seedDefault: 12345,
   localeDefault: "pt-BR",
   activeScenarios: {},
+  errorRate: 0,
 };

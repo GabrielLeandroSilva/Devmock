@@ -1,6 +1,7 @@
 import { createServer, type IncomingMessage, type Server, type ServerResponse } from "node:http";
 import { randomUUID } from "node:crypto";
 import { generate } from "../generators/index.js";
+import { mulberry32 } from "../rng.js";
 import { DEFAULT_CONFIG, type DevMockConfig, type Schema } from "../types.js";
 import {
   ERROR_BODY,
@@ -37,6 +38,7 @@ interface Ctx {
   scenario: string;
   delayMs: number;
   headers?: Record<string, string>;
+  reqBody?: string;
 }
 
 interface Reply {
@@ -65,6 +67,18 @@ export function createMockServer(schemas: Schema[], opts: MockServerOptions = {}
   const server: Server = createServer((req, res) => void handle(req, res));
   let actualPort = config.port;
 
+  // RNG dedicado à errorRate — determinístico por seedDefault, sem tocar no RNG de dados.
+  const errorRng = mulberry32(`error-rate:${config.seedDefault}`);
+
+  /** Injeção de falha determinística: só sobre o Default (cenário ativo tem precedência). */
+  function applyErrorRate(reply: Reply, errorRate: number, scenario: string): Reply {
+    if (errorRate <= 0 || scenario !== "Default") return reply;
+    if (errorRng() * 100 < errorRate) {
+      return { status: 500, body: ERROR_BODY[500] };
+    }
+    return reply;
+  }
+
   async function handle(req: IncomingMessage, res: ServerResponse): Promise<void> {
     const started = Date.now();
     const method = (req.method ?? "GET").toUpperCase();
@@ -89,6 +103,7 @@ export function createMockServer(schemas: Schema[], opts: MockServerOptions = {}
         status: 413,
         scenario: "Default",
         delayMs: 0,
+        reqBody: rawBody,
       }, { status: 413, body: { error: "PAYLOAD_TOO_LARGE", message: "Corpo acima de 1MB." } });
       return;
     }
@@ -106,6 +121,7 @@ export function createMockServer(schemas: Schema[], opts: MockServerOptions = {}
         status: 404,
         scenario: "Default",
         delayMs: 0,
+        reqBody: rawBody,
       }, { status: 404, body: NOT_FOUND_BODY });
       return;
     }
@@ -113,7 +129,8 @@ export function createMockServer(schemas: Schema[], opts: MockServerOptions = {}
     // B2: routeKey sempre em minúsculas para casar com a config ("GET /users").
     const route = `${method} /${parts[0].toLowerCase()}` + (parts.length >= 2 ? "/:id" : "");
     const { cfg, scenario } = resolveEndpoint(route, liveOpts);
-    const reply = buildReply(method, parts, store, url, cfg, rawBody);
+    const errorRate = cfg.errorRate ?? liveOpts.config?.errorRate ?? 0;
+    const reply = applyErrorRate(buildReply(method, parts, store, url, cfg, rawBody), errorRate, scenario);
 
     logAndSend(
       res,
@@ -125,6 +142,7 @@ export function createMockServer(schemas: Schema[], opts: MockServerOptions = {}
         scenario,
         delayMs: cfg.delayMs,
         headers: cfg.headers,
+        reqBody: rawBody,
       },
       reply,
     );
@@ -225,12 +243,18 @@ export function createMockServer(schemas: Schema[], opts: MockServerOptions = {}
       } else {
         res.end(JSON.stringify(reply.body));
       }
+      const responseText = reply.body === undefined ? undefined : JSON.stringify(reply.body);
+      const req = truncateBody(ctx.reqBody);
+      const resBody = truncateBody(responseText);
       entries.push({
         method: ctx.method,
         route: ctx.route,
         status: res.statusCode,
         ms: Date.now() - ctx.started,
         scenario: ctx.scenario,
+        requestBody: req.text,
+        responseBody: resBody.text,
+        truncated: req.truncated || resBody.truncated,
       });
     };
     if (ctx.delayMs && ctx.delayMs > 0) setTimeout(send, ctx.delayMs);
@@ -321,3 +345,11 @@ async function drain(req: IncomingMessage): Promise<{ text: string; tooLarge: bo
 }
 
 const MAX_BODY_BYTES = 1024 * 1024;
+const MAX_LOG_BODY = 1024;
+
+/** Trunca o corpo do log em 1KB, sinalizando corte (PRD-02 logs com body). */
+function truncateBody(text: string | undefined): { text: string | undefined; truncated: boolean } {
+  if (!text) return { text: undefined, truncated: false };
+  if (text.length <= MAX_LOG_BODY) return { text, truncated: false };
+  return { text: text.slice(0, MAX_LOG_BODY), truncated: true };
+}

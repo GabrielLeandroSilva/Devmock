@@ -24,7 +24,7 @@ Define o contrato uma vez e use-o para desenvolver, testar, documentar, comparti
 | Switch Scenario… | Default, Empty, 401/403/500/429, Slow — sem restart |
 | Export Contract… | OpenAPI JSON+YAML, JSON Schema, `types.ts`, Markdown |
 | Validate Real API… | Compara a API real com o contrato (Compatible/Warning/Breaking) |
-| Show Request Log | Método, rota, status, ms e cenário |
+| Show Request Log | Método, rota, status, ms, cenário e bodies (truncados em 1KB) |
 
 CLI equivalente: `devmock init|start|generate|export|import|validate` (pacote `devmock` em breve no npm).
 

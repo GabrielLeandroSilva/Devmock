@@ -15,10 +15,10 @@ updated: 2026-10-11
 Travar o que entra no `v1.0.0` e o que fica para depois — anti-inchamento.
 
 ## 2. Detalhamento
-**Must (v1.0.0):** Init Project, Schema, Fake Data + `br.*`, Mock REST `:4010`, config de endpoint básica, Scenarios (Default/Empty/401/500/Slow), export OpenAPI + Markdown + TS, request log básico.
-**Should (v1.x):** Forbidden/Rate Limited, error rate %, logs com body, `staleDetector` completo.
-**Could (pós):** Import OpenAPI, Detect from project, HTML docs.
-**Won't (nesta janela):** Contract Validation, CLI, CI/CD, team features — viram PRD-06/07/08.
+**Must (v1.0.0):** Init Project, Schema, Fake Data + `br.*`, Mock REST `:4010`, config de endpoint básica, Scenarios (Default/Empty/401/500/Slow), export OpenAPI + Markdown + TS, request log básico. ✅ entregue
+**Should (v1.x):** Forbidden/Rate Limited, error rate %, logs com body, `staleDetector` completo. → planejados na **[[06-Plano-Release-v1.1.0]]** (M1–M4)
+**Could (pós):** Import OpenAPI ✅ (v1.3.0), Detect from project, HTML docs → **v1.2.0**. Detect exige PRD-09 novo.
+**Won't (nesta janela):** Contract Validation, CLI, CI/CD, team features — viram PRD-06/07/08. ✅ todos entregues (v1.3.0–v1.6.x)
 
 ## 3. Tasks
 - [ ] #task ⏫ Confirmar que nenhum Must está sem PRD correspondente 🏷️ fase/4
@@ -31,4 +31,4 @@ group by filename
 ```
 
 ## 5. Links
-- PRDs: `01-PRDs/` | Riscos de escopo: [[04-Riscos]]
+- PRDs: `01-PRDs/` | Riscos de escopo: [[04-Riscos]] | Plano de release: [[06-Plano-Release-v1.1.0]]

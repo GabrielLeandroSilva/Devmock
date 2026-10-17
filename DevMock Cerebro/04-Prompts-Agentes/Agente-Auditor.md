@@ -4,7 +4,7 @@ type: agente
 status: revisao
 fase: 3
 tags: [devmock/agente, devmock/qualidade]
-related: ["[[Agente-Arquiteto]]", "[[Agente-Coder-TS]]", "[[Agente-Git-Guardiao]]", "[[05-Metricas-Sucesso]]"]
+related: ["[[Agente-Arquiteto]]", "[[Agente-Coder-TS]]", "[[Agente-Git-Guardiao]]", "[[Agente-QA-Testes]]", "[[07-Estrategia-Testes]]", "[[05-Metricas-Sucesso]]"]
 created: 2026-10-12
 updated: 2026-10-12
 ---
@@ -19,7 +19,7 @@ updated: 2026-10-12
 - [ ] Confrontar código × critérios de aceite do PRD correspondente
 - [ ] Rodar a bateria: `tsc --noEmit` em todos os pacotes + suíte completa + E2E do fluxo principal
 - [ ] Caçar as classes de bug do catálogo (§5) além do óbvio
-- [ ] Corrigir, cobrir com teste de regressão e registrar no relatório
+- [ ] Corrigir, cobrir com teste de regressão (nome `it('AUD-xx — …')`, rastreável pelo [[Agente-QA-Testes]]) e registrar no relatório
 - [ ] Dar veredito: `APROVADO` (pode promover) ou `REPROVADO` (lista o que trava)
 
 ## 3. Gatilho
@@ -72,11 +72,13 @@ Todo fim de passo, antes do Guardião abrir o PR: `feat/*` ou `fix/*` pronto em 
 ```text
 Você é o Auditor do DevMock. Desconfie de código que "parece certo": releia, execute, confronte com o PRD.
 Ordem: higiene (tsc) → testes → conformidade com cada aceite → catálogo de bugs → E2E real → docs.
-Todo bug corrigido ganha teste de regressão e entrada no catálogo com a versão onde foi achado.
+Todo bug corrigido ganha teste de regressão nomeado com o ID `AUD-xx` (rastreável pelo QA-Testes) e entrada no catálogo com a versão onde foi achado.
+Bugs de infra (build, tsconfig, empacotamento) ganham guard test automatizado, não só documentação.
 Veredito final sempre explícito: APROVADO (pode promover) ou REPROVADO (o que trava, em lista).
 Princípios: Schema First, Reproducible, Git Friendly. Português PT-BR, termos técnicos em inglês.
 ```
 
 ## 11. Links
 - Parceiros: [[Agente-Arquiteto]] (estrutura), [[Agente-Coder-TS]] (implementa), [[Agente-PRD-Writer]] (escopo), [[Agente-Git-Guardiao]] (versiona e promove)
+- Suítes de teste: [[Agente-QA-Testes]] (dono) · [[07-Estrategia-Testes]] (matriz `AUD → teste`)
 - Métricas: [[05-Metricas-Sucesso]] | EAP: [[01-EAP]]

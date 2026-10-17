@@ -86,6 +86,19 @@ updated: 2026-10-10
 | ext-v1.0.0 | 2026-10-16 | tag em main | 🎉 PUBLICADO na Marketplace | `Published devmock.devmock-vscode v1.0.0` via publish.yml | ✅ ao vivo |
 | v1.8.4 | 2026-10-16 | des | About do repo + Agente LinkedIn | `docs(divulg): about + agente-linkedin` | ⏳ em des, em revisão |
 | — | 2026-10-16 | — | 📣 Post de lançamento publicado no LinkedIn (texto do Agente-LinkedIn, postagem manual) + About verificado na API | marco de divulgação, sem versão | ✅ no ar |
+| v1.8.5 | 2026-10-17 | des | Planejamento da release v1.1.0 (fechar Should do MVP) | `docs(release): plano v1.1.0 + rastreabilidade de pendências` | ⏳ em des, em revisão |
+| v1.8.6 | 2026-10-17 | des | Agente-QA-Testes + estratégia de suítes (S1/S2/S3) | `docs(qa): agente qa-testes + estrategia de suites` | ⏳ em des, em revisão |
+| v1.8.7 | 2026-10-17 | des | S1 — regressão por AUD (15/15) + 5 guards (core 82 ✅, host 13 ✅) | `test(qa): suites de regressao AUD-01..15 + guards de infra` | ⏳ em des, em revisão |
+| v1.8.8 | 2026-10-17 | des | S2 — matriz RF→teste dos 8 PRDs + 4 órfãos fechados (core 86 ✅, cli 7 ✅) | `test(qa): matriz rf->teste + testes de aceite de PRD` | ⏳ em des, em revisão |
+| v1.8.9 | 2026-10-17 | des | S3 — gate de cobertura no Core (≥90/80) + artefato no CI | `ci(qa): cobertura do core com threshold + artefato` | ⏳ em des, em revisão |
+| v1.9.0 | 2026-10-17 | des | M1 — UI expõe 403/429 via fonte única `SCENARIO_NAMES` (core 87 ✅, host 13 ✅) | `feat(ui): expoe forbidden e rate limited no switch` | ⏳ em des, em revisão |
+| v1.9.1 | 2026-10-17 | des | M2 — `errorRate` 0–100 determinístico por seed (core 89 ✅) | `feat(mock): errorRate deterministica + settings` | ⏳ em des, em revisão |
+| v1.9.2 | 2026-10-17 | des | M3 — request log com body truncado 1KB (core 90 ✅, host 14 ✅) | `feat(log): request log com body truncado` | ⏳ em des, em revisão |
+| v1.9.3 | 2026-10-17 | des | M4 — staleDetector por artefato + CLI grava `.hashes.json` (core 92 ✅, cli 7 ✅, host 15 ✅) | `fix(export): stale por artefato + cli grava hashes` | ⏳ em des, em revisão |
+| v1.9.4 | 2026-10-17 | des | Fixa modelo `opencode-go/gpt-6-luna` no subagente qa-testes | `chore(qa): fixa modelo gpt-6-luna no subagente qa-testes` | ⏳ em des, em revisão |
+| v1.9.5 | 2026-10-17 | des | Fechamento v1.1.0: Manual-Teste-v1.1, versão `1.1.0`, README+wiki, gate (core 92/cob 94% · cli 7 · host 15) | `docs(release): fecha v1.1.0 — manual, versao e docs` | ⏳ em des, em revisão |
+| v1.9.6 | 2026-10-17 | des | Fix F5: task usa `npm run build:host` (evita yarn) | `fix(dev): task do F5 usa npm explicito (evita yarn)` | ⏳ em des, em revisão |
+| v1.9.7 | 2026-10-17 | des | Manual v1.1.0 100% ✅ no host (M1–M4 + regressão §1–§7) | `docs(qa): manual v1.1.0 100% aprovado no host` | ⏳ em des → promove |
 
 ## Consulta (Dataview — notas de gestão)
 
@@ -121,3 +134,5 @@ SORT file.name ASC
 - [ ] #task ⏫ Teste manual passo a passo (host VS Code real) antes da v1.0.0 🏷️ fase/codigo
 - [x] #task ⏫ Executar Manual-Teste-v1 e preencher tabela de Resultado 🏷️ fase/codigo
 - [x] #task 🔼 Promover v1.0.0 para main após manual 100% (PR nº 10) 🏷️ fase/codigo
+- [ ] #task ⏫ Executar o plano da v1.1.0 (M1–M4 + gate de cobertura) 🏷️ fase/codigo
+- [ ] #task ⏫ Levantar suítes de teste (S1 regressão AUD + S2 consolidação + S3 CI) 🏷️ fase/codigo

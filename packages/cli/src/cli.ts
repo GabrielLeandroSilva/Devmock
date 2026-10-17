@@ -9,6 +9,8 @@ import {
   DEFAULT_CONFIG,
   generate,
   importOpenApi,
+  mergeExportHashes,
+  ALL_ARTIFACTS,
   summarize,
   toYaml,
   validateLive,
@@ -329,5 +331,7 @@ function cmdExport(args: string[]): void {
   for (const s of schemas) {
     writeFileSync(join(dir, "docs", `${s.name.toLowerCase()}.md`), buildDocFor(s));
   }
-  console.log(`DevMock: contrato exportado (${schemas.length} schema(s), 5 artefatos).`);
+  const hashes = mergeExportHashes(undefined, schemas, ALL_ARTIFACTS);
+  writeFileSync(join(dir, "openapi", ".hashes.json"), `${JSON.stringify(hashes, null, 2)}\n`);
+  console.log(`DevMock: contrato exportado (${schemas.length} schema(s), 5 artefatos + .hashes.json).`);
 }

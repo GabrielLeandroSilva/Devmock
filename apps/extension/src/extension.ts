@@ -4,6 +4,7 @@ import { existsSync, mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import {
   DEFAULT_CONFIG,
+  SCENARIO_NAMES,
   createMockServer,
   generatorNames,
   routesFor,
@@ -18,6 +19,7 @@ import {
   doSaveFakeData,
   doSwitchScenario,
   doValidate,
+  formatLogEntry,
 } from "./ops.js";
 import {
   devmockDir,
@@ -99,7 +101,7 @@ class ProjectProvider implements vscode.TreeDataProvider<TreeNode> {
         return schemas.flatMap((s) => routesFor(s).map((r) => ({ label: r })));
       case "Scenarios": {
         const cfg = readConfig(ctx.root);
-        return ["Default", "Empty", "Unauthorized", "Server Error", "Slow Network"].map((name) => ({
+        return SCENARIO_NAMES.map((name) => ({
           label: (Object.values(cfg.activeScenarios ?? {}).includes(name) ? "✓ " : "") + name,
         }));
       }
@@ -111,6 +113,7 @@ class ProjectProvider implements vscode.TreeDataProvider<TreeNode> {
           { label: `port: ${cfg.port}` },
           { label: `seedDefault: ${cfg.seedDefault}` },
           { label: `localeDefault: ${cfg.localeDefault}` },
+          { label: `errorRate: ${cfg.errorRate}` },
         ];
       }
       default:
@@ -229,7 +232,7 @@ export function activate(context: vscode.ExtensionContext): void {
       state.port = undefined;
       channel.clear();
       for (const l of logs.slice(-50)) {
-        channel.appendLine(`${l.method.padEnd(6)} ${l.route.padEnd(24)} ${l.status} ${l.ms}ms [${l.scenario}]`);
+        for (const line of formatLogEntry(l)) channel.appendLine(line);
       }
       channel.show(true);
       refresh();
@@ -336,7 +339,7 @@ export function activate(context: vscode.ExtensionContext): void {
       const endpoint = await vscode.window.showQuickPick(endpoints, { placeHolder: "Endpoint" });
       if (!endpoint) return;
       const scenario = await vscode.window.showQuickPick(
-        ["Default", "Empty", "Unauthorized", "Server Error", "Slow Network"],
+        SCENARIO_NAMES,
         { placeHolder: `Cenário para ${endpoint}` },
       );
       if (!scenario) return;
@@ -383,7 +386,7 @@ export function activate(context: vscode.ExtensionContext): void {
       }
       channel.clear();
       for (const l of state.server.logs().slice(-100)) {
-        channel.appendLine(`${l.method.padEnd(6)} ${l.route.padEnd(24)} ${l.status} ${l.ms}ms [${l.scenario}]`);
+        for (const line of formatLogEntry(l)) channel.appendLine(line);
       }
       channel.show(true);
     }),

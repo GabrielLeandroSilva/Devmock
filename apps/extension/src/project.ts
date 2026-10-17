@@ -1,6 +1,14 @@
 import { existsSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { DEFAULT_CONFIG, hashSchema, loadSchemas, type Schema } from "@devmock/core";
+import {
+  DEFAULT_CONFIG,
+  loadSchemas,
+  mergeExportHashes,
+  staleSchemas,
+  type ArtifactKey,
+  type ExportHashes,
+  type Schema,
+} from "@devmock/core";
 
 /** Helpers de projeto .devmock/ — puros (fs + Core), sem vscode. Testáveis no host. */
 
@@ -36,22 +44,23 @@ export function writeConfig(root: string, cfg: unknown): void {
 
 export const HASHES_FILE = ".hashes.json";
 
-/** Schemas cujo hash mudou desde o último export (vazio = tudo sincronizado). */
-export function staleSinceLastExport(root: string, schemas: Schema[]): string[] {
-  let stored: Record<string, string> = {};
+function readExportHashes(root: string): ExportHashes | undefined {
   try {
-    stored = readJson<Record<string, string>>(join(devmockDir(root), "openapi", HASHES_FILE));
+    return readJson<ExportHashes>(join(devmockDir(root), "openapi", HASHES_FILE));
   } catch {
-    return [];
+    return undefined;
   }
-  return schemas.filter((s) => stored[s.name] !== hashSchema(s)).map((s) => s.name);
 }
 
-/** Grava o hash atual de cada Schema após exportar. */
-export function recordExportHashes(root: string, schemas: Schema[]): void {
-  const hashes: Record<string, string> = {};
-  for (const s of schemas) hashes[s.name] = hashSchema(s);
-  writeFileSync(join(devmockDir(root), "openapi", HASHES_FILE), `${JSON.stringify(hashes, null, 2)}\n`);
+/** Schemas com o contrato desatualizado (qualquer artefato não sincronizado). */
+export function staleSinceLastExport(root: string, schemas: Schema[]): string[] {
+  return staleSchemas(schemas, readExportHashes(root));
+}
+
+/** Registra o hash do Schema apenas para os artefatos exportados (M4). */
+export function recordExportHashes(root: string, schemas: Schema[], artifacts: ArtifactKey[]): void {
+  const merged = mergeExportHashes(readExportHashes(root), schemas, artifacts);
+  writeFileSync(join(devmockDir(root), "openapi", HASHES_FILE), `${JSON.stringify(merged, null, 2)}\n`);
 }
 
 export function readScenarios(root: string): Record<string, Record<string, never>> {

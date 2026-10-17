@@ -2,7 +2,7 @@
   "name": "devmock-vscode",
   "displayName": "DevMock",
   "description": "API Contract & Mocking for Front-end — build without waiting for the backend.",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "publisher": "devmock",
   "license": "MIT",
   "icon": "images/icon.png",
@@ -57,6 +57,7 @@
   },
   "scripts": {
     "build": "npm run lint && node ./scripts/bundle.js",
+    "build:host": "npm --prefix ../../packages/core run build && npm run build",
     "lint": "tsc -p tsconfig.json --noEmit",
     "pretest": "npm run build && npm --prefix ../../packages/core run build && tsc -p test/tsconfig.test.json",
     "test": "node ./out/test/runTest.js",

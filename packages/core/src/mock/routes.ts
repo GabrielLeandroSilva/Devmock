@@ -12,6 +12,8 @@ export interface EndpointConfig {
   body?: unknown;
   /** Cenário indicativo para o log da Extension (Default, Empty, Unauthorized…). */
   label?: string;
+  /** Taxa de falha 0–100 (%) só sobre o Default; cenário ativo tem precedência. */
+  errorRate?: number;
 }
 
 export interface MockServerOptions {
@@ -28,6 +30,12 @@ export interface RequestLogEntry {
   status: number;
   ms: number;
   scenario: string;
+  /** Corpo da requisição, truncado em 1KB (PRD-02 logs com body). */
+  requestBody?: string;
+  /** Corpo da resposta, truncado em 1KB. */
+  responseBody?: string;
+  /** true se algum corpo foi cortado no limite de 1KB. */
+  truncated?: boolean;
 }
 
 export interface Envelope<T> {
@@ -69,6 +77,12 @@ export const BUILTIN_SCENARIOS: Record<string, EndpointConfig> = {
   "Slow Network": { status: 200, delayMs: 5000 },
   "Rate Limited": { status: 429 },
 };
+
+/**
+ * Nomes dos cenários embutidos, na ordem de exibição da UI (PRD-04).
+ * Fonte única para a Extension não divergir do Core (evita lista duplicada).
+ */
+export const SCENARIO_NAMES: string[] = Object.keys(BUILTIN_SCENARIOS);
 
 export function plural(name: string): string {
   const lower = name.toLowerCase();
