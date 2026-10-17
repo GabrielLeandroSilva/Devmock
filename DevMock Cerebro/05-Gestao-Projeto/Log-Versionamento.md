@@ -88,6 +88,7 @@ updated: 2026-10-10
 | — | 2026-10-16 | — | 📣 Post de lançamento publicado no LinkedIn (texto do Agente-LinkedIn, postagem manual) + About verificado na API | marco de divulgação, sem versão | ✅ no ar |
 | v1.8.5 | 2026-10-17 | des | Planejamento da release v1.1.0 (fechar Should do MVP) | `docs(release): plano v1.1.0 + rastreabilidade de pendências` | ⏳ em des, em revisão |
 | v1.8.6 | 2026-10-17 | des | Agente-QA-Testes + estratégia de suítes (S1/S2/S3) | `docs(qa): agente qa-testes + estrategia de suites` | ⏳ em des, em revisão |
+| v1.8.7 | 2026-10-17 | des | S1 — regressão por AUD (15/15) + 5 guards (core 82 ✅, host 13 ✅) | `test(qa): suites de regressao AUD-01..15 + guards de infra` | ⏳ em des, em revisão |
 
 ## Consulta (Dataview — notas de gestão)
 

@@ -60,7 +60,7 @@ Detalhe e matriz de rastreabilidade em [[07-Estrategia-Testes]].
 - **I1** Matriz `AUD → teste` 100% verde (15/15 com teste nomeado); CI publica cobertura e falha abaixo do threshold; guards de infra rodando.
 
 ## 5. Passos de execução (checklist ordenado)
-- [ ] #task 🔼 S1 — `regression.test.ts` por pacote (1 `it` por AUD-xx) 🏷️ fase/codigo
+- [x] #task 🔼 S1 — `regression.test.ts` por pacote (1 `it` por AUD-xx) 🏷️ fase/codigo
 - [ ] #task 🔼 S2 — matriz `RF → teste` e aceites órfãos zero 🏷️ fase/codigo
 - [ ] #task 🔼 S3 — cobertura + threshold + artefato no CI 🏷️ fase/codigo
 - [ ] #task 🔼 Guards de infra (build-order, tsconfig, cjs-esm, ci-build) 🏷️ fase/codigo
