@@ -432,7 +432,7 @@ export function activate(context: vscode.ExtensionContext): void {
         return;
       }
       const picked = await vscode.window.showQuickPick(
-        ["OpenAPI JSON", "OpenAPI YAML", "JSON Schema", "TypeScript types", "Markdown", "Tudo"],
+        ["OpenAPI JSON", "OpenAPI YAML", "JSON Schema", "TypeScript types", "Markdown", "HTML Docs", "Tudo"],
         { placeHolder: "Artefatos", canPickMany: false },
       );
       if (!picked) return;

@@ -22,7 +22,7 @@ Define o contrato uma vez e use-o para desenvolver, testar, documentar, comparti
 | Generate / Save Fake Data… | Preview ou salva em `docs/examples/` |
 | Start / Stop Mock Server | Sobe/derruba `:4010`; Stop mostra o request log |
 | Switch Scenario… | Default, Empty, 401/403/500/429, Slow — sem restart |
-| Export Contract… | OpenAPI JSON+YAML, JSON Schema, `types.ts`, Markdown |
+| Export Contract… | OpenAPI JSON+YAML, JSON Schema, `types.ts`, Markdown, HTML |
 | Validate Real API… | Compara a API real com o contrato (Compatible/Warning/Breaking) |
 | Show Request Log | Método, rota, status, ms, cenário e bodies (truncados em 1KB) |
 

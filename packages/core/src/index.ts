@@ -21,6 +21,7 @@ export {
   buildTypes,
   buildDocFor,
   buildDocs,
+  buildHtmlDocs,
   hashSchema,
   isStale,
   mergeExportHashes,

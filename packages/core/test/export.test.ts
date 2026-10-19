@@ -3,6 +3,7 @@ import SwaggerParser from "@apidevtools/swagger-parser";
 import {
   ALL_ARTIFACTS,
   buildDocFor,
+  buildHtmlDocs,
   buildJsonSchemas,
   buildOpenApi,
   buildTypes,
@@ -158,6 +159,33 @@ describe("idempotência + stale (PRD-05 §8)", () => {
 
   it("canonical lida com undefined", () => {
     expect(hashSchema(user)).toMatch(/^[0-9a-f]{16}$/);
+  });
+
+  it("W3 — HTML docs: página única com âncoras, campos e endpoints", () => {
+    const html = buildHtmlDocs([user, order]);
+    expect(html).toContain("<!doctype html>");
+    expect(html).toContain('id="user"');
+    expect(html).toContain('href="#user"');
+    expect(html).toContain("GET /users");
+    expect(html).toContain("<th>Campo</th>");
+  });
+
+  it("W3 — HTML docs: offline (sem links externos) e determinístico", () => {
+    const a = buildHtmlDocs([user]);
+    const b = buildHtmlDocs([user]);
+    expect(a).toBe(b);
+    expect(a).not.toMatch(/https?:\/\//);
+  });
+
+  it("W3 — HTML docs escapa conteúdo dos campos", () => {
+    const weird: Schema = {
+      name: "X<y>",
+      fields: [{ name: "a<b", type: "string" }],
+    };
+    const html = buildHtmlDocs([weird]);
+    expect(html).toContain("X&lt;y&gt;");
+    expect(html).toContain("a&lt;b");
+    expect(html).not.toContain("<y>");
   });
 
   it("M4 — stale é por artefato: export parcial não marca o resto como sincronizado", () => {

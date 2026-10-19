@@ -26,7 +26,7 @@ Na [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemNa
 | Generate / Save Fake Data… | Preview em aba ou salva em `docs/examples/` |
 | Start / Stop Mock Server | Sobe/derruba `:4010`; Stop mostra o request log |
 | Switch Scenario… | Default, Empty, 401/403/500/429, Slow — sem restart |
-| Export Contract… | OpenAPI JSON+YAML, JSON Schema, `types.ts`, Markdown |
+| Export Contract… | OpenAPI JSON+YAML, JSON Schema, `types.ts`, Markdown, HTML |
 | Validate Real API… | Compara a API real com o contrato (Compatible/Warning/Breaking) |
 | Show Request Log | Método, rota, status, ms, cenário e bodies (request/response, truncados em 1KB) |
 

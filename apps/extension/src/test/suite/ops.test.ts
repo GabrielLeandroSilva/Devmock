@@ -44,9 +44,9 @@ suite("ops no host (fs real, sem mocks)", () => {
     assert.strictEqual(readConfig(root).activeScenarios["GET /users"], "Empty");
   });
 
-  test("export gera 5 artefatos + stale detecta mudança", () => {
+  test("export gera 6 artefatos + stale detecta mudança", () => {
     const first = doExport(root, "Tudo");
-    assert.strictEqual(first.files.length, 5);
+    assert.strictEqual(first.files.length, 6);
     assert.deepStrictEqual(first.stale, []);
     // Muda o schema e exporta de novo: avisa stale e sincroniza.
     const schemaPath = join(devmockDir(root), "schemas", "user.json");

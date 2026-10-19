@@ -2,6 +2,7 @@ import { existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import {
   buildDocFor,
+  buildHtmlDocs,
   buildJsonSchemas,
   buildOpenApi,
   buildTypes,
@@ -94,6 +95,10 @@ export function doExport(root: string, picked: string): ExportResult {
   if (want("Markdown")) {
     for (const s of schemas) write(`docs/${s.name.toLowerCase()}.md`, buildDocFor(s));
     artifacts.add("markdown");
+  }
+  if (want("HTML Docs")) {
+    write("docs/index.html", buildHtmlDocs(schemas));
+    artifacts.add("html");
   }
   recordExportHashes(root, schemas, [...artifacts]);
   return { files, stale };

@@ -92,11 +92,11 @@ describe("devmock cli (E2E)", () => {
     expect(r.err).toMatch(/não encontrado/);
   });
 
-  it("export gera 5 artefatos", async () => {
+  it("export gera 6 artefatos", async () => {
     await initWithUser();
     const r = await cli("export", dir);
     expect(r.code).toBe(0);
-    for (const f of ["openapi/generated.json", "openapi/generated.yaml", "openapi/schemas.json", "docs/types.ts", "docs/user.md", "openapi/.hashes.json"]) {
+    for (const f of ["openapi/generated.json", "openapi/generated.yaml", "openapi/schemas.json", "docs/types.ts", "docs/user.md", "docs/index.html", "openapi/.hashes.json"]) {
       expect(existsSync(join(dir, ".devmock", f))).toBe(true);
     }
   });
