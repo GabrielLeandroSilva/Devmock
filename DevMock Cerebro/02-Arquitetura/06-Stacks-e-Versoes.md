@@ -30,20 +30,20 @@ Registrar a stack oficial, **onde cada versão é declarada** e **o que um upgra
 | **1.101** | **35.5.1** | **22.15.1** |
 | 1.101+ | 35+ | 22+ |
 
-## 3. Matriz atual (após Rodada 1 — 2026-10-17)
+## 3. Matriz atual (após R1 + R2 — 2026-10-17)
 | Componente | Versão | Suporte |
 |------------|--------|---------|
 | Node — build/CI/CLI (mín.) | **≥ 22** | 22 = LTS (manutenção até abr/2027) |
 | Node — CI matrix | **22 e 24** | 24 = LTS ativa |
 | `.nvmrc` (dev) | **24** | — |
 | Node — runtime extension | **22+** (VS Code ≥ **1.101**) | — |
-| TypeScript | `^5.6` (resolved 5.9.3) | *Rodada 2: 7.0* |
-| vitest / coverage | 2.1.9 | *Rodada 2: 5.0* |
-| esbuild (target `node22`) | 0.21.5 | *Rodada 2: 0.28* |
-| mocha | 10.8.2 | *Rodada 2: 12* |
-| `@vscode/test-electron` | 2.5.2 | *Rodada 2: 3* |
-| `@vscode/vsce` | 3.9.2 | *Rodada 2: 4* |
-| glob | 10.5.0 | *Rodada 2: 13* |
+| TypeScript | **7.0.2** (`^7.0`) | nativo; exige `types: ["node"]` |
+| vitest / coverage | **5.0.5** | — |
+| esbuild (target `node22`) | **0.28.2** | — |
+| mocha | **12.0.3** | ESM-first; runner CJS ok via Node 22 |
+| `@vscode/test-electron` | **3.1.0** | engines Node ≥22 |
+| `@vscode/vsce` | **4.0.0** | engines Node ≥22 |
+| glob | **13.0.6** | ESM-first; export nomeado ok |
 | `@types/node` | **^22** (mínimo) | alinhado na R1 |
 | `@types/vscode` | **~1.101** | deve ser ≤ `engines.vscode` |
 | yaml / swagger-parser | 2.9.1 / 13.1.0 | latest |
@@ -72,6 +72,7 @@ Registrar a stack oficial, **onde cada versão é declarada** e **o que um upgra
 
 ### TypeScript (major)
 - `tsconfig` (`module: NodeNext`, `target`, `lib`), emissão de `declaration`
+- **TS 7 (nativo):** incluir `types: ["node"]` explicitamente no `tsconfig.base.json` — não auto-inclui `@types/*`
 - `esbuild` (parser do bundle) e `vitest` (transform)
 - Tipos: `@types/node`/`@types/vscode` compatíveis
 

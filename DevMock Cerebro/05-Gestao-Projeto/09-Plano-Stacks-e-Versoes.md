@@ -52,13 +52,13 @@ Cada major em PR próprio, com suíte completa + host.
 - [x] #task ⏫ R1.4 — `@types/node ^22` (core/cli/extension) 🏷️ fase/codigo
 - [x] #task 🔼 R1.5 — doc stacks + roadmap "Node 24" + AGENTS 🏷️ fase/codigo
 - [x] #task ⏫ R1.6 — Gate + tag 🏷️ fase/codigo
-- [/] #task 🔼 R2.1 — TypeScript 7 🏷️ fase/codigo
-- [/] #task 🔼 R2.2 — vitest 5 + coverage 🏷️ fase/codigo
-- [/] #task 🔼 R2.3 — esbuild 0.28 🏷️ fase/codigo
-- [/] #task 🔼 R2.4 — mocha 12 + test-electron 3 🏷️ fase/codigo
-- [/] #task 🔼 R2.5 — vsce 4 🏷️ fase/codigo
-- [/] #task 🔼 R2.6 — glob 13 🏷️ fase/codigo
-- [/] #task ⏫ R2.7 — Gate + tag 🏷️ fase/codigo
+- [x] #task 🔼 R2.1 — TypeScript 7 🏷️ fase/codigo
+- [x] #task 🔼 R2.2 — vitest 5 + coverage 🏷️ fase/codigo
+- [x] #task 🔼 R2.3 — esbuild 0.28 🏷️ fase/codigo
+- [x] #task 🔼 R2.4 — mocha 12 + test-electron 3 🏷️ fase/codigo
+- [x] #task 🔼 R2.5 — vsce 4 🏷️ fase/codigo
+- [x] #task 🔼 R2.6 — glob 13 🏷️ fase/codigo
+- [x] #task ⏫ R2.7 — Gate + tag 🏷️ fase/codigo
 
 ## 6. Riscos
 - **R1.3** eleva o mínimo de VS Code para 1.101 (deixa de instalar em versões anteriores). Aceitável: produto recém-lançado.

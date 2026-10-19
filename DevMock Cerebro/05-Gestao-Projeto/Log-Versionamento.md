@@ -109,6 +109,10 @@ updated: 2026-10-10
 | ext-v1.1.1 | 2026-10-17 | tag em main | 🎉 PUBLICADO na Marketplace (patch Stop) | `Published devmock.devmock-vscode v1.1.1` via publish.yml (run 39059635257) | ✅ ao vivo |
 | v1.9.14 | 2026-10-17 | des | Organização: AGENTS.md + convenção Kanban (planejado=In Progress); wiki `Correções` + `Roadmap`; README "Em breve"; Docs-Keeper | `docs(org): agents + kanban + wiki correcoes/roadmap` | ⏳ em des, em revisão |
 | v1.9.15 | 2026-10-17 | des | R1 stacks — Node ≥22 (CI 22/24), runtime extension Node 22 (VS Code ≥1.101), `@types/node ^22`; doc `06-Stacks-e-Versoes` | `chore(stacks): node >=22 + runtime extension node22` | ⏳ em des, em revisão |
+| v1.9.16 | 2026-10-17 | des | R2 batch A — esbuild 0.28 · vsce 4 · test-electron 3 | `chore(deps): esbuild 0.28 + vsce 4 + test-electron 3` | ⏳ em des |
+| v1.9.17 | 2026-10-17 | des | R2 batch B — mocha 12 · glob 13 (host 15 ✅) | `chore(deps): mocha 12 + glob 13` | ⏳ em des |
+| v1.9.18 | 2026-10-17 | des | R2 batch C — vitest 5 + coverage 5 (core 93, gate ✅) | `chore(deps): vitest 5 + coverage 5` | ⏳ em des |
+| v1.9.19 | 2026-10-17 | des | R2 batch D — TypeScript 7.0 (+ `types:["node"]`); gate completo verde | `chore(deps): typescript 7 + tsconfig types node` | ⏳ em des, em revisão |
 
 ## Consulta (Dataview — notas de gestão)
 
