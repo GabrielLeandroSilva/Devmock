@@ -21,6 +21,7 @@ import {
   readConfig,
   recordExportHashes,
   staleSinceLastExport,
+  writeConfig,
 } from "./project.js";
 
 /** Operações dos comandos, sem vscode — testáveis no host com fs real. */
@@ -151,4 +152,29 @@ export function formatLogEntry(l: RequestLogEntry): string[] {
   if (l.requestBody) lines.push(`  → ${l.requestBody}${mark}`);
   if (l.responseBody) lines.push(`  ← ${l.responseBody}${mark}`);
   return lines;
+}
+
+/** Aplica `errorRate` (0–100) no `config.json` e devolve o valor aplicado. */
+export function doSetErrorRate(root: string, value: number): number {
+  if (!Number.isInteger(value) || value < 0 || value > 100) {
+    throw new Error("DevMock: errorRate deve ser um inteiro entre 0 e 100.");
+  }
+  writeConfig(root, { ...readConfig(root), errorRate: value });
+  return value;
+}
+
+/** Nome do cenário ativo de uma rota ("Default" quando não há). */
+export function scenarioOf(
+  activeScenarios: Record<string, string> | undefined,
+  route: string,
+): string {
+  return activeScenarios?.[route] ?? "Default";
+}
+
+/** URL do navegador para uma rota GET coleção; `undefined` se não abrir (ex.: `:id`). */
+export function endpointUrl(port: number, route: string): string | undefined {
+  if (!route.startsWith("GET ")) return undefined;
+  const path = route.slice(4);
+  if (path.includes(":id")) return undefined;
+  return `http://localhost:${port}${path}?page=1&limit=5`;
 }

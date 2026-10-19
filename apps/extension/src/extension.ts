@@ -17,9 +17,12 @@ import {
   doGeneratePreview,
   doImportContent,
   doSaveFakeData,
+  doSetErrorRate,
   doSwitchScenario,
   doValidate,
+  endpointUrl,
   formatLogEntry,
+  scenarioOf,
 } from "./ops.js";
 import {
   devmockDir,
@@ -77,6 +80,7 @@ class ProjectProvider implements vscode.TreeDataProvider<TreeNode> {
       }];
     }
     if (!el) {
+      const running = Boolean(ctx.server && ctx.port);
       const serverLabel = ctx.server && ctx.port ? `🟢 localhost:${ctx.port}` : "🔴 parado";
       return [
         { label: "Schemas", icon: "symbol-class", children: true },
@@ -84,21 +88,42 @@ class ProjectProvider implements vscode.TreeDataProvider<TreeNode> {
         { label: "Scenarios", icon: "symbol-enum", children: true },
         { label: "Documentation", icon: "book", children: true },
         { label: "Settings", icon: "gear", children: true },
-        { label: `Mock Server ${serverLabel}`, icon: "server" },
+        {
+          label: `Mock Server ${serverLabel}`,
+          icon: "server",
+          contextValue: running ? "mockServerRunning" : "mockServerStopped",
+        },
       ];
     }
     const schemas = listSchemas(ctx.root);
     switch (el.label) {
-      case "Schemas":
+      case "Schemas": {
+        const cfg = readConfig(ctx.root);
         return schemas.map((s) => ({
           label: s.name,
-          description: `${s.fields.length} campos`,
+          description: `${s.fields.length} campos · cenário: ${scenarioOf(cfg.activeScenarios, routesFor(s)[0])}`,
           contextValue: "schema",
           schemaName: s.name,
           command: { command: "devmock.editSchema", title: "Editar Schema", arguments: [s.name] },
         }));
-      case "Endpoints":
-        return schemas.flatMap((s) => routesFor(s).map((r) => ({ label: r })));
+      }
+      case "Endpoints": {
+        const cfg = readConfig(ctx.root);
+        return schemas.flatMap((s) =>
+          routesFor(s).map((r) => {
+            const isGet = r.startsWith("GET ");
+            const openable = isGet && !r.includes(":id");
+            return {
+              label: r,
+              description: isGet ? `cenário: ${scenarioOf(cfg.activeScenarios, r)}` : undefined,
+              contextValue: isGet ? "endpointGet" : "endpoint",
+              command: openable
+                ? { command: "devmock.openEndpoint", title: "Abrir no navegador", arguments: [r] }
+                : undefined,
+            };
+          }),
+        );
+      }
       case "Scenarios": {
         const cfg = readConfig(ctx.root);
         return SCENARIO_NAMES.map((name) => ({
@@ -113,7 +138,11 @@ class ProjectProvider implements vscode.TreeDataProvider<TreeNode> {
           { label: `port: ${cfg.port}` },
           { label: `seedDefault: ${cfg.seedDefault}` },
           { label: `localeDefault: ${cfg.localeDefault}` },
-          { label: `errorRate: ${cfg.errorRate}` },
+          {
+            label: `errorRate: ${cfg.errorRate}`,
+            icon: "pencil",
+            command: { command: "devmock.setErrorRate", title: "Editar errorRate" },
+          },
         ];
       }
       default:
@@ -180,6 +209,50 @@ export function activate(context: vscode.ExtensionContext): void {
     watcher,
     vscode.workspace.onDidChangeWorkspaceFolders(refresh),
     vscode.commands.registerCommand("devmock.refresh", refresh),
+    vscode.commands.registerCommand("devmock.setErrorRate", async () => {
+      const root = workspaceRoot();
+      if (!root || !existsSync(devmockDir(root))) {
+        void vscode.window.showErrorMessage("DevMock: rode `DevMock: Initialize Project` primeiro.");
+        return;
+      }
+      const cfg = readConfig(root);
+      const input = await vscode.window.showInputBox({
+        prompt: "errorRate: % de requisições que falham com 500 (0–100)",
+        value: String(cfg.errorRate),
+        validateInput: (v) => {
+          const n = Number(v);
+          return Number.isInteger(n) && n >= 0 && n <= 100
+            ? undefined
+            : "Informe um inteiro entre 0 e 100.";
+        },
+      });
+      if (input === undefined) return;
+      try {
+        const applied = doSetErrorRate(root, Number(input));
+        if (state.server) state.server.reload({ config: readConfig(root), scenarios: readScenarios(root) });
+        refresh();
+        void vscode.window.showInformationMessage(`DevMock: errorRate = ${applied}%.`);
+      } catch (err) {
+        void vscode.window.showErrorMessage(err instanceof Error ? err.message : String(err));
+      }
+    }),
+    vscode.commands.registerCommand("devmock.openEndpoint", async (route?: string) => {
+      if (!route) return;
+      if (!state.server || !state.port) {
+        void vscode.window.showInformationMessage(
+          "DevMock: inicie o Mock Server para abrir a rota no navegador.",
+        );
+        return;
+      }
+      const url = endpointUrl(state.port, route);
+      if (!url) {
+        void vscode.window.showInformationMessage(
+          "DevMock: esta rota exige um id real — abra a rota de coleção (GET /…).",
+        );
+        return;
+      }
+      await vscode.env.openExternal(vscode.Uri.parse(url));
+    }),
     vscode.commands.registerCommand("devmock.init", async () => {
       const root = workspaceRoot();
       if (!root) {

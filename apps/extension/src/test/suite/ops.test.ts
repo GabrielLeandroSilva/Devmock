@@ -4,7 +4,18 @@ import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { createMockServer } from "@devmock/core";
 import { handleStudioMessage } from "../../studio.js";
-import { doExport, doGeneratePreview, doImportContent, doSaveFakeData, doSwitchScenario, doValidate, formatLogEntry } from "../../ops.js";
+import {
+  doExport,
+  doGeneratePreview,
+  doImportContent,
+  doSaveFakeData,
+  doSetErrorRate,
+  doSwitchScenario,
+  doValidate,
+  endpointUrl,
+  formatLogEntry,
+  scenarioOf,
+} from "../../ops.js";
 import { devmockDir, listSchemas, readConfig, staleSinceLastExport } from "../../project.js";
 
 suite("ops no host (fs real, sem mocks)", () => {
@@ -151,5 +162,38 @@ suite("ops no host (fs real, sem mocks)", () => {
     });
     assert.strictEqual(cut.length, 2);
     assert.ok(cut[1].includes("truncado"));
+  });
+
+  test("W1 — doSetErrorRate valida 0..100 e grava", () => {
+    assert.strictEqual(doSetErrorRate(root, 25), 25);
+    assert.strictEqual(readConfig(root).errorRate, 25);
+    assert.throws(() => doSetErrorRate(root, -1));
+    assert.throws(() => doSetErrorRate(root, 101));
+    assert.throws(() => doSetErrorRate(root, 1.5));
+  });
+
+  test("W1 — scenarioOf e endpointUrl", () => {
+    assert.strictEqual(scenarioOf({ "GET /users": "Empty" }, "GET /users"), "Empty");
+    assert.strictEqual(scenarioOf({}, "GET /users"), "Default");
+    assert.strictEqual(endpointUrl(4010, "GET /users"), "http://localhost:4010/users?page=1&limit=5");
+    assert.strictEqual(endpointUrl(4010, "GET /users/:id"), undefined);
+    assert.strictEqual(endpointUrl(4010, "POST /users"), undefined);
+  });
+
+  test("W1 — comandos/menus da Tree no package.json", () => {
+    const pkg = JSON.parse(readFileSync(join(__dirname, "../../../package.json"), "utf8")) as {
+      contributes: {
+        commands: { command: string; icon?: string }[];
+        menus: Record<string, { command: string; when?: string }[]>;
+      };
+    };
+    const cmds = pkg.contributes.commands;
+    assert.ok(cmds.some((c) => c.command === "devmock.setErrorRate"));
+    assert.ok(cmds.some((c) => c.command === "devmock.openEndpoint"));
+    assert.strictEqual(cmds.find((c) => c.command === "devmock.start")?.icon, "$(play)");
+    assert.strictEqual(cmds.find((c) => c.command === "devmock.stop")?.icon, "$(debug-stop)");
+    const ctx = pkg.contributes.menus["view/item/context"];
+    assert.ok(ctx.some((m) => m.command === "devmock.start" && /mockServerStopped/.test(m.when ?? "")));
+    assert.ok(ctx.some((m) => m.command === "devmock.stop" && /mockServerRunning/.test(m.when ?? "")));
   });
 });

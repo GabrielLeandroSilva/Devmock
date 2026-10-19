@@ -41,11 +41,13 @@
       },
       {
         "command": "devmock.start",
-        "title": "DevMock: Start Mock Server"
+        "title": "DevMock: Start Mock Server",
+        "icon": "$(play)"
       },
       {
         "command": "devmock.stop",
-        "title": "DevMock: Stop Mock Server"
+        "title": "DevMock: Stop Mock Server",
+        "icon": "$(debug-stop)"
       },
       {
         "command": "devmock.refresh",
@@ -91,6 +93,14 @@
       {
         "command": "devmock.validate",
         "title": "DevMock: Validate Real API…"
+      },
+      {
+        "command": "devmock.setErrorRate",
+        "title": "DevMock: Set Error Rate…"
+      },
+      {
+        "command": "devmock.openEndpoint",
+        "title": "DevMock: Open Endpoint in Browser"
       }
     ],
     "menus": {
@@ -116,6 +126,16 @@
           "command": "devmock.editSchema",
           "when": "view == devmock.project && viewItem == schema",
           "group": "inline"
+        },
+        {
+          "command": "devmock.start",
+          "when": "view == devmock.project && viewItem == mockServerStopped",
+          "group": "inline@1"
+        },
+        {
+          "command": "devmock.stop",
+          "when": "view == devmock.project && viewItem == mockServerRunning",
+          "group": "inline@1"
         }
       ]
     },

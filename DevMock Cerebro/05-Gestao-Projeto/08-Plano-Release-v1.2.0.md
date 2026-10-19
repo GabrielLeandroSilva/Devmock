@@ -57,10 +57,10 @@ updated: 2026-10-17
 ## 3. Passos de execução (checklist)
 - [x] #task ⏫ P0 — Core `close()` + regressão `AUD-16` 🏷️ fase/codigo
 - [x] #task 🔼 P0 — versão `1.1.1` + CHANGELOG + Manual §7 + gate + tag `ext-v1.1.1` 🏷️ fase/codigo
-- [/] #task ⏫ W1.1 — `devmock.setErrorRate` + Settings clicável 🏷️ fase/codigo
-- [/] #task ⏫ W1.2 — cenário ativo no Schema e nos Endpoints 🏷️ fase/codigo
-- [/] #task ⏫ W1.3 — `devmock.openEndpoint` (só GET) 🏷️ fase/codigo
-- [/] #task ⏫ W1.4 — ícones inline Start/Stop no nó Mock Server 🏷️ fase/codigo
+- [x] #task ⏫ W1.1 — `devmock.setErrorRate` + Settings clicável 🏷️ fase/codigo
+- [x] #task ⏫ W1.2 — cenário ativo no Schema e nos Endpoints 🏷️ fase/codigo
+- [x] #task ⏫ W1.3 — `devmock.openEndpoint` (só GET) 🏷️ fase/codigo
+- [x] #task ⏫ W1.4 — ícones inline Start/Stop no nó Mock Server 🏷️ fase/codigo
 - [/] #task ⏫ W3 — HTML docs (página única) + artefato no export 🏷️ fase/codigo
 - [/] #task ⏫ W2 — Detect from project ([[PRD-09-Detect-From-Project]]) 🏷️ fase/codigo
 - [/] #task 🔼 Suítes: matriz `RF→teste` ampliada; órfão (b) fechado 🏷️ fase/codigo

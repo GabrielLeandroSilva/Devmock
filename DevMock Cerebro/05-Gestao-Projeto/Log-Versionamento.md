@@ -113,6 +113,7 @@ updated: 2026-10-10
 | v1.9.17 | 2026-10-17 | des | R2 batch B — mocha 12 · glob 13 (host 15 ✅) | `chore(deps): mocha 12 + glob 13` | ⏳ em des |
 | v1.9.18 | 2026-10-17 | des | R2 batch C — vitest 5 + coverage 5 (core 93, gate ✅) | `chore(deps): vitest 5 + coverage 5` | ⏳ em des |
 | v1.9.19 | 2026-10-17 | des | R2 batch D — TypeScript 7.0 (+ `types:["node"]`); gate completo verde | `chore(deps): typescript 7 + tsconfig types node` | ⏳ em des, em revisão |
+| v1.9.20 | 2026-10-17 | des | W1 Tree UX — editar `errorRate` na Settings, cenário no Schema/Endpoints, abrir GET no navegador, ícones Start/Stop (host 18 ✅) | `feat(extension): tree ux — errorRate, cenario, open endpoint, start/stop` | ⏳ em des, em revisão |
 
 ## Consulta (Dataview — notas de gestão)
 
