@@ -13,6 +13,8 @@ import {
 } from "@devmock/core";
 import { handleStudioMessage } from "./studio.js";
 import {
+  doCreateDetectedSchemas,
+  doDetect,
   doExport,
   doGeneratePreview,
   doImportContent,
@@ -174,6 +176,55 @@ async function pickSchema(): Promise<{ root: string; schema: Schema } | undefine
   if (!picked) return undefined;
   const schema = schemas.find((s) => s.name === picked);
   return schema ? { root, schema } : undefined;
+}
+
+/** Create API → Detect from project (PRD-09). */
+async function detectFlow(
+  root: string,
+  channel: vscode.OutputChannel,
+  refresh: () => void,
+): Promise<void> {
+  const result = doDetect(root);
+  if (result.schemas.length === 0) {
+    for (const w of result.warnings) channel.appendLine(`detect: ${w}`);
+    void vscode.window.showInformationMessage(
+      "DevMock Detect: nada encontrado em src/ (interfaces TS ou chamadas api.get/axios.post).",
+    );
+    return;
+  }
+  type Item = vscode.QuickPickItem & { schema: Schema };
+  const items: Item[] = result.schemas.map((s) => ({
+    label: s.name,
+    description: `${s.fields.length} campos`,
+    detail: s.fields.map((f) => `${f.name}: ${f.type}`).join(", "),
+    schema: s,
+    picked: true,
+  }));
+  const picked = await vscode.window.showQuickPick(items, {
+    placeHolder: "Detect from project — selecione os Schemas a criar",
+    canPickMany: true,
+  });
+  if (!picked || picked.length === 0) return;
+
+  const { created, skipped, warnings } = doCreateDetectedSchemas(
+    root,
+    picked.map((p) => p.schema),
+  );
+  const allWarnings = [...result.warnings, ...warnings];
+  channel.appendLine(
+    `detect: ${created.length} criado(s), ${skipped.length} pulado(s), ${result.endpoints.length} endpoint(s) detectado(s).`,
+  );
+  for (const w of allWarnings) channel.appendLine(`detect: ${w}`);
+  if (result.endpoints.length > 0) {
+    channel.appendLine(
+      `detect endpoints: ${result.endpoints.map((e) => `${e.method} ${e.path}`).join(", ")}`,
+    );
+  }
+  refresh();
+  const parts = [`${created.length} Schema(s) criado(s)`];
+  if (skipped.length > 0) parts.push(`${skipped.length} já existia(m)`);
+  if (allWarnings.length > 0) parts.push(`${allWarnings.length} aviso(s) no Output`);
+  void vscode.window.showInformationMessage(`DevMock Detect: ${parts.join(" · ")}.`);
 }
 
 export function activate(context: vscode.ExtensionContext): void {
@@ -347,7 +398,7 @@ export function activate(context: vscode.ExtensionContext): void {
         [
           { label: "From scratch", description: "Criar Schema no Studio", action: "scratch" },
           { label: "Import OpenAPI", description: "Gerar Schemas de openapi.yaml/json", action: "import" },
-          { label: "Detect from project", description: "Em breve (pós-MVP)", action: "soon" },
+          { label: "Detect from project", description: "Sugerir Schemas a partir de src/", action: "detect" },
         ],
         { placeHolder: "Create API" },
       );
@@ -360,7 +411,9 @@ export function activate(context: vscode.ExtensionContext): void {
         await importApiFlow(root, channel, refresh);
         return;
       }
-      void vscode.window.showInformationMessage(`DevMock: ${picked.label} chega em versão futura — por enquanto, use From scratch.`);
+      if (picked.action === "detect") {
+        await detectFlow(root, channel, refresh);
+      }
     }),
     vscode.commands.registerCommand("devmock.importApi", async () => {
       const root = workspaceRoot();

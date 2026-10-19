@@ -11,11 +11,14 @@ import {
   summarize,
   toYaml,
   validateLive,
+  validateSchema,
   type ArtifactKey,
+  type DetectResult,
   type EndpointReport,
   type RequestLogEntry,
   type Schema,
 } from "@devmock/core";
+import { detectProject } from "./detect.js";
 import {
   devmockDir,
   listSchemas,
@@ -182,4 +185,37 @@ export function endpointUrl(port: number, route: string): string | undefined {
   const path = route.slice(4);
   if (path.includes(":id")) return undefined;
   return `http://localhost:${port}${path}?page=1&limit=5`;
+}
+
+/** Detect from project (PRD-09): varre o projeto e sugere Schemas/endpoints. */
+export function doDetect(root: string): DetectResult {
+  return detectProject(root);
+}
+
+/** Cria os Schemas detectados (valida; pula existentes). */
+export function doCreateDetectedSchemas(
+  root: string,
+  schemas: Schema[],
+  overwrite = false,
+): { created: string[]; skipped: string[]; warnings: string[] } {
+  const dir = join(devmockDir(root), "schemas");
+  mkdirSync(dir, { recursive: true });
+  const created: string[] = [];
+  const skipped: string[] = [];
+  const warnings: string[] = [];
+  for (const s of schemas) {
+    const errors = validateSchema(s).filter((d) => d.severity === "error");
+    if (errors.length > 0) {
+      warnings.push(`${s.name}: inválido — ${errors.map((e) => e.message).join("; ")}`);
+      continue;
+    }
+    const target = join(dir, `${s.name.toLowerCase()}.json`);
+    if (existsSync(target) && !overwrite) {
+      skipped.push(s.name);
+      continue;
+    }
+    writeFileSync(target, `${JSON.stringify(s, null, 2)}\n`);
+    created.push(s.name);
+  }
+  return { created, skipped, warnings };
 }

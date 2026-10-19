@@ -62,11 +62,11 @@ O fluxo de adoção trava quando o dev já tem um projeto sem contrato formal: n
 - Rotas do mock continuam derivadas do **Schema** (PRD-02) — endpoints detectados só garantem que o Schema correspondente exista
 
 ## 7. Critérios de Aceite
-- [ ] #task ⏫ Fixture com `interface User/Order` detecta os 2 modelos, com tipos e opcionais corretos 🏷️ fase/codigo
-- [ ] #task ⏫ Fixture com `api.get('/users')` + `axios.post('/orders')` detecta os endpoints 🏷️ fase/codigo
-- [ ] #task ⏫ Nada é criado sem confirmação; rodar 2× não duplica (`schemas/` inalterado na 2ª) 🏷️ fase/codigo
-- [ ] #task 🔼 Tipos não mapeáveis viram `warnings[]`, nunca campo inventado 🏷️ fase/codigo
-- [ ] #task 🔼 `Create API… → Detect` deixa de exibir "em breve" 🏷️ fase/codigo
+- [x] #task ⏫ Fixture com `interface User/Order` detecta os 2 modelos, com tipos e opcionais corretos 🏷️ fase/codigo
+- [x] #task ⏫ Fixture com `api.get('/users')` + `axios.post('/orders')` detecta os endpoints 🏷️ fase/codigo
+- [x] #task ⏫ Nada é criado sem confirmação; rodar 2× não duplica (`schemas/` inalterado na 2ª) 🏷️ fase/codigo
+- [x] #task 🔼 Tipos não mapeáveis viram `warnings[]`, nunca campo inventado 🏷️ fase/codigo
+- [x] #task 🔼 `Create API… → Detect` deixa de exibir "em breve" 🏷️ fase/codigo
 
 ## 8. Riscos e Dependências
 - **Falsos positivos:** chamadas dinâmicas (`api.get(path)`) e proxies não são detectáveis — heurística conservadora + revisão humana na seleção

@@ -21,7 +21,7 @@ Na [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemNa
 |---|---|
 | Initialize Project | Cria `.devmock/` versionável no projeto |
 | New Schema… / Edit Schema… | Studio: edita campos, preview com seed, salva |
-| Create API… | From scratch ou Import OpenAPI |
+| Create API… | From scratch, Import OpenAPI ou Detect from project |
 | Import OpenAPI… | Gera Schemas de `openapi.yaml/json` |
 | Generate / Save Fake Data… | Preview em aba ou salva em `docs/examples/` |
 | Start / Stop Mock Server | Sobe/derruba `:4010`; Stop mostra o request log |

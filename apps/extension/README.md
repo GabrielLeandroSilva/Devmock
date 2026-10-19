@@ -17,7 +17,7 @@ Define o contrato uma vez e use-o para desenvolver, testar, documentar, comparti
 |---|---|
 | Initialize Project | Cria `.devmock/` versionável |
 | New Schema… / Edit Schema… | Studio: edita campos, preview com seed, salva |
-| Create API… | From scratch, Import OpenAPI ou (em breve) Detect |
+| Create API… | From scratch, Import OpenAPI ou Detect from project |
 | Import OpenAPI… | Gera Schemas de `openapi.yaml/json` |
 | Generate / Save Fake Data… | Preview ou salva em `docs/examples/` |
 | Start / Stop Mock Server | Sobe/derruba `:4010`; Stop mostra o request log |

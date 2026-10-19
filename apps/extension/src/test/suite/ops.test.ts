@@ -1,10 +1,12 @@
 import * as assert from "node:assert";
-import { cpSync, existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { createMockServer } from "@devmock/core";
 import { handleStudioMessage } from "../../studio.js";
 import {
+  doCreateDetectedSchemas,
+  doDetect,
   doExport,
   doGeneratePreview,
   doImportContent,
@@ -180,8 +182,7 @@ suite("ops no host (fs real, sem mocks)", () => {
     assert.strictEqual(endpointUrl(4010, "POST /users"), undefined);
   });
 
-  test("W1 — comandos/menus da Tree no package.json", () => {
-    const pkg = JSON.parse(readFileSync(join(__dirname, "../../../package.json"), "utf8")) as {
+  test("W1 — comandos/menus da Tree no package.json", () => {    const pkg = JSON.parse(readFileSync(join(__dirname, "../../../package.json"), "utf8")) as {
       contributes: {
         commands: { command: string; icon?: string }[];
         menus: Record<string, { command: string; when?: string }[]>;
@@ -195,5 +196,24 @@ suite("ops no host (fs real, sem mocks)", () => {
     const ctx = pkg.contributes.menus["view/item/context"];
     assert.ok(ctx.some((m) => m.command === "devmock.start" && /mockServerStopped/.test(m.when ?? "")));
     assert.ok(ctx.some((m) => m.command === "devmock.stop" && /mockServerRunning/.test(m.when ?? "")));
+  });
+
+  test("W2 — doDetect encontra interface e cria Schema (skip existente)", () => {
+    mkdirSync(join(root, "src"), { recursive: true });
+    writeFileSync(
+      join(root, "src", "types.ts"),
+      "export interface Customer { id: string; name?: string; }\napi.get('/customers');\n",
+    );
+    const detected = doDetect(root);
+    const customer = detected.schemas.find((s) => s.name === "Customer");
+    assert.ok(customer);
+    assert.ok(detected.endpoints.some((e) => e.method === "GET" && e.path === "/customers"));
+
+    const first = doCreateDetectedSchemas(root, detected.schemas);
+    assert.deepStrictEqual(first.created, ["Customer"]);
+    assert.ok(existsSync(join(devmockDir(root), "schemas", "customer.json")));
+
+    const second = doCreateDetectedSchemas(root, detected.schemas);
+    assert.deepStrictEqual(second.skipped, ["Customer"]);
   });
 });
