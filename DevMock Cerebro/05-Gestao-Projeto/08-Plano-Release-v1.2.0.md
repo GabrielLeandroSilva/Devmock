@@ -83,6 +83,7 @@ updated: 2026-10-17
 - **W3** altera o contrato do `.hashes.json` (novo artefato) — cobrir com testes (já temos base no M4).
 - **W1.2** toca a Tree (órfão (a) da matriz de testes pede *seam*): extrair um builder puro da Tree para testar Schema/Endpoint sem o host.
 - Depende de v1.1.1 (Stop) já publicado para a experiência de start/stop ficar fluida no W1.4.
+- **Infra/Stacks:** a baseline agora exige **Node ≥22** e **VS Code ≥1.101** (runtime Node 22); **futuro: mínimo Node 24** → [[06-Stacks-e-Versoes]].
 
 ## 6. Links
 - PRDs: [[PRD-03-VSCode-Extension]] · [[PRD-05-Docs-Export]] · [[PRD-09-Detect-From-Project]] · [[PRD-02-Mock-Server]]

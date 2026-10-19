@@ -108,6 +108,7 @@ updated: 2026-10-10
 | v1.9.12 | 2026-10-17 | main + des | 🚀 Promoção v1.1.1 (PR nº 24) + tag `ext-v1.1.1` | merge `558a23a` + tag `ext-v1.1.1` | ✅ validado, em main |
 | ext-v1.1.1 | 2026-10-17 | tag em main | 🎉 PUBLICADO na Marketplace (patch Stop) | `Published devmock.devmock-vscode v1.1.1` via publish.yml (run 39059635257) | ✅ ao vivo |
 | v1.9.14 | 2026-10-17 | des | Organização: AGENTS.md + convenção Kanban (planejado=In Progress); wiki `Correções` + `Roadmap`; README "Em breve"; Docs-Keeper | `docs(org): agents + kanban + wiki correcoes/roadmap` | ⏳ em des, em revisão |
+| v1.9.15 | 2026-10-17 | des | R1 stacks — Node ≥22 (CI 22/24), runtime extension Node 22 (VS Code ≥1.101), `@types/node ^22`; doc `06-Stacks-e-Versoes` | `chore(stacks): node >=22 + runtime extension node22` | ⏳ em des, em revisão |
 
 ## Consulta (Dataview — notas de gestão)
 
