@@ -116,6 +116,7 @@ updated: 2026-10-10
 | v1.9.20 | 2026-10-17 | des | W1 Tree UX — editar `errorRate` na Settings, cenário no Schema/Endpoints, abrir GET no navegador, ícones Start/Stop (host 18 ✅) | `feat(extension): tree ux — errorRate, cenario, open endpoint, start/stop` | ⏳ em des, em revisão |
 | v1.9.21 | 2026-10-17 | des | W3 HTML docs — página única offline (`docs/index.html`) + artefato `html` no export/stale (core 96 ✅, cli 7 ✅, host 18 ✅) | `feat(export): html docs em pagina unica` | ⏳ em des, em revisão |
 | v1.9.22 | 2026-10-17 | des | W2 Detect from project — varre `src/`, interfaces TS → Schemas, chamadas HTTP → endpoints, multi-seleção; `Create API → Detect` (core 100 ✅, host 19 ✅) | `feat(detect): detect from project` | ⏳ em des, em revisão |
+| v1.9.23 | 2026-10-17 | des | Fechamento v1.2.0: Manual-Teste-v1.2, versão `1.2.0`, CHANGELOG, README+wiki; gate automático (core 100/cob 90.6 · cli 7 · host 19) | `docs(release): fecha v1.2.0 — manual, versao e docs` | ⏳ em des, em revisão |
 
 ## Consulta (Dataview — notas de gestão)
 

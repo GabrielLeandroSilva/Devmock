@@ -55,14 +55,9 @@ Schema mínimo (`.devmock/schemas/user.json`):
 }
 ```
 
-## Em breve (v1.2.0)
+## Roadmap
 
-Planejado, sem data — priorizado por feedback. Detalhes no [Roadmap](https://github.com/GabrielLeandroSilva/Devmock/wiki/Roadmap):
-
-- Editar `errorRate` e ver o **cenário ativo** direto na Tree
-- Clique num endpoint **GET** abre a rota no navegador; botões **Start/Stop** com ícone
-- **Detect from project** — criar Schemas a partir do seu código
-- **HTML docs** — documentação em página única, offline
+Próximas versões são planejadas **sem data** e priorizadas por feedback — veja o [Roadmap](https://github.com/GabrielLeandroSilva/Devmock/wiki/Roadmap). Já publicado: [Versões](https://github.com/GabrielLeandroSilva/Devmock/wiki/Vers%C3%B5es) · [Correções](https://github.com/GabrielLeandroSilva/Devmock/wiki/Corre%C3%A7%C3%B5es).
 
 ## Links
 
