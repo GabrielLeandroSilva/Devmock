@@ -122,6 +122,8 @@ updated: 2026-10-10
 | v1.9.26 | 2026-10-19 | des | Fix docs: `Response 200` vira **JSON válido** com 1 registro real (Markdown e HTML); remove o placeholder `"data": "Model[]"` | `fix(export): exemplo de response 200 valido` | ⏳ em des |
 | v1.9.27 | 2026-10-19 | des | Fix W2: Detect valida refs entre os Schemas do lote (Order→Customer não é mais "quebrada"); ambos são criados | `fix(detect): refs entre schemas do lote` | ⏳ em des |
 | v1.9.28 | 2026-10-19 | des | UX: **Start/Stop no topo da view** (context key `devmock.serverRunning`); nó Mock Server sem botões inline | `feat(ui): start/stop no titulo da view` | ⏳ em des |
+| v1.9.29 | 2026-10-20 | main + des | 🚀 Promoção v1.2.0 (PR nº 25) + tag `ext-v1.2.0` | merge `082e0fa` + tag `ext-v1.2.0` | ✅ validado, em main |
+| ext-v1.2.0 | 2026-10-20 | tag em main | 🎉 PUBLICADO na Marketplace (Tree UX, Detect, HTML docs) | `Published devmock.devmock-vscode v1.2.0` via publish.yml (run 39352777569) | ✅ ao vivo |
 
 ## Consulta (Dataview — notas de gestão)
 
