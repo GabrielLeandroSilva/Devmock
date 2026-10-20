@@ -107,7 +107,7 @@ Cada PRD ([[Indice-PRDs]]) confrontado com os testes existentes. **S2 entregue e
 | 08 | RF-04 Erro acionável + exit codes | `cli.test.ts` "generate sem schema → exit 1" | ✅ |
 
 **Órfãos conscientes (não são falhas silenciosas):**
-- **(a) UI do host — TreeView/watch/CTA (PRD-03 RF-02, RF-05, §7):** o `ProjectProvider` é interno ao `extension.ts` e o VS Code não expõe providers registrados. Fechar exige um *seam*: extrair o construtor da Tree para uma função pura (sem tipos `vscode`) e testá-lo. **Ação:** tarefa abaixo; sem teste "falso" enquanto o seam não existir.
+- **(a) UI do host — TreeView/watch/CTA (PRD-03 RF-02, RF-05, §7):** o `ProjectProvider` é interno ao `extension.ts` e o VS Code não expõe providers registrados. Fechar exige um *seam*: extrair o construtor da Tree para uma função pura (sem tipos `vscode`) e testá-lo. **Ação:** **planejado na v1.3.0 (T3a)** → [[10-Plano-Release-v1.3.0]]; sem teste "falso" enquanto o seam não existir.
 - **(b) Create API (PRD-03 RF-06):** ✅ **resolvido na v1.2.0** — Detect implementado ([[PRD-09-Detect-From-Project]]) com testes em `detect.test.ts` (core) e `ops.test.ts` (host).
 - **(c) CLI `export` sem `.hashes.json` (PRD-08 RF-02):** **bug de produto**, não de teste — tratado em **M4** do [[06-Plano-Release-v1.1.0]] (staleDetector completo + CLI grava hashes); o teste é adicionado junto do fix.
 
@@ -123,7 +123,7 @@ Não são unit-testáveis; vivem em `packages/core/test/guards.test.ts` e falham
 | Pacote | Gate no CI | Baseline medido | Observação |
 |--------|-----------|-----------------|------------|
 | `packages/core` | **sim** — stmts/lines/funcs ≥ 90, branch ≥ 80 (`vitest.config.ts`) | 93.8 / 93.8 / 94.3 / 85.7 | gate ativo; falha o CI abaixo |
-| `packages/cli` | **não** — E2E | — | testes spawnam `bin/devmock.js` num processo filho → a cobertura in-process mede 0%. Medir exigiria `NODE_V8_COVERAGE`/c8; aceito como limitação (o E2E cobre o fluxo). |
+| `packages/cli` | **não** — E2E | — | testes spawnam `bin/devmock.js` num processo filho → a cobertura in-process mede 0%. **Planejado na v1.3.0 (T3b):** `NODE_V8_COVERAGE`/c8 (stretch) → [[10-Plano-Release-v1.3.0]]. |
 | `apps/extension` | **não** — integração | — | smoke + commands + ops verdes obrigatórios no host |
 
 Artefato `coverage-core-nodeXX` publicado no CI. Regra: novo código não pode **baixar** a cobertura do Core abaixo do gate.
@@ -139,8 +139,9 @@ Artefato `coverage-core-nodeXX` publicado no CI. Regra: novo código não pode *
 - [x] #task ⏫ Definir agentes: criar [[Agente-QA-Testes]] (vault + `.opencode/agent/qa-testes.md`) 🏷️ fase/codigo
 - [x] #task ⏫ S1 — `regression.test.ts` por pacote (1 `it` por AUD-xx) 🏷️ fase/codigo
 - [x] #task ⏫ S2 — preencher matriz `RF → teste` e zerar aceites órfãos 🏷️ fase/codigo
-- [ ] #task 🔼 Seam de testabilidade da Tree (extrair builder puro) — fecha PRD-03 RF-02/RF-05/§7 🏷️ fase/codigo
-- [ ] #task 🔼 Teste de `.hashes.json` no CLI export — junto do fix M4 🏷️ fase/codigo
+- [/] #task 🔼 Seam de testabilidade da Tree (extrair builder puro) — fecha PRD-03 RF-02/RF-05/§7 — **v1.3.0 T3a** 🏷️ fase/codigo
+- [/] #task 🔼 Cobertura do CLI via `NODE_V8_COVERAGE` — **v1.3.0 T3b** 🏷️ fase/codigo
+- [x] #task 🔼 Teste de `.hashes.json` no CLI export — junto do fix M4 🏷️ fase/codigo
 - [x] #task 🔼 S3 — `--coverage` + threshold + artefato no CI 🏷️ fase/codigo
 - [x] #task 🔼 Guards de infra (build-order, tsconfig, cjs-esm, ci-build) 🏷️ fase/codigo
 - [ ] #task 🔼 Rodar varredura de flaky e remover `skip` silencioso 🏷️ fase/codigo

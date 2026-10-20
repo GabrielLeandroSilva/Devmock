@@ -126,6 +126,7 @@ updated: 2026-10-10
 | ext-v1.2.0 | 2026-10-20 | tag em main | 🎉 PUBLICADO na Marketplace (Tree UX, Detect, HTML docs) | `Published devmock.devmock-vscode v1.2.0` via publish.yml (run 39352777569) | ✅ ao vivo |
 | — | 2026-10-20 | — | 📣 Post de lançamento v1.2.0 (texto do [[Agente-LinkedIn]], postagem manual) | marco de divulgação, sem versão | ✅ entregue |
 | v1.9.30 | 2026-10-20 | des | ✅ Gate da v1.2.0 fechado (W1–W3 + P0 publicados; post entregue) | `docs(release): fecha gate da v1.2.0` | ✅ concluído |
+| v1.9.31 | 2026-10-20 | des | Planejamento v1.3.0: skill `roadmap-update`, plano 10 (T1 header/query + T3 testes da UI), PRD-04, roadmap (Home/EAP/wiki/README) | `docs(release): planeja v1.3.0 + skill roadmap-update` | ⏳ em des, em revisão |
 
 ## Consulta (Dataview — notas de gestão)
 

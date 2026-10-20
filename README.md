@@ -59,6 +59,8 @@ Schema mínimo (`.devmock/schemas/user.json`):
 
 Próximas versões são planejadas **sem data** e priorizadas por feedback — veja o [Roadmap](https://github.com/GabrielLeandroSilva/Devmock/wiki/Roadmap). Já publicado: [Versões](https://github.com/GabrielLeandroSilva/Devmock/wiki/Vers%C3%B5es) · [Correções](https://github.com/GabrielLeandroSilva/Devmock/wiki/Corre%C3%A7%C3%B5es).
 
+- **v1.3.0 (planejado):** cenários por requisição (`?scenario=` / header) e mais testes/qualidade
+
 ## Links
 
 - [Wiki — guia completo](https://github.com/GabrielLeandroSilva/Devmock/wiki)

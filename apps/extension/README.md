@@ -36,6 +36,8 @@ VS Code `^1.90.0`. Sem telemetria, 100% local, tudo em arquivos versionáveis.
 
 Próximas versões: [Roadmap](https://github.com/GabrielLeandroSilva/Devmock/wiki/Roadmap) · histórico: [Versões](https://github.com/GabrielLeandroSilva/Devmock/wiki/Vers%C3%B5es) e [Correções](https://github.com/GabrielLeandroSilva/Devmock/wiki/Corre%C3%A7%C3%B5es).
 
+- **v1.3.0 (planejado):** cenários por requisição (`?scenario=` / header) e mais testes/qualidade
+
 ## Links
 
 - Repositório e docs vivas: [GabrielLeandroSilva/Devmock](https://github.com/GabrielLeandroSilva/Devmock)
