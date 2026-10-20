@@ -57,24 +57,24 @@ updated: 2026-10-17
 ## 3. Passos de execução (checklist)
 - [x] #task ⏫ P0 — Core `close()` + regressão `AUD-16` 🏷️ fase/codigo
 - [x] #task 🔼 P0 — versão `1.1.1` + CHANGELOG + Manual §7 + gate + tag `ext-v1.1.1` 🏷️ fase/codigo
-- [ ] #task ⏫ W1.1 — `devmock.setErrorRate` + Settings clicável 🏷️ fase/codigo
-- [ ] #task ⏫ W1.2 — cenário ativo no Schema e nos Endpoints 🏷️ fase/codigo
-- [ ] #task ⏫ W1.3 — `devmock.openEndpoint` (só GET) 🏷️ fase/codigo
-- [ ] #task ⏫ W1.4 — ícones inline Start/Stop no nó Mock Server 🏷️ fase/codigo
-- [ ] #task ⏫ W3 — HTML docs (página única) + artefato no export 🏷️ fase/codigo
-- [ ] #task ⏫ W2 — Detect from project ([[PRD-09-Detect-From-Project]]) 🏷️ fase/codigo
-- [ ] #task 🔼 Suítes: matriz `RF→teste` ampliada; órfão (b) fechado 🏷️ fase/codigo
-- [ ] #task 🔼 Manual-Teste-v1.2 + CHANGELOG + `package.json → 1.2.0` 🏷️ fase/codigo
-- [ ] #task 🔼 Sincronizar README + wiki (Docs-Keeper) 🏷️ fase/codigo
-- [ ] #task ⏫ Rodar Gate de Release (§4) 🏷️ fase/codigo
+- [x] #task ⏫ W1.1 — `devmock.setErrorRate` + Settings clicável 🏷️ fase/codigo
+- [x] #task ⏫ W1.2 — cenário ativo no Schema e nos Endpoints 🏷️ fase/codigo
+- [x] #task ⏫ W1.3 — `devmock.openEndpoint` (só GET) 🏷️ fase/codigo
+- [x] #task ⏫ W1.4 — ícones inline Start/Stop no nó Mock Server 🏷️ fase/codigo
+- [x] #task ⏫ W3 — HTML docs (página única) + artefato no export 🏷️ fase/codigo
+- [x] #task ⏫ W2 — Detect from project ([[PRD-09-Detect-From-Project]]) 🏷️ fase/codigo
+- [x] #task 🔼 Suítes: matriz `RF→teste` ampliada; órfão (b) fechado 🏷️ fase/codigo
+- [x] #task 🔼 Manual-Teste-v1.2 + CHANGELOG + `package.json → 1.2.0` 🏷️ fase/codigo
+- [x] #task 🔼 Sincronizar README + wiki (Docs-Keeper) 🏷️ fase/codigo
+- [/] #task ⏫ Rodar Gate de Release (§4) — automático ✅; falta host (UI) 🏷️ fase/codigo
 
 ## 4. Gate de Release
-- [ ] Manual-Teste-v1.2 100% ✅ (inclui W1–W3 + P0)
-- [ ] `vitest run` verde + cobertura ≥ gate + matriz `AUD`/`RF` 100%
-- [ ] `tsc --noEmit` limpo em todos os workspaces
-- [ ] CHANGELOG + `package.json` = `1.2.0`
-- [ ] README (raiz + extension) e wiki sincronizados
-- [ ] `Log-Versionamento` atualizado
+- [ ] Manual-Teste-v1.2 100% ✅ (inclui W1–W3 + P0) — pendente validação no host
+- [x] `vitest run` verde + cobertura ≥ gate + matriz `AUD`/`RF` 100%
+- [x] `tsc --noEmit` limpo em todos os workspaces
+- [x] CHANGELOG + `package.json` = `1.2.0`
+- [x] README (raiz + extension) e wiki sincronizados
+- [x] `Log-Versionamento` atualizado
 - [ ] Tag `ext-v1.2.0` (trava `tag == versão`) → `publish.yml`
 - [ ] Post de lançamento ([[Agente-LinkedIn]], postagem manual)
 
@@ -83,6 +83,7 @@ updated: 2026-10-17
 - **W3** altera o contrato do `.hashes.json` (novo artefato) — cobrir com testes (já temos base no M4).
 - **W1.2** toca a Tree (órfão (a) da matriz de testes pede *seam*): extrair um builder puro da Tree para testar Schema/Endpoint sem o host.
 - Depende de v1.1.1 (Stop) já publicado para a experiência de start/stop ficar fluida no W1.4.
+- **Infra/Stacks:** a baseline agora exige **Node ≥22** e **VS Code ≥1.101** (runtime Node 22); **futuro: mínimo Node 24** → [[06-Stacks-e-Versoes]].
 
 ## 6. Links
 - PRDs: [[PRD-03-VSCode-Extension]] · [[PRD-05-Docs-Export]] · [[PRD-09-Detect-From-Project]] · [[PRD-02-Mock-Server]]

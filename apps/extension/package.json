@@ -2,7 +2,7 @@
   "name": "devmock-vscode",
   "displayName": "DevMock",
   "description": "API Contract & Mocking for Front-end — build without waiting for the backend.",
-  "version": "1.1.1",
+  "version": "1.2.0",
   "publisher": "devmock",
   "license": "MIT",
   "icon": "images/icon.png",
@@ -15,44 +15,141 @@
     "url": "https://github.com/GabrielLeandroSilva/Devmock/issues"
   },
   "engines": {
-    "vscode": "^1.90.0"
+    "vscode": "^1.101.0"
   },
-  "categories": ["Other"],
-  "keywords": ["mock", "api", "openapi", "contract", "frontend", "faker", "brasil"],
-  "activationEvents": ["onStartupFinished"],
+  "categories": [
+    "Other"
+  ],
+  "keywords": [
+    "mock",
+    "api",
+    "openapi",
+    "contract",
+    "frontend",
+    "faker",
+    "brasil"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
   "main": "./dist/extension.js",
   "contributes": {
     "commands": [
-      { "command": "devmock.init", "title": "DevMock: Initialize Project" },
-      { "command": "devmock.start", "title": "DevMock: Start Mock Server" },
-      { "command": "devmock.stop", "title": "DevMock: Stop Mock Server" },
-      { "command": "devmock.refresh", "title": "DevMock: Refresh View", "icon": "$(refresh)" },
-      { "command": "devmock.createSchema", "title": "DevMock: New Schema…" },
-      { "command": "devmock.editSchema", "title": "DevMock: Edit Schema…" },
-      { "command": "devmock.createApi", "title": "DevMock: Create API…" },
-      { "command": "devmock.importApi", "title": "DevMock: Import OpenAPI…" },
-      { "command": "devmock.generate", "title": "DevMock: Generate Fake Data…" },
-      { "command": "devmock.saveFakeData", "title": "DevMock: Save Fake Data…" },
-      { "command": "devmock.switchScenario", "title": "DevMock: Switch Scenario…" },
-      { "command": "devmock.export", "title": "DevMock: Export Contract…" },
-      { "command": "devmock.showLog", "title": "DevMock: Show Request Log" },
-      { "command": "devmock.validate", "title": "DevMock: Validate Real API…" }
+      {
+        "command": "devmock.init",
+        "title": "DevMock: Initialize Project"
+      },
+      {
+        "command": "devmock.start",
+        "title": "DevMock: Start Mock Server",
+        "icon": "$(play)"
+      },
+      {
+        "command": "devmock.stop",
+        "title": "DevMock: Stop Mock Server",
+        "icon": "$(debug-stop)"
+      },
+      {
+        "command": "devmock.refresh",
+        "title": "DevMock: Refresh View",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "devmock.createSchema",
+        "title": "DevMock: New Schema…"
+      },
+      {
+        "command": "devmock.editSchema",
+        "title": "DevMock: Edit Schema…"
+      },
+      {
+        "command": "devmock.createApi",
+        "title": "DevMock: Create API…"
+      },
+      {
+        "command": "devmock.importApi",
+        "title": "DevMock: Import OpenAPI…"
+      },
+      {
+        "command": "devmock.generate",
+        "title": "DevMock: Generate Fake Data…"
+      },
+      {
+        "command": "devmock.saveFakeData",
+        "title": "DevMock: Save Fake Data…"
+      },
+      {
+        "command": "devmock.switchScenario",
+        "title": "DevMock: Switch Scenario…"
+      },
+      {
+        "command": "devmock.export",
+        "title": "DevMock: Export Contract…"
+      },
+      {
+        "command": "devmock.showLog",
+        "title": "DevMock: Show Request Log"
+      },
+      {
+        "command": "devmock.validate",
+        "title": "DevMock: Validate Real API…"
+      },
+      {
+        "command": "devmock.setErrorRate",
+        "title": "DevMock: Set Error Rate…"
+      },
+      {
+        "command": "devmock.openEndpoint",
+        "title": "DevMock: Open Endpoint in Browser"
+      }
     ],
     "menus": {
       "view/title": [
-        { "command": "devmock.refresh", "when": "view == devmock.project", "group": "navigation" },
-        { "command": "devmock.createSchema", "when": "view == devmock.project", "group": "navigation" },
-        { "command": "devmock.start", "when": "view == devmock.project", "group": "navigation" }
+        {
+          "command": "devmock.refresh",
+          "when": "view == devmock.project",
+          "group": "navigation@1"
+        },
+        {
+          "command": "devmock.createSchema",
+          "when": "view == devmock.project",
+          "group": "navigation@2"
+        },
+        {
+          "command": "devmock.start",
+          "when": "view == devmock.project && !devmock.serverRunning",
+          "group": "navigation@3"
+        },
+        {
+          "command": "devmock.stop",
+          "when": "view == devmock.project && devmock.serverRunning",
+          "group": "navigation@3"
+        }
       ],
       "view/item/context": [
-        { "command": "devmock.editSchema", "when": "view == devmock.project && viewItem == schema", "group": "inline" }
+        {
+          "command": "devmock.editSchema",
+          "when": "view == devmock.project && viewItem == schema",
+          "group": "inline"
+        }
       ]
     },
     "viewsContainers": {
-      "activitybar": [{ "id": "devmock", "title": "DevMock", "icon": "$(beaker)" }]
+      "activitybar": [
+        {
+          "id": "devmock",
+          "title": "DevMock",
+          "icon": "$(beaker)"
+        }
+      ]
     },
     "views": {
-      "devmock": [{ "id": "devmock.project", "name": "Project" }]
+      "devmock": [
+        {
+          "id": "devmock.project",
+          "name": "Project"
+        }
+      ]
     }
   },
   "scripts": {
@@ -69,12 +166,12 @@
   "devDependencies": {
     "@types/mocha": "^10.0.0",
     "@types/node": "^22.0.0",
-    "@types/vscode": "^1.90.0",
-    "@vscode/test-electron": "^2.4.0",
-    "@vscode/vsce": "^3.2.0",
-    "esbuild": "0.21.5",
-    "glob": "^11.0.0",
-    "mocha": "^10.7.0",
-    "typescript": "^5.6.0"
+    "@types/vscode": "~1.101.0",
+    "@vscode/test-electron": "^3.1.0",
+    "@vscode/vsce": "^4.0.0",
+    "esbuild": "^0.28.2",
+    "glob": "^13.0.6",
+    "mocha": "^12.0.3",
+    "typescript": "^7.0.2"
   }
 }

@@ -6,6 +6,12 @@ export * from "./schemaStore.js";
 export { generate, generatorNames } from "./generators/index.js";
 export { importOpenApi, type ImportResult } from "./import/index.js";
 export {
+  detectFromProject,
+  type DetectResult,
+  type DetectedEndpoint,
+  type ProjectFile,
+} from "./detect/index.js";
+export {
   compare,
   validateLive,
   summarize,
@@ -21,6 +27,7 @@ export {
   buildTypes,
   buildDocFor,
   buildDocs,
+  buildHtmlDocs,
   hashSchema,
   isStale,
   mergeExportHashes,

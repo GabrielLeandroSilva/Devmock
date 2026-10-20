@@ -3,6 +3,7 @@ import SwaggerParser from "@apidevtools/swagger-parser";
 import {
   ALL_ARTIFACTS,
   buildDocFor,
+  buildHtmlDocs,
   buildJsonSchemas,
   buildOpenApi,
   buildTypes,
@@ -124,6 +125,16 @@ describe("buildDocFor (PRD-05 RF-01)", () => {
     expect(md).toContain("| page | number |");
     expect(md).toContain("ACTIVE | BLOCKED | PENDING");
   });
+
+  it("Response 200 é JSON válido (data é array, total é número)", () => {
+    const md = buildDocFor(user);
+    const match = md.match(/```json\n([\s\S]*?)\n```/);
+    expect(match).not.toBeNull();
+    const payload = JSON.parse(match![1]);
+    expect(Array.isArray(payload.data)).toBe(true);
+    expect(typeof payload.total).toBe("number");
+    expect(payload.data[0].id).toBeTruthy();
+  });
 });
 
 describe("toYaml", () => {
@@ -158,6 +169,48 @@ describe("idempotência + stale (PRD-05 §8)", () => {
 
   it("canonical lida com undefined", () => {
     expect(hashSchema(user)).toMatch(/^[0-9a-f]{16}$/);
+  });
+
+  it("W3 — HTML docs: página única com âncoras, campos e endpoints", () => {
+    const html = buildHtmlDocs([user, order]);
+    expect(html).toContain("<!doctype html>");
+    expect(html).toContain('id="user"');
+    expect(html).toContain('href="#user"');
+    expect(html).toContain("GET /users");
+    expect(html).toContain("<th>Campo</th>");
+  });
+
+  it("W3 — HTML docs: offline (sem links externos) e determinístico", () => {
+    const a = buildHtmlDocs([user]);
+    const b = buildHtmlDocs([user]);
+    expect(a).toBe(b);
+    expect(a).not.toMatch(/https?:\/\//);
+  });
+
+  it("W3 — HTML docs escapa conteúdo dos campos", () => {
+    const weird: Schema = {
+      name: "X<y>",
+      fields: [{ name: "a<b", type: "string" }],
+    };
+    const html = buildHtmlDocs([weird]);
+    expect(html).toContain("X&lt;y&gt;");
+    expect(html).toContain("a&lt;b");
+    expect(html).not.toContain("<y>");
+  });
+
+  it("W3 — HTML docs: Response 200 é JSON válido (data é array)", () => {
+    const html = buildHtmlDocs([user]);
+    const m = html.match(/<pre><code>([\s\S]*?)<\/code><\/pre>/);
+    expect(m).not.toBeNull();
+    const json = m![1]
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'")
+      .replace(/&lt;/g, "<")
+      .replace(/&gt;/g, ">")
+      .replace(/&amp;/g, "&");
+    const payload = JSON.parse(json);
+    expect(Array.isArray(payload.data)).toBe(true);
+    expect(typeof payload.total).toBe("number");
   });
 
   it("M4 — stale é por artefato: export parcial não marca o resto como sincronizado", () => {

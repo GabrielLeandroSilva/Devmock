@@ -66,9 +66,9 @@ Dev precisa de experiência visual simples (TreeView) + edição direta dos arqu
 - [ ] #task ⏫ Tree exibe User/Product/Order + endpoints GET/POST/DELETE do exemplo §6 🏷️ fase/1
 - [ ] #task ⏫ Start exibe 🟢 + porta; Stop derruba sem processo zumbi 🏷️ fase/1
 - [ ] #task 🔼 Editar `user.json` na mão atualiza a Tree sem reload 🏷️ fase/1
-- [ ] #task 🔼 **[v1.2.0]** Editar `errorRate` pela Settings grava no `config.json` e reflete na Tree 🏷️ fase/codigo
-- [ ] #task 🔼 **[v1.2.0]** Schema e Endpoints exibem o cenário ativo; clique em GET abre no navegador 🏷️ fase/codigo
-- [ ] #task 🔼 **[v1.2.0]** Nó Mock Server mostra Start/Stop inline conforme o estado 🏷️ fase/codigo
+- [x] #task 🔼 **[v1.2.0]** Editar `errorRate` pela Settings grava no `config.json` e reflete na Tree 🏷️ fase/codigo
+- [x] #task 🔼 **[v1.2.0]** Schema e Endpoints exibem o cenário ativo; clique em GET abre no navegador 🏷️ fase/codigo
+- [x] #task 🔼 **[v1.2.0]** Nó Mock Server mostra Start/Stop inline conforme o estado 🏷️ fase/codigo
 
 ## 8. Riscos e Dependências
 - Depende de PRD-01 (formato de Schema) e PRD-02 (start/stop)

@@ -85,7 +85,7 @@ Cada PRD ([[Indice-PRDs]]) confrontado com os testes existentes. **S2 entregue e
 | 03 | RF-07 Testabilidade (ops puros, fire-and-forget, `?limit`) | `ops.test.ts` · `regression.test.ts` AUD-12 · AUD-13 | ✅ |
 | 03 | RF-02 TreeView lista Schemas/Endpoints | — | ⚠️ órfão (a) |
 | 03 | RF-05 Edição manual do JSON recarrega a Tree | — | ⚠️ órfão (a) |
-| 03 | RF-06 Create API (From scratch/Import/Detect) | — | ⚠️ órfão (b) |
+| 03 | RF-06 Create API (From scratch/Import/Detect) | `detect.test.ts` (core) · `ops.test.ts` (host, W2) | ✅ |
 | 03 | §7 CTA sem `.devmock/` | — | ⚠️ órfão (a) |
 | 04 | RF-01 CRUD de cenário | `ops.test.ts` "switch grava activeScenarios" | ✅ |
 | 04 | RF-02 Troca <500ms sem restart | `mockServer.test.ts` "troca de cenário sem restart" | ✅ |
@@ -108,7 +108,7 @@ Cada PRD ([[Indice-PRDs]]) confrontado com os testes existentes. **S2 entregue e
 
 **Órfãos conscientes (não são falhas silenciosas):**
 - **(a) UI do host — TreeView/watch/CTA (PRD-03 RF-02, RF-05, §7):** o `ProjectProvider` é interno ao `extension.ts` e o VS Code não expõe providers registrados. Fechar exige um *seam*: extrair o construtor da Tree para uma função pura (sem tipos `vscode`) e testá-lo. **Ação:** tarefa abaixo; sem teste "falso" enquanto o seam não existir.
-- **(b) Create API (PRD-03 RF-06):** depende de interação de `QuickPick`; "Detect" é placeholder → será feature real na v1.2.0 (PRD-09), quando ganha teste próprio.
+- **(b) Create API (PRD-03 RF-06):** ✅ **resolvido na v1.2.0** — Detect implementado ([[PRD-09-Detect-From-Project]]) com testes em `detect.test.ts` (core) e `ops.test.ts` (host).
 - **(c) CLI `export` sem `.hashes.json` (PRD-08 RF-02):** **bug de produto**, não de teste — tratado em **M4** do [[06-Plano-Release-v1.1.0]] (staleDetector completo + CLI grava hashes); o teste é adicionado junto do fix.
 
 ## 6. Guard tests (bugs de infra)

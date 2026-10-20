@@ -17,7 +17,7 @@ esbuild.buildSync({
   external: ["vscode"],
   format: "cjs",
   platform: "node",
-  target: "node20",
+  target: "node22",
   sourcemap: false,
   logLevel: "info",
 });

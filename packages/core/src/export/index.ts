@@ -2,6 +2,7 @@ export { buildJsonSchemas, schemaToJsonSchema, fieldToJsonSchema } from "./jsons
 export { buildOpenApi } from "./openapi.js";
 export { buildTypes } from "./ts.js";
 export { buildDocFor, buildDocs } from "./md.js";
+export { buildHtmlDocs } from "./html.js";
 export { toYaml } from "./yaml.js";
 export {
   canonical,

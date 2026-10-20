@@ -26,10 +26,10 @@ export function isStale(schema: Schema, exportedHash: string): boolean {
 }
 
 /** Artefatos exportáveis, chaveados no `.hashes.json`. */
-export type ArtifactKey = "openapi" | "jsonSchema" | "types" | "markdown";
+export type ArtifactKey = "openapi" | "jsonSchema" | "types" | "markdown" | "html";
 
 /** Conjunto completo do contrato: um artefato ausente conta como desatualizado. */
-export const ALL_ARTIFACTS: ArtifactKey[] = ["openapi", "jsonSchema", "types", "markdown"];
+export const ALL_ARTIFACTS: ArtifactKey[] = ["openapi", "jsonSchema", "types", "markdown", "html"];
 
 /** Hash do Schema no momento em que cada artefato foi gerado: `{ schema: { artefato: hash } }`. */
 export type ExportHashes = Record<string, Partial<Record<ArtifactKey, string>>>;

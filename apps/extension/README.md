@@ -17,12 +17,12 @@ Define o contrato uma vez e use-o para desenvolver, testar, documentar, comparti
 |---|---|
 | Initialize Project | Cria `.devmock/` versionável |
 | New Schema… / Edit Schema… | Studio: edita campos, preview com seed, salva |
-| Create API… | From scratch, Import OpenAPI ou (em breve) Detect |
+| Create API… | From scratch, Import OpenAPI ou Detect from project |
 | Import OpenAPI… | Gera Schemas de `openapi.yaml/json` |
 | Generate / Save Fake Data… | Preview ou salva em `docs/examples/` |
 | Start / Stop Mock Server | Sobe/derruba `:4010`; Stop mostra o request log |
 | Switch Scenario… | Default, Empty, 401/403/500/429, Slow — sem restart |
-| Export Contract… | OpenAPI JSON+YAML, JSON Schema, `types.ts`, Markdown |
+| Export Contract… | OpenAPI JSON+YAML, JSON Schema, `types.ts`, Markdown, HTML |
 | Validate Real API… | Compara a API real com o contrato (Compatible/Warning/Breaking) |
 | Show Request Log | Método, rota, status, ms, cenário e bodies (truncados em 1KB) |
 
@@ -31,6 +31,10 @@ CLI equivalente: `devmock init|start|generate|export|import|validate` (pacote `d
 ## Requisitos
 
 VS Code `^1.90.0`. Sem telemetria, 100% local, tudo em arquivos versionáveis.
+
+## Roadmap
+
+Próximas versões: [Roadmap](https://github.com/GabrielLeandroSilva/Devmock/wiki/Roadmap) · histórico: [Versões](https://github.com/GabrielLeandroSilva/Devmock/wiki/Vers%C3%B5es) e [Correções](https://github.com/GabrielLeandroSilva/Devmock/wiki/Corre%C3%A7%C3%B5es).
 
 ## Links
 

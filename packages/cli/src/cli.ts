@@ -2,6 +2,7 @@ import { existsSync, mkdirSync, writeFileSync, readdirSync, readFileSync } from 
 import { join } from "node:path";
 import {
   buildDocFor,
+  buildHtmlDocs,
   buildJsonSchemas,
   buildOpenApi,
   buildTypes,
@@ -29,7 +30,7 @@ Uso: devmock init [dir]              cria .devmock/ no diretório
       devmock import <arquivo> [dir] [--force]   importa OpenAPI → schemas/
       devmock validate <baseUrl> [dir]           valida a API real contra o contrato
       devmock generate <schema> [dir] [--records N] [--seed S] [--out arq]   gera fake data
-      devmock export [dir]            exporta o contrato (5 artefatos + hashes)
+      devmock export [dir]            exporta o contrato (6 artefatos + hashes)
 `);
 }
 
@@ -331,7 +332,8 @@ function cmdExport(args: string[]): void {
   for (const s of schemas) {
     writeFileSync(join(dir, "docs", `${s.name.toLowerCase()}.md`), buildDocFor(s));
   }
+  writeFileSync(join(dir, "docs", "index.html"), buildHtmlDocs(schemas));
   const hashes = mergeExportHashes(undefined, schemas, ALL_ARTIFACTS);
   writeFileSync(join(dir, "openapi", ".hashes.json"), `${JSON.stringify(hashes, null, 2)}\n`);
-  console.log(`DevMock: contrato exportado (${schemas.length} schema(s), 5 artefatos + .hashes.json).`);
+  console.log(`DevMock: contrato exportado (${schemas.length} schema(s), 6 artefatos + .hashes.json).`);
 }

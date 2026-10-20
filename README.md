@@ -21,12 +21,12 @@ Na [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemNa
 |---|---|
 | Initialize Project | Cria `.devmock/` versionável no projeto |
 | New Schema… / Edit Schema… | Studio: edita campos, preview com seed, salva |
-| Create API… | From scratch ou Import OpenAPI |
+| Create API… | From scratch, Import OpenAPI ou Detect from project |
 | Import OpenAPI… | Gera Schemas de `openapi.yaml/json` |
 | Generate / Save Fake Data… | Preview em aba ou salva em `docs/examples/` |
 | Start / Stop Mock Server | Sobe/derruba `:4010`; Stop mostra o request log |
 | Switch Scenario… | Default, Empty, 401/403/500/429, Slow — sem restart |
-| Export Contract… | OpenAPI JSON+YAML, JSON Schema, `types.ts`, Markdown |
+| Export Contract… | OpenAPI JSON+YAML, JSON Schema, `types.ts`, Markdown, HTML |
 | Validate Real API… | Compara a API real com o contrato (Compatible/Warning/Breaking) |
 | Show Request Log | Método, rota, status, ms, cenário e bodies (request/response, truncados em 1KB) |
 
@@ -54,6 +54,10 @@ Schema mínimo (`.devmock/schemas/user.json`):
   ]
 }
 ```
+
+## Roadmap
+
+Próximas versões são planejadas **sem data** e priorizadas por feedback — veja o [Roadmap](https://github.com/GabrielLeandroSilva/Devmock/wiki/Roadmap). Já publicado: [Versões](https://github.com/GabrielLeandroSilva/Devmock/wiki/Vers%C3%B5es) · [Correções](https://github.com/GabrielLeandroSilva/Devmock/wiki/Corre%C3%A7%C3%B5es).
 
 ## Links
 

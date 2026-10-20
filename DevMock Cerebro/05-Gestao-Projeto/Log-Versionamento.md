@@ -105,6 +105,23 @@ updated: 2026-10-10
 | v1.9.9 | 2026-10-17 | des | ✅ Gate da v1.1.0 fechado — release concluída (M1–M4 + suítes S1–S3) | `docs(release): fecha gate da v1.1.0` | ✅ concluído |
 | v1.9.10 | 2026-10-17 | des | Planejamento v1.2.0 (+v1.1.1): PRD-09 Detect, plano 08, RFs Tree UX, HTML docs, AUD-16 | `docs(release): planeja v1.2.0 + prd-09 detect` | ⏳ em des, em revisão |
 | v1.9.11 | 2026-10-17 | des | v1.1.1 — fix Stop lento (AUD-16): `closeAllConnections` (core 93 ✅) + versão `1.1.1` | `fix(mock): stop encerra conexoes keep-alive (AUD-16)` | ⏳ em des, em revisão |
+| v1.9.12 | 2026-10-17 | main + des | 🚀 Promoção v1.1.1 (PR nº 24) + tag `ext-v1.1.1` | merge `558a23a` + tag `ext-v1.1.1` | ✅ validado, em main |
+| ext-v1.1.1 | 2026-10-17 | tag em main | 🎉 PUBLICADO na Marketplace (patch Stop) | `Published devmock.devmock-vscode v1.1.1` via publish.yml (run 39059635257) | ✅ ao vivo |
+| v1.9.14 | 2026-10-17 | des | Organização: AGENTS.md + convenção Kanban (planejado=In Progress); wiki `Correções` + `Roadmap`; README "Em breve"; Docs-Keeper | `docs(org): agents + kanban + wiki correcoes/roadmap` | ⏳ em des, em revisão |
+| v1.9.15 | 2026-10-17 | des | R1 stacks — Node ≥22 (CI 22/24), runtime extension Node 22 (VS Code ≥1.101), `@types/node ^22`; doc `06-Stacks-e-Versoes` | `chore(stacks): node >=22 + runtime extension node22` | ⏳ em des, em revisão |
+| v1.9.16 | 2026-10-17 | des | R2 batch A — esbuild 0.28 · vsce 4 · test-electron 3 | `chore(deps): esbuild 0.28 + vsce 4 + test-electron 3` | ⏳ em des |
+| v1.9.17 | 2026-10-17 | des | R2 batch B — mocha 12 · glob 13 (host 15 ✅) | `chore(deps): mocha 12 + glob 13` | ⏳ em des |
+| v1.9.18 | 2026-10-17 | des | R2 batch C — vitest 5 + coverage 5 (core 93, gate ✅) | `chore(deps): vitest 5 + coverage 5` | ⏳ em des |
+| v1.9.19 | 2026-10-17 | des | R2 batch D — TypeScript 7.0 (+ `types:["node"]`); gate completo verde | `chore(deps): typescript 7 + tsconfig types node` | ⏳ em des, em revisão |
+| v1.9.20 | 2026-10-17 | des | W1 Tree UX — editar `errorRate` na Settings, cenário no Schema/Endpoints, abrir GET no navegador, ícones Start/Stop (host 18 ✅) | `feat(extension): tree ux — errorRate, cenario, open endpoint, start/stop` | ⏳ em des, em revisão |
+| v1.9.21 | 2026-10-17 | des | W3 HTML docs — página única offline (`docs/index.html`) + artefato `html` no export/stale (core 96 ✅, cli 7 ✅, host 18 ✅) | `feat(export): html docs em pagina unica` | ⏳ em des, em revisão |
+| v1.9.22 | 2026-10-17 | des | W2 Detect from project — varre `src/`, interfaces TS → Schemas, chamadas HTTP → endpoints, multi-seleção; `Create API → Detect` (core 100 ✅, host 19 ✅) | `feat(detect): detect from project` | ⏳ em des, em revisão |
+| v1.9.23 | 2026-10-17 | des | Fechamento v1.2.0: Manual-Teste-v1.2, versão `1.2.0`, CHANGELOG, README+wiki; gate automático (core 100/cob 90.6 · cli 7 · host 19) | `docs(release): fecha v1.2.0 — manual, versao e docs` | ⏳ em des, em revisão |
+| v1.9.24 | 2026-10-17 | des | Fix F5: `--disable-extensions` (tentativa de evitar 1.1.1 publicada sombrear) | `fix(dev): F5 carrega apenas a extensao dev` | ⏳ em des |
+| v1.9.25 | 2026-10-17 | des | Reverte `--disable-extensions`; diagnóstico: VS Code do mantenedor **1.95 < 1.101** (mínimo p/ Node 22). Manual exige VS Code ≥1.101 | `fix(dev): reverte disable-extensions + requisito VS Code 1.101` | ⏳ em des |
+| v1.9.26 | 2026-10-19 | des | Fix docs: `Response 200` vira **JSON válido** com 1 registro real (Markdown e HTML); remove o placeholder `"data": "Model[]"` | `fix(export): exemplo de response 200 valido` | ⏳ em des |
+| v1.9.27 | 2026-10-19 | des | Fix W2: Detect valida refs entre os Schemas do lote (Order→Customer não é mais "quebrada"); ambos são criados | `fix(detect): refs entre schemas do lote` | ⏳ em des |
+| v1.9.28 | 2026-10-19 | des | UX: **Start/Stop no topo da view** (context key `devmock.serverRunning`); nó Mock Server sem botões inline | `feat(ui): start/stop no titulo da view` | ⏳ em des |
 
 ## Consulta (Dataview — notas de gestão)
 
