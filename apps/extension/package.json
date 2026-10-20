@@ -108,17 +108,22 @@
         {
           "command": "devmock.refresh",
           "when": "view == devmock.project",
-          "group": "navigation"
+          "group": "navigation@1"
         },
         {
           "command": "devmock.createSchema",
           "when": "view == devmock.project",
-          "group": "navigation"
+          "group": "navigation@2"
         },
         {
           "command": "devmock.start",
-          "when": "view == devmock.project",
-          "group": "navigation"
+          "when": "view == devmock.project && !devmock.serverRunning",
+          "group": "navigation@3"
+        },
+        {
+          "command": "devmock.stop",
+          "when": "view == devmock.project && devmock.serverRunning",
+          "group": "navigation@3"
         }
       ],
       "view/item/context": [
@@ -126,16 +131,6 @@
           "command": "devmock.editSchema",
           "when": "view == devmock.project && viewItem == schema",
           "group": "inline"
-        },
-        {
-          "command": "devmock.start",
-          "when": "view == devmock.project && viewItem == mockServerStopped",
-          "group": "inline@1"
-        },
-        {
-          "command": "devmock.stop",
-          "when": "view == devmock.project && viewItem == mockServerRunning",
-          "group": "inline@1"
         }
       ]
     },

@@ -23,7 +23,7 @@ updated: 2026-10-17
 - [ ] #task ⏫ **[UI]** Settings → clique em `errorRate: N` abre input; gravar 20 reflete na Tree e vale no server rodando 🏷️ fase/codigo
 - [ ] #task ⏫ **[UI]** Schema e Endpoints exibem `cenário: Default`; após Switch → `Empty`, o texto atualiza 🏷️ fase/codigo
 - [ ] #task ⏫ **[UI]** Clique em `GET /users` abre `http://localhost:<porta>/users?page=1&limit=5` no navegador (server parado → aviso) 🏷️ fase/codigo
-- [ ] #task ⏫ **[UI]** Nó `Mock Server` mostra ícone **Start** parado e **Stop** rodando; clicar funciona 🏷️ fase/codigo
+- [ ] #task ⏫ **[UI]** No **topo da view** (ao lado de Refresh/New Schema): parado mostra **Start**, rodando mostra **Stop** (nunca os dois); o nó Mock Server fica sem botões inline 🏷️ fase/codigo
 - **Evidência auto:** host `ops.test.ts` (W1 — `doSetErrorRate`, `scenarioOf`, `endpointUrl`, contrato do `package.json`)
 
 ## W3 — HTML docs

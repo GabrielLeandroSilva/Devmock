@@ -193,9 +193,11 @@ suite("ops no host (fs real, sem mocks)", () => {
     assert.ok(cmds.some((c) => c.command === "devmock.openEndpoint"));
     assert.strictEqual(cmds.find((c) => c.command === "devmock.start")?.icon, "$(play)");
     assert.strictEqual(cmds.find((c) => c.command === "devmock.stop")?.icon, "$(debug-stop)");
+    const title = pkg.contributes.menus["view/title"];
+    assert.ok(title.some((m) => m.command === "devmock.start" && /&&\s*!devmock\.serverRunning/.test(m.when ?? "")));
+    assert.ok(title.some((m) => m.command === "devmock.stop" && /&&\s*devmock\.serverRunning/.test(m.when ?? "")));
     const ctx = pkg.contributes.menus["view/item/context"];
-    assert.ok(ctx.some((m) => m.command === "devmock.start" && /mockServerStopped/.test(m.when ?? "")));
-    assert.ok(ctx.some((m) => m.command === "devmock.stop" && /mockServerRunning/.test(m.when ?? "")));
+    assert.ok(!ctx.some((m) => m.command === "devmock.start" || m.command === "devmock.stop"));
   });
 
   test("W2 — doDetect encontra interfaces e cria os Schemas (ref entre eles)", () => {

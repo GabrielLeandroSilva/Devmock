@@ -82,7 +82,6 @@ class ProjectProvider implements vscode.TreeDataProvider<TreeNode> {
       }];
     }
     if (!el) {
-      const running = Boolean(ctx.server && ctx.port);
       const serverLabel = ctx.server && ctx.port ? `🟢 localhost:${ctx.port}` : "🔴 parado";
       return [
         { label: "Schemas", icon: "symbol-class", children: true },
@@ -90,11 +89,7 @@ class ProjectProvider implements vscode.TreeDataProvider<TreeNode> {
         { label: "Scenarios", icon: "symbol-enum", children: true },
         { label: "Documentation", icon: "book", children: true },
         { label: "Settings", icon: "gear", children: true },
-        {
-          label: `Mock Server ${serverLabel}`,
-          icon: "server",
-          contextValue: running ? "mockServerRunning" : "mockServerStopped",
-        },
+        { label: `Mock Server ${serverLabel}`, icon: "server" },
       ];
     }
     const schemas = listSchemas(ctx.root);
@@ -244,6 +239,16 @@ export function activate(context: vscode.ExtensionContext): void {
     provider.refresh();
   };
 
+  /** Mantém a context key do título da view (Start/Stop) em sincronia com o server. */
+  const syncServerContext = (): void => {
+    void vscode.commands.executeCommand(
+      "setContext",
+      "devmock.serverRunning",
+      state.server !== undefined,
+    );
+  };
+  syncServerContext();
+
   // Watcher com debounce: edição manual reflete na Tree em <200ms (PRD-03 RF-05).
   let timer: NodeJS.Timeout | undefined;
   const watcher = vscode.workspace.createFileSystemWatcher("**/.devmock/**");
@@ -324,6 +329,7 @@ export function activate(context: vscode.ExtensionContext): void {
         return;
       }
       if (state.server) {
+        syncServerContext();
         void vscode.window.showInformationMessage(`DevMock já roda em http://localhost:${state.port}.`);
         return;
       }
@@ -339,9 +345,11 @@ export function activate(context: vscode.ExtensionContext): void {
         state.port = await state.server.listen();
       } catch (err) {
         state.server = undefined;
+        syncServerContext();
         void vscode.window.showErrorMessage(`DevMock: ${err instanceof Error ? err.message : String(err)}`);
         return;
       }
+      syncServerContext();
       refresh();
       void vscode.window.showInformationMessage(`DevMock 🟢 http://localhost:${state.port}`);
     }),
@@ -354,6 +362,7 @@ export function activate(context: vscode.ExtensionContext): void {
       await state.server.close();
       state.server = undefined;
       state.port = undefined;
+      syncServerContext();
       channel.clear();
       for (const l of logs.slice(-50)) {
         for (const line of formatLogEntry(l)) channel.appendLine(line);
