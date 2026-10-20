@@ -1,5 +1,6 @@
 import { routesFor } from "../mock/routes.js";
 import type { Schema, SchemaField } from "../types.js";
+import { paginatedExampleJson } from "./example.js";
 
 const CSS = `:root{color-scheme:light dark}
 *{box-sizing:border-box}
@@ -61,7 +62,7 @@ export function buildHtmlDocs(schemas: Schema[]): string {
 <h3>Campos</h3>
 <table><thead><tr><th>Campo</th><th>Tipo</th><th>Obrigatório</th><th>Gerador</th></tr></thead><tbody>${rows}</tbody></table>
 <h3>Response 200</h3>
-<pre><code>{ "data": "${esc(s.name)}[]", "total": "number" }</code></pre>
+<pre><code>${esc(paginatedExampleJson(s))}</code></pre>
 </section>`;
     })
     .join("\n");

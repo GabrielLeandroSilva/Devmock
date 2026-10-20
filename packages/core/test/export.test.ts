@@ -125,6 +125,16 @@ describe("buildDocFor (PRD-05 RF-01)", () => {
     expect(md).toContain("| page | number |");
     expect(md).toContain("ACTIVE | BLOCKED | PENDING");
   });
+
+  it("Response 200 é JSON válido (data é array, total é número)", () => {
+    const md = buildDocFor(user);
+    const match = md.match(/```json\n([\s\S]*?)\n```/);
+    expect(match).not.toBeNull();
+    const payload = JSON.parse(match![1]);
+    expect(Array.isArray(payload.data)).toBe(true);
+    expect(typeof payload.total).toBe("number");
+    expect(payload.data[0].id).toBeTruthy();
+  });
 });
 
 describe("toYaml", () => {
@@ -186,6 +196,21 @@ describe("idempotência + stale (PRD-05 §8)", () => {
     expect(html).toContain("X&lt;y&gt;");
     expect(html).toContain("a&lt;b");
     expect(html).not.toContain("<y>");
+  });
+
+  it("W3 — HTML docs: Response 200 é JSON válido (data é array)", () => {
+    const html = buildHtmlDocs([user]);
+    const m = html.match(/<pre><code>([\s\S]*?)<\/code><\/pre>/);
+    expect(m).not.toBeNull();
+    const json = m![1]
+      .replace(/&quot;/g, '"')
+      .replace(/&#39;/g, "'")
+      .replace(/&lt;/g, "<")
+      .replace(/&gt;/g, ">")
+      .replace(/&amp;/g, "&");
+    const payload = JSON.parse(json);
+    expect(Array.isArray(payload.data)).toBe(true);
+    expect(typeof payload.total).toBe("number");
   });
 
   it("M4 — stale é por artefato: export parcial não marca o resto como sincronizado", () => {
