@@ -124,6 +124,8 @@ updated: 2026-10-10
 | v1.9.28 | 2026-10-19 | des | UX: **Start/Stop no topo da view** (context key `devmock.serverRunning`); nó Mock Server sem botões inline | `feat(ui): start/stop no titulo da view` | ⏳ em des |
 | v1.9.29 | 2026-10-20 | main + des | 🚀 Promoção v1.2.0 (PR nº 25) + tag `ext-v1.2.0` | merge `082e0fa` + tag `ext-v1.2.0` | ✅ validado, em main |
 | ext-v1.2.0 | 2026-10-20 | tag em main | 🎉 PUBLICADO na Marketplace (Tree UX, Detect, HTML docs) | `Published devmock.devmock-vscode v1.2.0` via publish.yml (run 39352777569) | ✅ ao vivo |
+| — | 2026-10-20 | — | 📣 Post de lançamento v1.2.0 (texto do [[Agente-LinkedIn]], postagem manual) | marco de divulgação, sem versão | ✅ entregue |
+| v1.9.30 | 2026-10-20 | des | ✅ Gate da v1.2.0 fechado (W1–W3 + P0 publicados; post entregue) | `docs(release): fecha gate da v1.2.0` | ✅ concluído |
 
 ## Consulta (Dataview — notas de gestão)
 
