@@ -117,6 +117,8 @@ updated: 2026-10-10
 | v1.9.21 | 2026-10-17 | des | W3 HTML docs — página única offline (`docs/index.html`) + artefato `html` no export/stale (core 96 ✅, cli 7 ✅, host 18 ✅) | `feat(export): html docs em pagina unica` | ⏳ em des, em revisão |
 | v1.9.22 | 2026-10-17 | des | W2 Detect from project — varre `src/`, interfaces TS → Schemas, chamadas HTTP → endpoints, multi-seleção; `Create API → Detect` (core 100 ✅, host 19 ✅) | `feat(detect): detect from project` | ⏳ em des, em revisão |
 | v1.9.23 | 2026-10-17 | des | Fechamento v1.2.0: Manual-Teste-v1.2, versão `1.2.0`, CHANGELOG, README+wiki; gate automático (core 100/cob 90.6 · cli 7 · host 19) | `docs(release): fecha v1.2.0 — manual, versao e docs` | ⏳ em des, em revisão |
+| v1.9.24 | 2026-10-17 | des | Fix F5: `--disable-extensions` (tentativa de evitar 1.1.1 publicada sombrear) | `fix(dev): F5 carrega apenas a extensao dev` | ⏳ em des |
+| v1.9.25 | 2026-10-17 | des | Reverte `--disable-extensions`; diagnóstico: VS Code do mantenedor **1.95 < 1.101** (mínimo p/ Node 22). Manual exige VS Code ≥1.101 | `fix(dev): reverte disable-extensions + requisito VS Code 1.101` | ⏳ em des |
 
 ## Consulta (Dataview — notas de gestão)
 

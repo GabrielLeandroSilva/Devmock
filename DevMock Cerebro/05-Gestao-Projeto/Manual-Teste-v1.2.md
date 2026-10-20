@@ -16,6 +16,7 @@ updated: 2026-10-17
 ## 0. Preparação
 - [x] #task 🔼 Build limpo: `npm run build` 🏷️ fase/codigo ✅ 2026-10-17
 - [x] #task 🔼 Suítes verdes: core + cli + extension 🏷️ fase/codigo ✅ 2026-10-17
+- [ ] #task 🔼 **VS Code ≥ 1.101** (a 1.2.0 roda no Node 22; o host 1.95 recusa a extensão) 🏷️ fase/codigo
 - [ ] #task 🔼 F5 no host de desenvolvimento 🏷️ fase/codigo
 
 ## W1 — Tree UX
