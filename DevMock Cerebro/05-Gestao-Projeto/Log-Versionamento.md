@@ -120,6 +120,7 @@ updated: 2026-10-10
 | v1.9.24 | 2026-10-17 | des | Fix F5: `--disable-extensions` (tentativa de evitar 1.1.1 publicada sombrear) | `fix(dev): F5 carrega apenas a extensao dev` | ⏳ em des |
 | v1.9.25 | 2026-10-17 | des | Reverte `--disable-extensions`; diagnóstico: VS Code do mantenedor **1.95 < 1.101** (mínimo p/ Node 22). Manual exige VS Code ≥1.101 | `fix(dev): reverte disable-extensions + requisito VS Code 1.101` | ⏳ em des |
 | v1.9.26 | 2026-10-19 | des | Fix docs: `Response 200` vira **JSON válido** com 1 registro real (Markdown e HTML); remove o placeholder `"data": "Model[]"` | `fix(export): exemplo de response 200 valido` | ⏳ em des |
+| v1.9.27 | 2026-10-19 | des | Fix W2: Detect valida refs entre os Schemas do lote (Order→Customer não é mais "quebrada"); ambos são criados | `fix(detect): refs entre schemas do lote` | ⏳ em des |
 
 ## Consulta (Dataview — notas de gestão)
 

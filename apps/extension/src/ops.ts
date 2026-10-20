@@ -203,8 +203,10 @@ export function doCreateDetectedSchemas(
   const created: string[] = [];
   const skipped: string[] = [];
   const warnings: string[] = [];
+  // refs entre os schemas do lote (e os já existentes) são válidas.
+  const known = [...new Set([...listSchemas(root).map((s) => s.name), ...schemas.map((s) => s.name)])];
   for (const s of schemas) {
-    const errors = validateSchema(s).filter((d) => d.severity === "error");
+    const errors = validateSchema(s, known).filter((d) => d.severity === "error");
     if (errors.length > 0) {
       warnings.push(`${s.name}: inválido — ${errors.map((e) => e.message).join("; ")}`);
       continue;

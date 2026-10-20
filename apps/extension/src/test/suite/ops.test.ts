@@ -198,22 +198,26 @@ suite("ops no host (fs real, sem mocks)", () => {
     assert.ok(ctx.some((m) => m.command === "devmock.stop" && /mockServerRunning/.test(m.when ?? "")));
   });
 
-  test("W2 — doDetect encontra interface e cria Schema (skip existente)", () => {
+  test("W2 — doDetect encontra interfaces e cria os Schemas (ref entre eles)", () => {
     mkdirSync(join(root, "src"), { recursive: true });
     writeFileSync(
       join(root, "src", "types.ts"),
-      "export interface Customer { id: string; name?: string; }\napi.get('/customers');\n",
+      "export interface Customer { id: string; name?: string; }\n" +
+        "export interface Order { id: string; customer: Customer; total: number; }\n" +
+        "api.get('/customers');\n",
     );
     const detected = doDetect(root);
-    const customer = detected.schemas.find((s) => s.name === "Customer");
-    assert.ok(customer);
+    assert.ok(detected.schemas.some((s) => s.name === "Customer"));
+    assert.ok(detected.schemas.some((s) => s.name === "Order"));
     assert.ok(detected.endpoints.some((e) => e.method === "GET" && e.path === "/customers"));
 
+    // As duas devem ser criadas: Order referencia Customer no MESMO lote.
     const first = doCreateDetectedSchemas(root, detected.schemas);
-    assert.deepStrictEqual(first.created, ["Customer"]);
+    assert.deepStrictEqual(first.created, ["Customer", "Order"]);
     assert.ok(existsSync(join(devmockDir(root), "schemas", "customer.json")));
+    assert.ok(existsSync(join(devmockDir(root), "schemas", "order.json")));
 
     const second = doCreateDetectedSchemas(root, detected.schemas);
-    assert.deepStrictEqual(second.skipped, ["Customer"]);
+    assert.deepStrictEqual(second.skipped.sort(), ["Customer", "Order"]);
   });
 });
