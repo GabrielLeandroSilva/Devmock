@@ -119,14 +119,14 @@ Não são unit-testáveis; vivem em `packages/core/test/guards.test.ts` e falham
 - **AUD-08** — Core empacota CommonJS (sem `type: module`)
 - **AUD-15** — CI chama o script ordenado da raiz (nunca `build --workspaces`)
 
-## 7. Política de cobertura (S3 entregue 2026-10-17)
+## 7. Política de cobertura (S3 2026-10-17 · CLI T3b 2026-10-20)
 | Pacote | Gate no CI | Baseline medido | Observação |
 |--------|-----------|-----------------|------------|
 | `packages/core` | **sim** — stmts/lines/funcs ≥ 90, branch ≥ 80 (`vitest.config.ts`) | 93.8 / 93.8 / 94.3 / 85.7 | gate ativo; falha o CI abaixo |
-| `packages/cli` | **não** — E2E | — | testes spawnam `bin/devmock.js` num processo filho → a cobertura in-process mede 0%. **Planejado na v1.3.0 (T3b):** `NODE_V8_COVERAGE`/c8 (stretch) → [[10-Plano-Release-v1.3.0]]. |
+| `packages/cli` | **sim** — c8 no processo filho (`NODE_V8_COVERAGE`); stmts/lines ≥ 90, funcs ≥ 95, branch ≥ 80 | 96.46 / 96.46 / 100 / 87.12 | `npm run test:coverage`; remapeia `dist/cli.js` → `src/cli.ts` via sourcemap |
 | `apps/extension` | **não** — integração | — | smoke + commands + ops verdes obrigatórios no host |
 
-Artefato `coverage-core-nodeXX` publicado no CI. Regra: novo código não pode **baixar** a cobertura do Core abaixo do gate.
+Artefatos `coverage-core-nodeXX` e `coverage-cli-nodeXX` publicados no CI. Regra: novo código não pode **baixar** a cobertura abaixo do gate.
 
 ## 8. Convenções
 - Nome de teste: `it('AUD-xx — <descrição>')` para regressão; descritivo normal para os demais.
@@ -140,7 +140,7 @@ Artefato `coverage-core-nodeXX` publicado no CI. Regra: novo código não pode *
 - [x] #task ⏫ S1 — `regression.test.ts` por pacote (1 `it` por AUD-xx) 🏷️ fase/codigo
 - [x] #task ⏫ S2 — preencher matriz `RF → teste` e zerar aceites órfãos 🏷️ fase/codigo
 - [x] #task 🔼 Seam de testabilidade da Tree (extrair builder puro) — fecha PRD-03 RF-02/RF-05/§7 — **v1.3.0 T3a** 🏷️ fase/codigo
-- [/] #task 🔼 Cobertura do CLI via `NODE_V8_COVERAGE` — **v1.3.0 T3b** 🏷️ fase/codigo
+- [x] #task 🔼 Cobertura do CLI via `NODE_V8_COVERAGE` — **v1.3.0 T3b** 🏷️ fase/codigo
 - [x] #task 🔼 Teste de `.hashes.json` no CLI export — junto do fix M4 🏷️ fase/codigo
 - [x] #task 🔼 S3 — `--coverage` + threshold + artefato no CI 🏷️ fase/codigo
 - [x] #task 🔼 Guards de infra (build-order, tsconfig, cjs-esm, ci-build) 🏷️ fase/codigo

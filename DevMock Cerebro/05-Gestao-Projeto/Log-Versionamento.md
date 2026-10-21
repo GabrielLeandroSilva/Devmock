@@ -129,6 +129,7 @@ updated: 2026-10-10
 | v1.9.31 | 2026-10-20 | des | Planejamento v1.3.0: skill `roadmap-update`, plano 10 (T1 header/query + T3 testes da UI), PRD-04, roadmap (Home/EAP/wiki/README) | `docs(release): planeja v1.3.0 + skill roadmap-update` | ✅ concluído |
 | v1.9.32 | 2026-10-20 | des | T1 entregue: cenário por `?scenario=` / `X-Mock-Scenario` (request > ativo > Default, fallback, CORS); core 108 testes, cobertura 90.76/82.02 | `feat(mock): cenário por header/query na requisição (T1)` | ✅ em des, em revisão |
 | v1.9.33 | 2026-10-20 | des | T3a entregue: builder puro da Tree (`tree.ts`) + 8 testes no host (27); órfão (a) fechado | `refactor(extension): builder puro da Tree (T3a)` | ✅ em des, em revisão |
+| v1.9.34 | 2026-10-20 | des | T3b entregue: c8 no CLI (filho via `NODE_V8_COVERAGE`), 15 testes, 96.46/87.12/100; gate 90/80/95/90 no CI + artefato | `test(cli): cobertura do processo filho com c8 (T3b)` | ✅ em des, em revisão |
 
 ## Consulta (Dataview — notas de gestão)
 

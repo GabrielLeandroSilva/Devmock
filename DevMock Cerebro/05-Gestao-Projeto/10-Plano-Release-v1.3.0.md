@@ -27,7 +27,7 @@ Depois da 1.2.0 (Tree UX, Detect, HTML docs), a próxima janela ataca dois ponto
 ### Should (stretch)
 | ID | Item | Origem | Observação |
 |----|------|--------|------------|
-| **T3b** | **Cobertura do CLI** via `NODE_V8_COVERAGE` (hoje o E2E por spawn mede 0%) | [[07-Estrategia-Testes]] §7 | Pode escorregar p/ 1.3.1 |
+| **T3b** | **Cobertura do CLI** via `NODE_V8_COVERAGE` (hoje o E2E por spawn mede 0%) | [[07-Estrategia-Testes]] §7 | ✅ v1.3.0 (T3b) — c8; 96.46/87.12/100 (15 testes) |
 | **T2** | **Detect: ampliar padrões** (clientes HTTP/frameworks) | [[PRD-09-Detect-From-Project]] "Fora" | Heurística; não bloqueia a release |
 
 ### Fora (v1.4.0 / roadmap)
@@ -45,7 +45,7 @@ Depois da 1.2.0 (Tree UX, Detect, HTML docs), a próxima janela ataca dois ponto
 - [x] #task ⏫ T1 — testes (query/header/desconhecido) + regressão 🏷️ fase/codigo
 - [x] #task ⏫ T3a — extrair builder puro do Tree (`tree.ts`) 🏷️ fase/codigo
 - [x] #task ⏫ T3a — testes no host do builder (fecha órfão (a)) 🏷️ fase/codigo
-- [/] #task 🔼 T3b — cobertura do CLI via `NODE_V8_COVERAGE` (stretch) 🏷️ fase/codigo
+- [x] #task 🔼 T3b — cobertura do CLI via `NODE_V8_COVERAGE` (stretch) 🏷️ fase/codigo
 - [/] #task 🔼 T2 — ampliar padrões do Detect (stretch) 🏷️ fase/codigo
 - [/] #task 🔼 Manual-Teste-v1.3 + CHANGELOG + `package.json → 1.3.0` 🏷️ fase/codigo
 - [/] #task 🔼 Sincronizar README + wiki (Docs-Keeper) 🏷️ fase/codigo
