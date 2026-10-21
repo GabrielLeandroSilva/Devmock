@@ -135,6 +135,7 @@ updated: 2026-10-10
 | ext-v1.3.0 | 2026-10-21 | tag em des | 🚀 PUBLICADO na Marketplace (cenário por requisição, Detect ampliado, qualidade) | `Published devmock.devmock-vscode v1.3.0` via publish.yml (run 39524527077; 1ª tentativa caiu por ETIMEDOUT no download do VS Code; rerun ok) | ✅ ao vivo |
 | v1.9.37 | 2026-10-21 | des | Pós-publicação v1.3.0: wiki, Log, Home/EAP; PR `#26` (des→main) | `docs(release): publica v1.3.0 e sincroniza docs` | ✅ em main (PR #26, merge `9df6dac`) |
 | v1.9.38 | 2026-10-21 | des | Pós-promoção v1.3.0 (PR #26) | `docs(git): registra promoção v1.3.0 em main` | ✅ em des |
+| - | 2026-10-21 | - | 📝 Texto do post de lançamento v1.3.0 gerado ([[Agente-LinkedIn]]: curto + completo + hashtags + CTA + arte); postagem manual pendente | marco de divulgação, sem versão | ⏳ aguarda postagem |
 
 ## Consulta (Dataview — notas de gestão)
 
