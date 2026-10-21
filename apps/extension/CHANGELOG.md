@@ -2,6 +2,15 @@
 
 Formato [Keep a Changelog](https://keepachangelog.com/). Versões da extension são independentes das tags do monorepo.
 
+## [1.3.0] — 2026-10-20 — Cenário por requisição + Detect ampliado
+### Added
+- **Cenário por requisição**: force `Empty`, `Forbidden`, `Server Error`, etc. **sem trocar o cenário global** — `GET /users?scenario=Empty` ou header `X-Mock-Scenario: Forbidden`. Precedência **request > ativo > Default**; cenário desconhecido cai no ativo (nunca quebra); CORS libera o header
+- **Detect ampliado**: reconhece `http`, `https`, `httpClient`, `client`, `ky`, `got` e `request`; métodos genéricos (`http.get<User[]>('/users')`); config-object (`axios({ url, method })`, `request({ url })`); `fetch(url, { method })`; e normaliza base em template/URL absoluta (`${BASE}/users` → `/users`)
+### Changed
+- **Tree**: `getChildren` passou a delegar a um builder puro (`tree.ts`) — mesmo comportamento, agora coberto por testes no host
+### Internal
+- Cobertura do **CLI** medida via **c8** (`NODE_V8_COVERAGE`) com gate no CI (`coverage-cli-nodeXX`); a medição in-process anterior era 0%
+
 ## [1.2.0] — 2026-10-17 — Painel de controle + Detect + HTML docs
 ### Added
 - **Tree UX**: editar `errorRate` direto na Settings; cenário ativo visível no **Schema** e em cada **Endpoint**; clique num endpoint **GET** abre a rota no navegador; botões inline **Start/Stop** (ícones) no nó Mock Server

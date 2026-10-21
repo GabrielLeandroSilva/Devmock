@@ -23,8 +23,20 @@ export interface DetectResult {
 
 const DECL = /(?:^|\n)\s*(?:export\s+)?(?:interface|type)\s+([A-Za-z_$][\w$]*)\s*(?:=\s*)?\{/g;
 const FIELD = /^\s*(?:readonly\s+)?([A-Za-z_$][\w$]*)\s*(\?)?\s*:\s*([^;]+);?\s*$/;
-const CALL = /\b(?:api|axios)\s*\.\s*(get|post|put|patch|delete)\s*\(\s*[`'"]([^`'"]+)[`'"]/g;
-const FETCH = /\bfetch\s*\(\s*[`'"]([^`'"]+)[`'"]/g;
+/** Clientes HTTP reconhecidos (T2): ordem importa — o mais específico primeiro. */
+const CLIENTS = "httpClient|https?|axios|api|client|ky|got|request";
+const CALL = new RegExp(
+  "\\b(?:" +
+    CLIENTS +
+    ")\\s*\\.\\s*(get|post|put|patch|delete)\\s*(?:<[^<>()]*>)?\\s*\\(\\s*[\"'`]([^\"'`]+)[\"'`]",
+  "g",
+);
+/** Config-object: `axios({ url, method })`, `axios.request({…})`, `request({…})`. */
+const CONFIG = /\b(?:axios|request)\s*(?:\.\s*request\s*)?\(\s*\{([^}]*)\}/g;
+const URL_PROP = /\burl\s*:\s*['"`]([^'"`]+)['"`]/;
+const METHOD_PROP = /\bmethod\s*:\s*['"`](\w+)['"`]/;
+const FETCH = /\bfetch\s*\(\s*['"`]([^'"`]+)['"`](?:\s*,\s*\{([^}]*)\})?/g;
+const METHODS = new Set(["GET", "POST", "PUT", "PATCH", "DELETE"]);
 
 function collectDeclarations(content: string): { name: string; body: string }[] {
   const out: { name: string; body: string }[] = [];
@@ -47,8 +59,23 @@ function collectDeclarations(content: string): { name: string; body: string }[] 
 }
 
 function normalizePath(p: string): string {
-  const clean = p.split("?")[0].trim();
+  let clean = p.split("?")[0].trim();
+  // Base embutida no template: `${BASE}/users` → `/users`.
+  clean = clean.replace(/^(?:\$\{[^}]*\})+/, "");
+  // URL absoluta: guarda só o path (`https://api.x/users` → `/users`).
+  if (/^https?:\/\//i.test(clean)) {
+    try {
+      return new URL(clean).pathname || "/";
+    } catch {
+      // URL inválida: segue como texto.
+    }
+  }
   return clean.startsWith("/") ? clean : `/${clean}`;
+}
+
+function methodOf(raw: string | undefined, fallback = "GET"): string {
+  const m = (raw ?? fallback).toUpperCase();
+  return METHODS.has(m) ? m : fallback;
 }
 
 function parseFieldType(
@@ -127,7 +154,13 @@ function detectEndpoints(content: string): DetectedEndpoint[] {
   }
   FETCH.lastIndex = 0;
   while ((m = FETCH.exec(content))) {
-    out.push({ method: "GET", path: normalizePath(m[1]) });
+    out.push({ method: methodOf(m[2] ? METHOD_PROP.exec(m[2])?.[1] : undefined), path: normalizePath(m[1]) });
+  }
+  CONFIG.lastIndex = 0;
+  while ((m = CONFIG.exec(content))) {
+    const url = URL_PROP.exec(m[1])?.[1];
+    if (!url) continue;
+    out.push({ method: methodOf(METHOD_PROP.exec(m[1])?.[1]), path: normalizePath(url) });
   }
   return out;
 }

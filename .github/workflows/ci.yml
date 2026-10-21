@@ -26,13 +26,20 @@ jobs:
       - run: npx --prefix packages/cli tsc -p packages/cli/tsconfig.check.json
       - run: npx --prefix apps/extension tsc -p apps/extension/tsconfig.json --noEmit
       - run: npx --prefix packages/core vitest run --root packages/core --coverage
-      - run: npx --prefix packages/cli vitest run --root packages/cli
+      - run: npm run test:coverage --prefix packages/cli
       - name: Upload cobertura do Core
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: coverage-core-node${{ matrix.node }}
           path: packages/core/coverage
+          if-no-files-found: ignore
+      - name: Upload cobertura do CLI
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage-cli-node${{ matrix.node }}
+          path: packages/cli/coverage
           if-no-files-found: ignore
 
   vscode-integration:

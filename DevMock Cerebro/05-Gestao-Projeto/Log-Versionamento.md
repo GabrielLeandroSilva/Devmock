@@ -122,6 +122,18 @@ updated: 2026-10-10
 | v1.9.26 | 2026-10-19 | des | Fix docs: `Response 200` vira **JSON válido** com 1 registro real (Markdown e HTML); remove o placeholder `"data": "Model[]"` | `fix(export): exemplo de response 200 valido` | ⏳ em des |
 | v1.9.27 | 2026-10-19 | des | Fix W2: Detect valida refs entre os Schemas do lote (Order→Customer não é mais "quebrada"); ambos são criados | `fix(detect): refs entre schemas do lote` | ⏳ em des |
 | v1.9.28 | 2026-10-19 | des | UX: **Start/Stop no topo da view** (context key `devmock.serverRunning`); nó Mock Server sem botões inline | `feat(ui): start/stop no titulo da view` | ⏳ em des |
+| v1.9.29 | 2026-10-20 | main + des | 🚀 Promoção v1.2.0 (PR nº 25) + tag `ext-v1.2.0` | merge `082e0fa` + tag `ext-v1.2.0` | ✅ validado, em main |
+| ext-v1.2.0 | 2026-10-20 | tag em main | 🎉 PUBLICADO na Marketplace (Tree UX, Detect, HTML docs) | `Published devmock.devmock-vscode v1.2.0` via publish.yml (run 39352777569) | ✅ ao vivo |
+| — | 2026-10-20 | — | 📣 Post de lançamento v1.2.0 (texto do [[Agente-LinkedIn]], postagem manual) | marco de divulgação, sem versão | ✅ entregue |
+| v1.9.30 | 2026-10-20 | des | ✅ Gate da v1.2.0 fechado (W1–W3 + P0 publicados; post entregue) | `docs(release): fecha gate da v1.2.0` | ✅ concluído |
+| v1.9.31 | 2026-10-20 | des | Planejamento v1.3.0: skill `roadmap-update`, plano 10 (T1 header/query + T3 testes da UI), PRD-04, roadmap (Home/EAP/wiki/README) | `docs(release): planeja v1.3.0 + skill roadmap-update` | ✅ concluído |
+| v1.9.32 | 2026-10-20 | des | T1 entregue: cenário por `?scenario=` / `X-Mock-Scenario` (request > ativo > Default, fallback, CORS); core 108 testes, cobertura 90.76/82.02 | `feat(mock): cenário por header/query na requisição (T1)` | ✅ em des, em revisão |
+| v1.9.33 | 2026-10-20 | des | T3a entregue: builder puro da Tree (`tree.ts`) + 8 testes no host (27); órfão (a) fechado | `refactor(extension): builder puro da Tree (T3a)` | ✅ em des, em revisão |
+| v1.9.34 | 2026-10-20 | des | T3b entregue: c8 no CLI (filho via `NODE_V8_COVERAGE`), 15 testes, 96.46/87.12/100; gate 90/80/95/90 no CI + artefato | `test(cli): cobertura do processo filho com c8 (T3b)` | ✅ em des, em revisão |
+| v1.9.35 | 2026-10-20 | des | T2 entregue: Detect com clientes variados/genéricos, config-object, `fetch` com método e base/URL normalizada; core 111 testes | `feat(detect): amplia padrões de chamadas HTTP (T2)` | ✅ em des, em revisão |
+| v1.9.36 | 2026-10-20 | des | Fechamento v1.3.0: Manual-Teste-v1.3, versão `1.3.0`, CHANGELOG, README; gate automático (core 111/cob 90.83 · cli 15/cob 96.46 · host 27); wiki pronta p/ publish | `docs(release): fecha v1.3.0 - manual, versao e docs` | ✅ concluído |
+| ext-v1.3.0 | 2026-10-21 | tag em des | 🚀 PUBLICADO na Marketplace (cenário por requisição, Detect ampliado, qualidade) | `Published devmock.devmock-vscode v1.3.0` via publish.yml (run 39524527077; 1ª tentativa caiu por ETIMEDOUT no download do VS Code; rerun ok) | ✅ ao vivo |
+| v1.9.37 | 2026-10-21 | des | Pós-publicação v1.3.0: wiki, Log, Home/EAP; PR `#26` (des→main) | `docs(release): publica v1.3.0 e sincroniza docs` | ⏳ em des, PR #26 em revisão |
 
 ## Consulta (Dataview — notas de gestão)
 

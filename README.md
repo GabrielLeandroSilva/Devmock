@@ -32,7 +32,7 @@ Na [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemNa
 
 Prefere terminal? Há CLI equivalente: `devmock init|start|generate|export|import|validate` (ver `packages/cli`).
 
-Quer testar instabilidade? Defina **`errorRate`** (0–100) em `.devmock/config.json` para injetar falhas 500 de forma determinística — e use o Switch Scenario para os estados `403/429/slow`.
+Quer testar instabilidade? Defina **`errorRate`** (0–100) em `.devmock/config.json` para injetar falhas 500 de forma determinística — e use o Switch Scenario para os estados `403/429/slow`. Para forçar um cenário **só naquela chamada**, use `?scenario=` ou o header `X-Mock-Scenario`.
 
 ## Exemplo
 
@@ -40,6 +40,10 @@ Quer testar instabilidade? Defina **`errorRate`** (0–100) em `.devmock/config.
 # com o servidor rodando:
 curl "http://localhost:4010/users?page=1&limit=5"
 curl -X POST http://localhost:4010/users -H "Content-Type: application/json" -d "{}"
+
+# forçar um cenário só nesta chamada:
+curl "http://localhost:4010/users?scenario=Empty"
+curl -H "X-Mock-Scenario: Forbidden" "http://localhost:4010/users"
 ```
 
 Schema mínimo (`.devmock/schemas/user.json`):
@@ -58,6 +62,8 @@ Schema mínimo (`.devmock/schemas/user.json`):
 ## Roadmap
 
 Próximas versões são planejadas **sem data** e priorizadas por feedback — veja o [Roadmap](https://github.com/GabrielLeandroSilva/Devmock/wiki/Roadmap). Já publicado: [Versões](https://github.com/GabrielLeandroSilva/Devmock/wiki/Vers%C3%B5es) · [Correções](https://github.com/GabrielLeandroSilva/Devmock/wiki/Corre%C3%A7%C3%B5es).
+
+Última versão: **v1.3.0** — cenário por requisição (`?scenario=` / `X-Mock-Scenario`) e Detect ampliado.
 
 ## Links
 

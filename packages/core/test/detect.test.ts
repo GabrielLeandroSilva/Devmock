@@ -85,3 +85,56 @@ describe("detectFromProject (PRD-09)", () => {
     expect(detectFromProject(files)).toEqual(detectFromProject(files));
   });
 });
+
+describe("clientes HTTP variados (T2)", () => {
+  const calls: ProjectFile[] = [
+    {
+      path: "src/services/http.ts",
+      content: `
+http.get('/users');
+this.http.get<User[]>('/users/1');
+httpClient.post('/orders');
+ky.get('/health');
+got.put('/settings');
+client.patch('/profile');
+request.delete('/session');
+axios({ url: '/orders', method: 'post' });
+axios.request({ url: '/teams' });
+request({ url: '/legacy', method: 'DELETE' });
+fetch('/users', { method: 'POST' });
+fetch('https://api.example.com/v1/users?x=1');
+api.get(\`\${BASE}/users\`);
+fetch(\`\${API_URL}/orders/\${id}\`);
+`,
+    },
+  ];
+
+  it("detecta clientes, genéricos, config-object, fetch com método e base em template", () => {
+    expect(detectFromProject(calls).endpoints).toEqual([
+      { method: "GET", path: "/users" },
+      { method: "GET", path: "/users/1" },
+      { method: "POST", path: "/orders" },
+      { method: "GET", path: "/health" },
+      { method: "PUT", path: "/settings" },
+      { method: "PATCH", path: "/profile" },
+      { method: "DELETE", path: "/session" },
+      { method: "POST", path: "/users" },
+      { method: "GET", path: "/v1/users" },
+      { method: "GET", path: "/orders/${id}" },
+      { method: "GET", path: "/teams" },
+      { method: "DELETE", path: "/legacy" },
+    ]);
+  });
+
+  it("método desconhecido no config cai para GET", () => {
+    const r = detectFromProject([
+      { path: "src/a.ts", content: "axios({ url: '/x', method: 'TRACE' });" },
+    ]);
+    expect(r.endpoints).toEqual([{ method: "GET", path: "/x" }]);
+  });
+
+  it("não confunde métodos de Map com chamadas HTTP", () => {
+    const r = detectFromProject([{ path: "src/m.ts", content: "const v = map.get('key');" }]);
+    expect(r.endpoints).toEqual([]);
+  });
+});

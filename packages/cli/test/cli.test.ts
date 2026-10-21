@@ -32,7 +32,7 @@ async function cli(...args: string[]): Promise<{ code: number; out: string; err:
   }
 }
 
-const USER_SCHEMA = {
+const USER_SCHEMA: Schema = {
   name: "User",
   fields: [
     { name: "id", type: "uuid", required: true },
@@ -49,6 +49,11 @@ async function initWithUser(): Promise<void> {
     join(dir, ".devmock", "config.json"),
     JSON.stringify({ port: 0, seedDefault: 7, localeDefault: "pt-BR", activeScenarios: {} }),
   );
+}
+
+async function initEmpty(): Promise<void> {
+  freshDir();
+  expect((await cli("init", dir)).code).toBe(0);
 }
 
 describe("devmock cli (E2E)", () => {
@@ -128,4 +133,141 @@ describe("devmock cli (E2E)", () => {
       await server.close();
     }
   }, 30000);
+});
+
+describe("erros e caminhos de borda (T3b)", () => {
+  it("sem comando ou comando desconhecido mostra o usage", async () => {
+    freshDir();
+    const noCmd = await cli();
+    expect(noCmd.code).toBe(0);
+    expect(noCmd.out).toMatch(/Uso: devmock/);
+    const unknown = await cli("nope");
+    expect(unknown.code).toBe(0);
+    expect(unknown.out).toMatch(/Uso: devmock/);
+  });
+
+  it("start sem .devmock, config inválida ou sem schema falha", async () => {
+    freshDir();
+    const noDir = await cli("start");
+    expect(noDir.code).toBe(1);
+    expect(noDir.err).toMatch(/rode `devmock init`/);
+
+    await initEmpty();
+    writeFileSync(join(dir, ".devmock", "config.json"), "{oops");
+    const badConfig = await cli("start");
+    expect(badConfig.code).toBe(1);
+    expect(badConfig.err).toMatch(/inválido/);
+
+    writeFileSync(join(dir, ".devmock", "config.json"), JSON.stringify({ port: 0 }));
+    const noSchema = await cli("start");
+    expect(noSchema.code).toBe(1);
+    expect(noSchema.err).toMatch(/nenhum Schema/);
+  });
+
+  it("generate sem schema/sem .devmock falha e sem --out vai ao stdout", async () => {
+    freshDir();
+    const noName = await cli("generate");
+    expect(noName.code).toBe(1);
+    expect(noName.err).toMatch(/informe o schema/);
+    const noDir = await cli("generate", "User");
+    expect(noDir.code).toBe(1);
+    expect(noDir.err).toMatch(/rode `devmock init`/);
+
+    await initWithUser();
+    // Config ilegível: gera com o seed default em vez de quebrar.
+    writeFileSync(join(dir, ".devmock", "config.json"), "not-json");
+    const stdout = await cli("generate", "User", dir, "--records", "2", "--seed", "1");
+    expect(stdout.code).toBe(0);
+    expect(JSON.parse(stdout.out)).toHaveLength(2);
+  });
+
+  it("export sem .devmock ou sem schema falha", async () => {
+    freshDir();
+    const noDir = await cli("export");
+    expect(noDir.code).toBe(1);
+    expect(noDir.err).toMatch(/rode `devmock init`/);
+
+    await initEmpty();
+    const noSchema = await cli("export");
+    expect(noSchema.code).toBe(1);
+    expect(noSchema.err).toMatch(/nenhum Schema/);
+  });
+
+  it("import sem arquivo, ilegível ou inválido falha; --force sobrescreve", async () => {
+    freshDir();
+    const noFile = await cli("import");
+    expect(noFile.code).toBe(1);
+    expect(noFile.err).toMatch(/informe o arquivo/);
+    const noDir = await cli("import", "x.json");
+    expect(noDir.code).toBe(1);
+    expect(noDir.err).toMatch(/rode `devmock init`/);
+
+    await initEmpty();
+    const missing = await cli("import", join(dir, "nope.json"));
+    expect(missing.code).toBe(1);
+    expect(missing.err).toMatch(/não foi possível ler/);
+
+    writeFileSync(join(dir, "bad.json"), "{{{");
+    const bad = await cli("import", join(dir, "bad.json"));
+    expect(bad.code).toBe(1);
+    expect(bad.err).toMatch(/inválid|OpenAPI/);
+
+    const yaml =
+      "openapi: 3.0.3\ninfo:\n  title: L\n  version: '1'\npaths: {}\ncomponents:\n  schemas:\n    Customer:\n      type: object\n      required: [id]\n      properties:\n        id:\n          type: string\n";
+    writeFileSync(join(dir, "api.yaml"), yaml);
+    expect((await cli("import", join(dir, "api.yaml"))).code).toBe(0);
+    const forced = await cli("import", join(dir, "api.yaml"), "--force");
+    expect(forced.code).toBe(0);
+    expect(forced.out).toMatch(/1 schema\(s\) criado\(s\), 0 pulado\(s\)/);
+  });
+
+  it("validate sem URL/sem .devmock falha", async () => {
+    freshDir();
+    const noUrl = await cli("validate");
+    expect(noUrl.code).toBe(1);
+    expect(noUrl.err).toMatch(/informe a URL/);
+    const noDir = await cli("validate", "http://127.0.0.1:1");
+    expect(noDir.code).toBe(1);
+    expect(noDir.err).toMatch(/rode `devmock init`/);
+
+    await initEmpty();
+    const noSchema = await cli("validate", "http://127.0.0.1:1");
+    expect(noSchema.code).toBe(1);
+    expect(noSchema.err).toMatch(/nenhum Schema válido/);
+  });
+
+  it("validate reporta findings de breaking", async () => {
+    await initWithUser();
+    const contract = {
+      ...USER_SCHEMA,
+      fields: [...USER_SCHEMA.fields, { name: "score", type: "number", required: true }],
+    };
+    writeFileSync(join(dir, ".devmock", "schemas", "user.json"), JSON.stringify(contract));
+    const server = createMockServer([USER_SCHEMA], { config: { port: 0 } });
+    const port = await server.listen();
+    try {
+      const r = await cli("validate", `http://127.0.0.1:${port}`, dir);
+      expect(r.code).toBe(1);
+      expect(r.out).toMatch(/breaking/);
+      expect(r.out).toMatch(/score/);
+    } finally {
+      await server.close();
+    }
+  }, 30000);
+
+  it("loadProject avisa sobre JSON inválido e Schema inválido", async () => {
+    await initWithUser();
+    writeFileSync(join(dir, ".devmock", "schemas", "bad-schema.json"), "{oops");
+    writeFileSync(join(dir, ".devmock", "schemas", "invalid.json"), JSON.stringify({ name: "Bad", fields: [] }));
+    writeFileSync(join(dir, ".devmock", "scenarios", "bad-scenario.json"), "{oops");
+    writeFileSync(
+      join(dir, ".devmock", "scenarios", "empty.json"),
+      JSON.stringify({ "GET /users": { Empty: { status: 200, body: { data: [], total: 0 } } } }),
+    );
+    const r = await cli("export");
+    expect(r.code).toBe(0);
+    expect(r.err).toMatch(/bad-schema\.json ignorado: JSON inválido/);
+    expect(r.err).toMatch(/invalid\.json ignorado: Schema precisa de ao menos um campo/);
+    expect(r.err).toMatch(/bad-scenario\.json ignorado: JSON inválido/);
+  });
 });

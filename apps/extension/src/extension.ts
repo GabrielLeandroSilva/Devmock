@@ -24,8 +24,8 @@ import {
   doValidate,
   endpointUrl,
   formatLogEntry,
-  scenarioOf,
 } from "./ops.js";
+import { buildTree, type TreeNode } from "./tree.js";
 import {
   devmockDir,
   listSchemas,
@@ -72,90 +72,30 @@ class ProjectProvider implements vscode.TreeDataProvider<TreeNode> {
 
   getChildren(el?: TreeNode): TreeNode[] {
     const ctx = this.ctx();
-    if (!ctx.root) return [{ label: "Abra uma pasta para começar" }];
-    const dir = devmockDir(ctx.root);
-    if (!existsSync(dir)) {
-      return [{
-        label: "Sem configuração — clique para inicializar",
-        icon: "warning",
-        command: { command: "devmock.init", title: "Initialize" },
-      }];
+    if (!ctx.root) {
+      return buildTree({
+        root: undefined,
+        initialized: false,
+        schemas: [],
+        config: DEFAULT_CONFIG,
+        serverRunning: false,
+      });
     }
-    if (!el) {
-      const serverLabel = ctx.server && ctx.port ? `🟢 localhost:${ctx.port}` : "🔴 parado";
-      return [
-        { label: "Schemas", icon: "symbol-class", children: true },
-        { label: "Endpoints", icon: "symbol-method", children: true },
-        { label: "Scenarios", icon: "symbol-enum", children: true },
-        { label: "Documentation", icon: "book", children: true },
-        { label: "Settings", icon: "gear", children: true },
-        { label: `Mock Server ${serverLabel}`, icon: "server" },
-      ];
-    }
-    const schemas = listSchemas(ctx.root);
-    switch (el.label) {
-      case "Schemas": {
-        const cfg = readConfig(ctx.root);
-        return schemas.map((s) => ({
-          label: s.name,
-          description: `${s.fields.length} campos · cenário: ${scenarioOf(cfg.activeScenarios, routesFor(s)[0])}`,
-          contextValue: "schema",
-          schemaName: s.name,
-          command: { command: "devmock.editSchema", title: "Editar Schema", arguments: [s.name] },
-        }));
-      }
-      case "Endpoints": {
-        const cfg = readConfig(ctx.root);
-        return schemas.flatMap((s) =>
-          routesFor(s).map((r) => {
-            const isGet = r.startsWith("GET ");
-            const openable = isGet && !r.includes(":id");
-            return {
-              label: r,
-              description: isGet ? `cenário: ${scenarioOf(cfg.activeScenarios, r)}` : undefined,
-              contextValue: isGet ? "endpointGet" : "endpoint",
-              command: openable
-                ? { command: "devmock.openEndpoint", title: "Abrir no navegador", arguments: [r] }
-                : undefined,
-            };
-          }),
-        );
-      }
-      case "Scenarios": {
-        const cfg = readConfig(ctx.root);
-        return SCENARIO_NAMES.map((name) => ({
-          label: (Object.values(cfg.activeScenarios ?? {}).includes(name) ? "✓ " : "") + name,
-        }));
-      }
-      case "Documentation":
-        return schemas.map((s) => ({ label: `${s.name}.md` }));
-      case "Settings": {
-        const cfg = readConfig(ctx.root);
-        return [
-          { label: `port: ${cfg.port}` },
-          { label: `seedDefault: ${cfg.seedDefault}` },
-          { label: `localeDefault: ${cfg.localeDefault}` },
-          {
-            label: `errorRate: ${cfg.errorRate}`,
-            icon: "pencil",
-            command: { command: "devmock.setErrorRate", title: "Editar errorRate" },
-          },
-        ];
-      }
-      default:
-        return [];
-    }
+    const initialized = existsSync(devmockDir(ctx.root));
+    // Só lê schemas/config ao expandir um nó — a raiz não precisa (T3a).
+    const loadData = initialized && !!el;
+    return buildTree(
+      {
+        root: ctx.root,
+        initialized,
+        schemas: loadData ? listSchemas(ctx.root) : [],
+        config: loadData ? readConfig(ctx.root) : DEFAULT_CONFIG,
+        serverRunning: !!ctx.server,
+        port: ctx.port,
+      },
+      el,
+    );
   }
-}
-
-interface TreeNode {
-  label: string;
-  description?: string;
-  icon?: string;
-  children?: boolean;
-  command?: vscode.Command;
-  contextValue?: string;
-  schemaName?: string;
 }
 
 /** Escolhe um Schema válido ou avisa; usado por generate/saveFakeData. */

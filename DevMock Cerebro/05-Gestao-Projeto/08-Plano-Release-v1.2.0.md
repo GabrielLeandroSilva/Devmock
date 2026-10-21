@@ -66,17 +66,17 @@ updated: 2026-10-17
 - [x] #task 🔼 Suítes: matriz `RF→teste` ampliada; órfão (b) fechado 🏷️ fase/codigo
 - [x] #task 🔼 Manual-Teste-v1.2 + CHANGELOG + `package.json → 1.2.0` 🏷️ fase/codigo
 - [x] #task 🔼 Sincronizar README + wiki (Docs-Keeper) 🏷️ fase/codigo
-- [/] #task ⏫ Rodar Gate de Release (§4) — automático ✅; falta host (UI) 🏷️ fase/codigo
+- [x] #task ⏫ Rodar Gate de Release (§4) — automático ✅ + host (UI) ✅ 🏷️ fase/codigo
 
 ## 4. Gate de Release
-- [ ] Manual-Teste-v1.2 100% ✅ (inclui W1–W3 + P0) — pendente validação no host
+- [x] Manual-Teste-v1.2 100% ✅ (inclui W1–W3 + P0) — validado no host (VS Code 1.142)
 - [x] `vitest run` verde + cobertura ≥ gate + matriz `AUD`/`RF` 100%
 - [x] `tsc --noEmit` limpo em todos os workspaces
 - [x] CHANGELOG + `package.json` = `1.2.0`
 - [x] README (raiz + extension) e wiki sincronizados
 - [x] `Log-Versionamento` atualizado
-- [ ] Tag `ext-v1.2.0` (trava `tag == versão`) → `publish.yml`
-- [ ] Post de lançamento ([[Agente-LinkedIn]], postagem manual)
+- [x] Tag `ext-v1.2.0` (trava `tag == versão`) → `publish.yml` — publicada ✅
+- [x] Post de lançamento ([[Agente-LinkedIn]], postagem manual) ✅
 
 ## 5. Riscos e Dependências
 - **W2 (Detect)** é o maior risco: falsos positivos e estilos de chamada variados. Mitigação: heurística conservadora, confirmação humana, `warnings[]`.
