@@ -83,10 +83,10 @@ Cada PRD ([[Indice-PRDs]]) confrontado com os testes existentes. **S2 entregue e
 | 03 | RF-03 Start/Stop painel | `commands.test.ts` "start sobe HTTP real" | ✅ |
 | 03 | RF-04 Studio preview/erro/rename | `ops.test.ts` "studio: save, preview, erro e rename" | ✅ |
 | 03 | RF-07 Testabilidade (ops puros, fire-and-forget, `?limit`) | `ops.test.ts` · `regression.test.ts` AUD-12 · AUD-13 | ✅ |
-| 03 | RF-02 TreeView lista Schemas/Endpoints | — | ⚠️ órfão (a) |
-| 03 | RF-05 Edição manual do JSON recarrega a Tree | — | ⚠️ órfão (a) |
+| 03 | RF-02 TreeView lista Schemas/Endpoints | `tree.test.ts` "raiz lista as 6 seções…" · "Schemas mostra…" · "Endpoints…" | ✅ |
+| 03 | RF-05 Edição manual do JSON recarrega a Tree | `tree.test.ts` (builder com snapshot fresco; watcher = glue do host) | ✅ |
 | 03 | RF-06 Create API (From scratch/Import/Detect) | `detect.test.ts` (core) · `ops.test.ts` (host, W2) | ✅ |
-| 03 | §7 CTA sem `.devmock/` | — | ⚠️ órfão (a) |
+| 03 | §7 CTA sem `.devmock/` | `tree.test.ts` "sem .devmock oferece inicializar" | ✅ |
 | 04 | RF-01 CRUD de cenário | `ops.test.ts` "switch grava activeScenarios" | ✅ |
 | 04 | RF-02 Troca <500ms sem restart | `mockServer.test.ts` "troca de cenário sem restart" | ✅ |
 | 04 | RF-03 `Empty` → 200 `{data:[],total:0}` | `mockServer.test.ts` "Empty retorna envelope vazio com 200" | ✅ |
@@ -107,7 +107,7 @@ Cada PRD ([[Indice-PRDs]]) confrontado com os testes existentes. **S2 entregue e
 | 08 | RF-04 Erro acionável + exit codes | `cli.test.ts` "generate sem schema → exit 1" | ✅ |
 
 **Órfãos conscientes (não são falhas silenciosas):**
-- **(a) UI do host — TreeView/watch/CTA (PRD-03 RF-02, RF-05, §7):** o `ProjectProvider` é interno ao `extension.ts` e o VS Code não expõe providers registrados. Fechar exige um *seam*: extrair o construtor da Tree para uma função pura (sem tipos `vscode`) e testá-lo. **Ação:** **planejado na v1.3.0 (T3a)** → [[10-Plano-Release-v1.3.0]]; sem teste "falso" enquanto o seam não existir.
+- **(a) UI do host — TreeView/watch/CTA (PRD-03 RF-02, RF-05, §7):** ✅ **resolvido na v1.3.0 (T3a)** — `ProjectProvider.getChildren` virou o builder puro `apps/extension/src/tree.ts`, testado em `suite/tree.test.ts` (8 casos); o watcher/reload é glue do host. → [[10-Plano-Release-v1.3.0]]
 - **(b) Create API (PRD-03 RF-06):** ✅ **resolvido na v1.2.0** — Detect implementado ([[PRD-09-Detect-From-Project]]) com testes em `detect.test.ts` (core) e `ops.test.ts` (host).
 - **(c) CLI `export` sem `.hashes.json` (PRD-08 RF-02):** **bug de produto**, não de teste — tratado em **M4** do [[06-Plano-Release-v1.1.0]] (staleDetector completo + CLI grava hashes); o teste é adicionado junto do fix.
 
@@ -139,7 +139,7 @@ Artefato `coverage-core-nodeXX` publicado no CI. Regra: novo código não pode *
 - [x] #task ⏫ Definir agentes: criar [[Agente-QA-Testes]] (vault + `.opencode/agent/qa-testes.md`) 🏷️ fase/codigo
 - [x] #task ⏫ S1 — `regression.test.ts` por pacote (1 `it` por AUD-xx) 🏷️ fase/codigo
 - [x] #task ⏫ S2 — preencher matriz `RF → teste` e zerar aceites órfãos 🏷️ fase/codigo
-- [/] #task 🔼 Seam de testabilidade da Tree (extrair builder puro) — fecha PRD-03 RF-02/RF-05/§7 — **v1.3.0 T3a** 🏷️ fase/codigo
+- [x] #task 🔼 Seam de testabilidade da Tree (extrair builder puro) — fecha PRD-03 RF-02/RF-05/§7 — **v1.3.0 T3a** 🏷️ fase/codigo
 - [/] #task 🔼 Cobertura do CLI via `NODE_V8_COVERAGE` — **v1.3.0 T3b** 🏷️ fase/codigo
 - [x] #task 🔼 Teste de `.hashes.json` no CLI export — junto do fix M4 🏷️ fase/codigo
 - [x] #task 🔼 S3 — `--coverage` + threshold + artefato no CI 🏷️ fase/codigo
