@@ -130,6 +130,7 @@ updated: 2026-10-10
 | v1.9.32 | 2026-10-20 | des | T1 entregue: cenário por `?scenario=` / `X-Mock-Scenario` (request > ativo > Default, fallback, CORS); core 108 testes, cobertura 90.76/82.02 | `feat(mock): cenário por header/query na requisição (T1)` | ✅ em des, em revisão |
 | v1.9.33 | 2026-10-20 | des | T3a entregue: builder puro da Tree (`tree.ts`) + 8 testes no host (27); órfão (a) fechado | `refactor(extension): builder puro da Tree (T3a)` | ✅ em des, em revisão |
 | v1.9.34 | 2026-10-20 | des | T3b entregue: c8 no CLI (filho via `NODE_V8_COVERAGE`), 15 testes, 96.46/87.12/100; gate 90/80/95/90 no CI + artefato | `test(cli): cobertura do processo filho com c8 (T3b)` | ✅ em des, em revisão |
+| v1.9.35 | 2026-10-20 | des | T2 entregue: Detect com clientes variados/genéricos, config-object, `fetch` com método e base/URL normalizada; core 111 testes | `feat(detect): amplia padrões de chamadas HTTP (T2)` | ✅ em des, em revisão |
 
 ## Consulta (Dataview — notas de gestão)
 

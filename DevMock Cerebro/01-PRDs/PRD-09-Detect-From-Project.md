@@ -4,9 +4,9 @@ type: prd
 status: revisao
 fase: 3
 tags: [devmock/pos-mvp, devmock/detect]
-related: ["[[PRD-01-Core-Schema-Data]]", "[[PRD-03-VSCode-Extension]]", "[[PRD-06-Import-OpenAPI]]", "[[08-Plano-Release-v1.2.0]]"]
+related: ["[[PRD-01-Core-Schema-Data]]", "[[PRD-03-VSCode-Extension]]", "[[PRD-06-Import-OpenAPI]]", "[[08-Plano-Release-v1.2.0]]", "[[10-Plano-Release-v1.3.0]]"]
 created: 2026-10-17
-updated: 2026-10-17
+updated: 2026-10-20
 ---
 
 # PRD-09 — Detect From Project (EAP 2.4)
@@ -31,6 +31,13 @@ O fluxo de adoção trava quando o dev já tem um projeto sem contrato formal: n
 - Lacunas em `warnings[]` (unions complexas, genéricos, tipos importados não resolvidos, interfaces aninhadas) — **nunca inventar campo**
 - Comando único: `DevMock: Create API… → Detect from project` (substitui o placeholder "em breve" da PRD-03 RF-06)
 
+### Dentro (v1.3.0)
+- Clientes HTTP além de `api/axios`: `http`, `https`, `httpClient`, `client`, `ky`, `got`, `request`
+- Métodos com genérico: `http.get<User[]>('/users')`
+- Config-object: `axios({ url, method })`, `axios.request({ url })`, `request({ url, method })` (sem `method` → GET)
+- `fetch(url, { method })` respeita o método do options
+- Base em template (`` `${BASE}/users` ``) e URL absoluta (`https://api.x/users`) → rota normalizada
+
 ### Fora (futuro)
 - Inferência em runtime / código compilado (`dist/`)
 - Frameworks específicos (decorators Nest, graphql), resolução de tipos por import cruzado
@@ -48,6 +55,10 @@ O fluxo de adoção trava quando o dev já tem um projeto sem contrato formal: n
 | RF-06 | Lacunas em `warnings[]` (path + motivo); nunca inventar campo | Must | SPEC |
 | RF-07 | Comando `Create API… → Detect` habilitado (remove "em breve") | Must | PRD-03 RF-06 |
 | RF-08 | Idempotente: mesmo projeto → mesmos candidatos; rodar 2× não duplica | Must | — |
+| RF-09 | Clientes variados (`http/https/httpClient/client/ky/got/request`) e genéricos (`get<T>`) | Must | v1.3.0 |
+| RF-10 | Config-object (`axios({url,method})`, `axios.request`, `request`); sem método → GET | Must | v1.3.0 |
+| RF-11 | `fetch(url, { method })` respeita o método | Must | v1.3.0 |
+| RF-12 | Normalizar base em template e URL absoluta para path | Must | v1.3.0 |
 
 ## 5. Requisitos Não-Funcionais
 - Varredura de projeto médio (<5.000 arquivos) em <3s local
@@ -67,10 +78,12 @@ O fluxo de adoção trava quando o dev já tem um projeto sem contrato formal: n
 - [x] #task ⏫ Nada é criado sem confirmação; rodar 2× não duplica (`schemas/` inalterado na 2ª) 🏷️ fase/codigo
 - [x] #task 🔼 Tipos não mapeáveis viram `warnings[]`, nunca campo inventado 🏷️ fase/codigo
 - [x] #task 🔼 `Create API… → Detect` deixa de exibir "em breve" 🏷️ fase/codigo
+- [x] #task 🔼 **[v1.3.0]** Detecta clientes variados/genéricos e config-object (`axios`/`request`) 🏷️ fase/codigo
+- [x] #task 🔼 **[v1.3.0]** `fetch` com `method` e base em template/URL absoluta normalizados 🏷️ fase/codigo
 
 ## 8. Riscos e Dependências
 - **Falsos positivos:** chamadas dinâmicas (`api.get(path)`) e proxies não são detectáveis — heurística conservadora + revisão humana na seleção
-- **Variedade de estilos** (`http.get`, `request({url})`, instância custom): começar pelos 3 padrões do §20; expandir por feedback
+- **Variedade de estilos** (`http.get`, `request({url})`, instância custom): expandido na **v1.3.0 (T2)** — clientes variados, config-object e `fetch` com método; Nest/graphql seguem fora.
 - Depende de PRD-01 (formato/validator) e da PRD-03 (ponto de entrada)
 - Extração de tipos é por arquivo (sem resolução de import) → limites documentados em `warnings[]`
 
