@@ -131,6 +131,7 @@ updated: 2026-10-10
 | v1.9.33 | 2026-10-20 | des | T3a entregue: builder puro da Tree (`tree.ts`) + 8 testes no host (27); órfão (a) fechado | `refactor(extension): builder puro da Tree (T3a)` | ✅ em des, em revisão |
 | v1.9.34 | 2026-10-20 | des | T3b entregue: c8 no CLI (filho via `NODE_V8_COVERAGE`), 15 testes, 96.46/87.12/100; gate 90/80/95/90 no CI + artefato | `test(cli): cobertura do processo filho com c8 (T3b)` | ✅ em des, em revisão |
 | v1.9.35 | 2026-10-20 | des | T2 entregue: Detect com clientes variados/genéricos, config-object, `fetch` com método e base/URL normalizada; core 111 testes | `feat(detect): amplia padrões de chamadas HTTP (T2)` | ✅ em des, em revisão |
+| v1.9.36 | 2026-10-20 | des | Fechamento v1.3.0: Manual-Teste-v1.3, versão `1.3.0`, CHANGELOG, README; gate automático (core 111/cob 90.83 · cli 15/cob 96.46 · host 27); wiki pronta p/ publish | `docs(release): fecha v1.3.0 - manual, versao e docs` | ⏳ em des, aguarda F5/publish |
 
 ## Consulta (Dataview — notas de gestão)
 

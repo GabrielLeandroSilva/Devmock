@@ -52,12 +52,12 @@ Depois da 1.2.0 (Tree UX, Detect, HTML docs), a próxima janela ataca dois ponto
 - [/] #task ⏫ Rodar Gate de Release (§5) 🏷️ fase/codigo
 
 ## 5. Gate de Release
-- [ ] Manual-Teste-v1.3 100% ✅ (T1 + T3a; T2/T3b se entrarem)
-- [ ] `vitest run` verde + cobertura ≥ gate + matriz `AUD`/`RF` 100%
-- [ ] `tsc --noEmit` limpo em todos os workspaces
-- [ ] CHANGELOG + `package.json` = `1.3.0`
-- [ ] README (raiz + extension) e wiki sincronizados
-- [ ] `Log-Versionamento` atualizado
+- [ ] Manual-Teste-v1.3 100% — **auto ✅** (core 111 · cli 15 · host 27); **UI aguarda F5**
+- [x] `vitest run` verde + cobertura ≥ gate: core 90.83/82.08 · CLI 96.46/87.12 ✅
+- [x] `tsc --noEmit` limpo em todos os workspaces ✅
+- [x] CHANGELOG + `package.json` = `1.3.0` ✅
+- [x] README (raiz + extension) atualizados; wiki pronta (push no publish)
+- [x] `Log-Versionamento` atualizado
 - [ ] Tag `ext-v1.3.0` (trava `tag == versão`) → `publish.yml`
 - [ ] Post de lançamento ([[Agente-LinkedIn]], postagem manual)
 
