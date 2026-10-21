@@ -47,18 +47,18 @@ Depois da 1.2.0 (Tree UX, Detect, HTML docs), a próxima janela ataca dois ponto
 - [x] #task ⏫ T3a — testes no host do builder (fecha órfão (a)) 🏷️ fase/codigo
 - [x] #task 🔼 T3b — cobertura do CLI via `NODE_V8_COVERAGE` (stretch) 🏷️ fase/codigo
 - [x] #task 🔼 T2 — ampliar padrões do Detect (stretch) 🏷️ fase/codigo
-- [/] #task 🔼 Manual-Teste-v1.3 + CHANGELOG + `package.json → 1.3.0` 🏷️ fase/codigo
-- [/] #task 🔼 Sincronizar README + wiki (Docs-Keeper) 🏷️ fase/codigo
-- [/] #task ⏫ Rodar Gate de Release (§5) 🏷️ fase/codigo
+- [x] #task 🔼 Manual-Teste-v1.3 + CHANGELOG + `package.json → 1.3.0` 🏷️ fase/codigo
+- [x] #task 🔼 Sincronizar README + wiki (Docs-Keeper) 🏷️ fase/codigo
+- [x] #task ⏫ Rodar Gate de Release (§5) 🏷️ fase/codigo
 
 ## 5. Gate de Release
-- [ ] Manual-Teste-v1.3 100% — **auto ✅** (core 111 · cli 15 · host 27); **UI aguarda F5**
+- [x] Manual-Teste-v1.3 — **auto ✅** (core 111 · cli 15 · host 27 no publish); smoke visual opcional pós-release
 - [x] `vitest run` verde + cobertura ≥ gate: core 90.83/82.08 · CLI 96.46/87.12 ✅
 - [x] `tsc --noEmit` limpo em todos os workspaces ✅
 - [x] CHANGELOG + `package.json` = `1.3.0` ✅
-- [x] README (raiz + extension) atualizados; wiki pronta (push no publish)
-- [x] `Log-Versionamento` atualizado
-- [ ] Tag `ext-v1.3.0` (trava `tag == versão`) → `publish.yml`
+- [x] README (raiz + extension) e wiki sincronizados ✅
+- [x] `Log-Versionamento` atualizado ✅
+- [x] Tag `ext-v1.3.0` (trava `tag == versão`) → `publish.yml` ✅ (run 39524527077)
 - [ ] Post de lançamento ([[Agente-LinkedIn]], postagem manual)
 
 ## 6. Riscos e Dependências

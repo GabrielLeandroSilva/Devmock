@@ -27,7 +27,7 @@ updated: 2026-10-10
 - **v1.1.0** — ✅ publicada (cenários 403/429, `errorRate`, log com body, `staleDetector` por artefato) → [[06-Plano-Release-v1.1.0]]
 - **v1.1.1** — ✅ publicada (patch: Stop lento / AUD-16) → [[08-Plano-Release-v1.2.0]] (Parte 0)
 - **v1.2.0** — ✅ publicada (Tree UX, Detect from project, HTML docs) → [[08-Plano-Release-v1.2.0]]
-- **v1.3.0** — planejado: cenários por header/query + testes da UI (T1/T3) → [[10-Plano-Release-v1.3.0]]
+- **v1.3.0** — ✅ publicada (cenário por requisição, Detect ampliado, qualidade) → [[10-Plano-Release-v1.3.0]]
 - **Infra (contínuo)** — Node **≥22** desde out/2026; **futuro: mínimo Node 24** → [[06-Stacks-e-Versoes]]
 
 ## Status geral (Dataview)

@@ -47,7 +47,8 @@ updated: 2026-10-20
 | Data | Passo | ✅/❌ | Observação |
 |------|-------|------|------------|
 | 2026-10-20 | Build + tsc + suítes | ✅ | core **111** (cob 90.83/82.08) · cli **15** (96.46/87.12) · host **27** |
-| | F5 + T1/T2/T3 (UI) | | aguarda host |
-| | Regressão v1.2 (UI) | | aguarda host |
+| 2026-10-21 | Publish | ✅ | run **39524527077** (rerun): host 27 verde antes do `vsce` → **PUBLICADO 1.3.0**; 1ª tentativa caiu por `ETIMEDOUT` no download do VS Code |
+| | F5 + T1/T2/T3 (UI) | | smoke visual opcional pós-release |
+| | Regressão v1.2 (UI) | | coberta pela suíte do host no publish |
 
 - Todos ✅ → **promove v1.3.0** (tag `ext-v1.3.0` → publish).
