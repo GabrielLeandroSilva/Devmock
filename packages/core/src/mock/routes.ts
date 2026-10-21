@@ -84,6 +84,12 @@ export const BUILTIN_SCENARIOS: Record<string, EndpointConfig> = {
  */
 export const SCENARIO_NAMES: string[] = Object.keys(BUILTIN_SCENARIOS);
 
+/** Header que força o cenário por requisição (PRD-04 RF-06). */
+export const SCENARIO_HEADER = "x-mock-scenario";
+
+/** Query que força o cenário por requisição (PRD-04 RF-06). */
+export const SCENARIO_QUERY = "scenario";
+
 export function plural(name: string): string {
   const lower = name.toLowerCase();
   if (lower === "person") return "people";
@@ -112,10 +118,15 @@ export function routesFor(schema: Schema): string[] {
 export function resolveEndpoint(
   key: string,
   opts: MockServerOptions,
+  scenarioOverride?: string,
 ): { cfg: Required<Pick<EndpointConfig, "status" | "delayMs" | "records">> & EndpointConfig; scenario: string } {
   const endpointCfg = opts.endpoints?.[key] ?? {};
   const scenarios = opts.scenarios?.[key] ?? {};
-  const activeName = endpointCfg.scenario ?? activeScenarioName(key, opts);
+  // Precedência: request (query/header) > cenário do endpoint > ativo > Default.
+  // Override desconhecido cai no cenário normal — nunca quebra a requisição (PRD-04 RF-07).
+  const activeName = isKnownScenario(scenarioOverride, scenarios)
+    ? scenarioOverride
+    : (endpointCfg.scenario ?? activeScenarioName(key, opts));
   // Arquivo > embutido > vazio (embutido evita cair no default silenciosamente).
   const scenarioCfg = activeName ? (scenarios[activeName] ?? BUILTIN_SCENARIOS[activeName] ?? {}) : {};
   const merged: EndpointConfig = { ...endpointCfg, ...scenarioCfg, scenario: activeName };
@@ -123,6 +134,18 @@ export function resolveEndpoint(
     cfg: { ...DEFAULT_ENDPOINT, ...merged },
     scenario: activeName ?? "Default",
   };
+}
+
+/** Nome de cenário resolvível (arquivo do endpoint ou embutido). */
+function isKnownScenario(
+  name: string | undefined,
+  scenarios: Record<string, EndpointConfig>,
+): name is string {
+  return (
+    !!name &&
+    (Object.prototype.hasOwnProperty.call(scenarios, name) ||
+      Object.prototype.hasOwnProperty.call(BUILTIN_SCENARIOS, name))
+  );
 }
 
 /** Cenário ativo declarado em config.activeScenarios tem precedência (PRD-04 §6). */

@@ -61,8 +61,8 @@ Exemplo (`user-empty.json`): `{ "endpoint": "GET /users", "scenario": "Empty", "
 - [ ] #task ⏫ Alternar Default→Empty→401→500 muda a resposta sem restart 🏷️ fase/1
 - [ ] #task ⏫ `Empty` retorna envelope vazio com 200 🏷️ fase/1
 - [ ] #task 🔼 `Slow Network` atrasa ~5s e o front consegue testar loading/timeout 🏷️ fase/1
-- [ ] #task ⏫ **[v1.3.0]** `?scenario=Empty` retorna envelope vazio e `X-Mock-Scenario: 403` retorna 403 🏷️ fase/codigo
-- [ ] #task 🔼 **[v1.3.0]** Precedência request > ativo > Default; cenário desconhecido cai no ativo sem quebrar 🏷️ fase/codigo
+- [x] #task ⏫ **[v1.3.0]** `?scenario=Empty` retorna envelope vazio e `X-Mock-Scenario: 403` retorna 403 🏷️ fase/codigo
+- [x] #task 🔼 **[v1.3.0]** Precedência request > ativo > Default; cenário desconhecido cai no ativo sem quebrar 🏷️ fase/codigo
 
 ## 8. Riscos e Dependências
 - Depende de PRD-02 (precedência + log mostra cenário ativo)

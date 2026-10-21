@@ -9,6 +9,8 @@ import {
   paginate,
   plural,
   resolveEndpoint,
+  SCENARIO_HEADER,
+  SCENARIO_QUERY,
   type MockServerOptions,
   type RequestLogEntry,
 } from "./routes.js";
@@ -46,6 +48,7 @@ interface Reply {
   body: unknown;
 }
 const SEED_RECORDS = 20;
+const CORS_ALLOW_HEADERS = `content-type, ${SCENARIO_HEADER}`;
 
 /**
  * Mock Server embutido no Core (http nativo, sem framework).
@@ -128,7 +131,10 @@ export function createMockServer(schemas: Schema[], opts: MockServerOptions = {}
 
     // B2: routeKey sempre em minúsculas para casar com a config ("GET /users").
     const route = `${method} /${parts[0].toLowerCase()}` + (parts.length >= 2 ? "/:id" : "");
-    const { cfg, scenario } = resolveEndpoint(route, liveOpts);
+    // Cenário por requisição: query vence header; ambos vencem o cenário ativo (PRD-04 RF-06/07).
+    const scenarioOverride =
+      url.searchParams.get(SCENARIO_QUERY)?.trim() || headerValue(req.headers[SCENARIO_HEADER]);
+    const { cfg, scenario } = resolveEndpoint(route, liveOpts, scenarioOverride);
     const errorRate = cfg.errorRate ?? liveOpts.config?.errorRate ?? 0;
     const reply = applyErrorRate(buildReply(method, parts, store, url, cfg, rawBody), errorRate, scenario);
 
@@ -233,7 +239,7 @@ export function createMockServer(schemas: Schema[], opts: MockServerOptions = {}
         "content-type": "application/json; charset=utf-8",
         "access-control-allow-origin": "*",
         "access-control-allow-methods": "GET,POST,PUT,PATCH,DELETE,OPTIONS",
-        "access-control-allow-headers": "content-type",
+        "access-control-allow-headers": CORS_ALLOW_HEADERS,
         ...ctx.headers,
       };
       for (const [k, v] of Object.entries(headers)) res.setHeader(k, v);
@@ -321,9 +327,16 @@ export function createMockServer(schemas: Schema[], opts: MockServerOptions = {}
 function sendPreflight(res: ServerResponse): void {
   res.setHeader("access-control-allow-origin", "*");
   res.setHeader("access-control-allow-methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
-  res.setHeader("access-control-allow-headers", "content-type");
+  res.setHeader("access-control-allow-headers", CORS_ALLOW_HEADERS);
   res.statusCode = 204;
   res.end();
+}
+
+/** Valor único de header (duplicados: vale o primeiro); vazio vira undefined. */
+function headerValue(value: string | string[] | undefined): string | undefined {
+  const raw = Array.isArray(value) ? value[0] : value;
+  const trimmed = raw?.trim();
+  return trimmed ? trimmed : undefined;
 }
 
 /** Lê o corpo até o fim e o devolve como texto (B1: POST/PUT/PATCH precisam dele). */

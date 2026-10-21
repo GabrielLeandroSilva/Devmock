@@ -278,10 +278,80 @@ describe("cenários (PRD-04)", () => {
     expect(last.ms).toBeGreaterThanOrEqual(0);
   });
 
-  it("OPTIONS responde preflight 204 com CORS", async () => {
+  it("query ?scenario=Empty força o cenário só daquela requisição (RF-06)", async () => {
+    const s = createMockServer([user], { config: EPHEMERAL });
+    const port = await s.listen();
+    const res = await fetch(`http://127.0.0.1:${port}/users?scenario=Empty`);
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ data: [], total: 0 });
+    expect(s.logs().at(-1)?.scenario).toBe("Empty");
+    await s.close();
+  });
+
+  it("header X-Mock-Scenario vence o cenário ativo (RF-06/RF-07)", async () => {
+    const s = createMockServer([user], {
+      config: { ...EPHEMERAL, activeScenarios: { "GET /users": "Empty" } },
+    });
+    const port = await s.listen();
+    const res = await fetch(`http://127.0.0.1:${port}/users`, {
+      headers: { "X-Mock-Scenario": "Forbidden" },
+    });
+    expect(res.status).toBe(403);
+    expect(await res.json()).toMatchObject({ error: "FORBIDDEN" });
+    expect(s.logs().at(-1)?.scenario).toBe("Forbidden");
+    await s.close();
+  });
+
+  it("query vence o header quando os dois vêm na requisição", async () => {
+    const s = createMockServer([user], { config: EPHEMERAL });
+    const port = await s.listen();
+    const res = await fetch(`http://127.0.0.1:${port}/users?scenario=Server%20Error`, {
+      headers: { "X-Mock-Scenario": "Forbidden" },
+    });
+    expect(res.status).toBe(500);
+    await s.close();
+  });
+
+  it("cenário de arquivo vale no override (arquivo > embutido)", async () => {
+    const s = createMockServer([user], {
+      config: EPHEMERAL,
+      scenarios: {
+        "GET /users": { Empty: { status: 200, body: { data: [{ custom: true }], total: 1 } } },
+      },
+    });
+    const port = await s.listen();
+    const res = await fetch(`http://127.0.0.1:${port}/users?scenario=Empty`);
+    expect(await res.json()).toEqual({ data: [{ custom: true }], total: 1 });
+    await s.close();
+  });
+
+  it("cenário desconhecido cai no ativo sem quebrar (RF-07)", async () => {
+    const s = createMockServer([user], {
+      config: { ...EPHEMERAL, activeScenarios: { "GET /users": "Empty" } },
+    });
+    const port = await s.listen();
+    const res = await fetch(`http://127.0.0.1:${port}/users?scenario=Nope`);
+    expect(res.status).toBe(200);
+    expect(await res.json()).toEqual({ data: [], total: 0 });
+    expect(s.logs().at(-1)?.scenario).toBe("Empty");
+    await s.close();
+  });
+
+  it("cenário desconhecido sem ativo cai no Default", async () => {
+    const s = createMockServer([user], { config: EPHEMERAL });
+    const port = await s.listen();
+    const res = await fetch(`http://127.0.0.1:${port}/users?scenario=Nope`);
+    expect(res.status).toBe(200);
+    expect((await res.json()).data.length).toBeGreaterThan(0);
+    expect(s.logs().at(-1)?.scenario).toBe("Default");
+    await s.close();
+  });
+
+  it("OPTIONS responde preflight 204 com CORS e libera X-Mock-Scenario (RF-08)", async () => {
     const res = await fetch(`${base}/users`, { method: "OPTIONS" });
     expect(res.status).toBe(204);
     expect(res.headers.get("access-control-allow-methods")).toContain("POST");
+    expect(res.headers.get("access-control-allow-headers")?.toLowerCase()).toContain("x-mock-scenario");
   });
 
   it("corpo acima de 1MB recebe 413 JSON sem derrubar o servidor", async () => {

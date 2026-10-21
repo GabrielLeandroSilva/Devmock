@@ -21,7 +21,7 @@ Depois da 1.2.0 (Tree UX, Detect, HTML docs), a próxima janela ataca dois ponto
 ### Must
 | ID | Item | Origem | Status atual |
 |----|------|--------|--------------|
-| **T1** | **Cenários por header/query**: `GET /users?scenario=Empty` e header `X-Mock-Scenario: Forbidden`; precedência **request > cenário ativo > Default**; CORS libera o header; desconhecido cai no ativo/Default | [[PRD-04-Scenarios]] "Fora (futuro)"; S1 que escorregou da 1.1.0 | Ausente (`resolveEndpoint` só lê `activeScenarios`) |
+| **T1** | **Cenários por header/query**: `GET /users?scenario=Empty` e header `X-Mock-Scenario: Forbidden`; precedência **request > cenário ativo > Default**; CORS libera o header; desconhecido cai no ativo/Default | [[PRD-04-Scenarios]] "Fora (futuro)"; S1 que escorregou da 1.1.0 | ✅ v1.3.0 (T1) — 6 testes novos verdes |
 | **T3a** | **Seam do Tree**: extrair um **builder puro** do `ProjectProvider.getChildren` (`apps/extension/src/tree.ts`) e testar Schema/Endpoint/Settings/Mock Server no host — fecha o **órfão (a)** | [[07-Estrategia-Testes]] §5 | `getChildren` é acoplado ao `vscode`; órfão (a) |
 
 ### Should (stretch)
@@ -41,8 +41,8 @@ Depois da 1.2.0 (Tree UX, Detect, HTML docs), a próxima janela ataca dois ponto
 - **T2 (stretch):** novos padrões documentados e testados; sem falso positivo silencioso (warnings).
 
 ## 4. Passos de execução (checklist)
-- [/] #task ⏫ T1 — core: cenário por header/query + precedência + CORS 🏷️ fase/codigo
-- [/] #task ⏫ T1 — testes (query/header/desconhecido) + regressão 🏷️ fase/codigo
+- [x] #task ⏫ T1 — core: cenário por header/query + precedência + CORS 🏷️ fase/codigo
+- [x] #task ⏫ T1 — testes (query/header/desconhecido) + regressão 🏷️ fase/codigo
 - [/] #task ⏫ T3a — extrair builder puro do Tree (`tree.ts`) 🏷️ fase/codigo
 - [/] #task ⏫ T3a — testes no host do builder (fecha órfão (a)) 🏷️ fase/codigo
 - [/] #task 🔼 T3b — cobertura do CLI via `NODE_V8_COVERAGE` (stretch) 🏷️ fase/codigo
