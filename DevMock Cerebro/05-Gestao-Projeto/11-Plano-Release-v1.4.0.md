@@ -56,7 +56,7 @@ Hoje várias ações só existem na Command Palette. A 1.4.0 leva essas ações 
 - [x] #task 🔼 S1 — descrição `N schema(s)` no nó 🏷️ fase/codigo
 - [x] #task 🔼 Manual-Teste-v1.4 (só-mouse) + CHANGELOG + `package.json → 1.4.0` 🏷️ fase/codigo
 - [x] #task 🔼 README + wiki (Docs-Keeper) 🏷️ fase/codigo
-- [/] #task ⏫ Rodar Gate de Release (§5) 🏷️ fase/codigo
+- [x] #task ⏫ Rodar Gate de Release (§5) 🏷️ fase/codigo
 
 ## 5. Gate de Release
 - [x] Manual-Teste-v1.4 — **auto ✅** (core 111 · cli 15 · host 41); smoke visual opcional pós-release
@@ -65,7 +65,7 @@ Hoje várias ações só existem na Command Palette. A 1.4.0 leva essas ações 
 - [x] CHANGELOG + `apps/extension/package.json` = `1.4.0` ✅
 - [x] README (raiz + extension) e wiki sincronizados ✅
 - [x] `Log-Versionamento` atualizado ✅
-- [ ] Tag `ext-v1.4.0` (trava `tag == versão`) → `publish.yml`
+- [x] Tag `ext-v1.4.0` (trava `tag == versão`) → `publish.yml` ✅ (run 39709686570)
 - [ ] Post de lançamento ([[Agente-LinkedIn]], postagem manual)
 
 ## 6. Riscos e Dependências

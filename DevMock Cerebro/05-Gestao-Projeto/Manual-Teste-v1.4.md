@@ -45,7 +45,8 @@ updated: 2026-10-21
 | Data | Passo | ✅/❌ | Observação |
 |------|-------|------|------------|
 | 2026-10-21 | Build + tsc + suítes | ✅ | core **111** · cli **15** · host **41** |
-| | F5 + M1/M2 (UI) | | aguarda host |
-| | Regressão v1.3 (UI) | | aguarda host |
+| 2026-10-22 | Publish | ✅ | run **39709686570**: host 41 verde antes do `vsce` → **PUBLICADO 1.4.0** |
+| | F5 + M1/M2 (UI) | | smoke visual opcional pós-release |
+| | Regressão v1.3 (UI) | | coberta pela suíte do host no publish |
 
 - Todos ✅ → **promove v1.4.0** (tag `ext-v1.4.0` → publish).
