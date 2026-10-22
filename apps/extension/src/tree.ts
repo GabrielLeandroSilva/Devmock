@@ -64,10 +64,18 @@ export function buildTree(state: TreeState, el?: TreeNode): TreeNode[] {
           };
         }),
       );
-    case "Scenarios":
-      return SCENARIO_NAMES.map((name) => ({
-        label: (Object.values(cfg.activeScenarios ?? {}).includes(name) ? "✓ " : "") + name,
-      }));
+    case "Scenarios": {
+      const active = cfg.activeScenarios ?? {};
+      return SCENARIO_NAMES.map((name) => {
+        const count = state.schemas.filter((s) => scenarioOf(active, routesFor(s)[0]) === name).length;
+        return {
+          label: (count > 0 ? "✓ " : "") + name,
+          description: count > 0 ? `${count} schema(s)` : undefined,
+          contextValue: "scenario",
+          command: { command: "devmock.applyScenario", title: "Aplicar cenário", arguments: [name] },
+        };
+      });
+    }
     case "Documentation":
       return state.schemas.map((s) => ({ label: `${s.name}.md` }));
     case "Settings":

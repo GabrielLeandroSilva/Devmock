@@ -30,6 +30,8 @@ Na [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemNa
 | Validate Real API… | Compara a API real com o contrato (Compatible/Warning/Breaking) |
 | Show Request Log | Método, rota, status, ms, cenário e bodies (request/response, truncados em 1KB) |
 
+Na Tree, o botão **Ações** concentra os comandos; clique num **cenário** para aplicá-lo a um ou mais Schemas.
+
 Prefere terminal? Há CLI equivalente: `devmock init|start|generate|export|import|validate` (ver `packages/cli`).
 
 Quer testar instabilidade? Defina **`errorRate`** (0–100) em `.devmock/config.json` para injetar falhas 500 de forma determinística — e use o Switch Scenario para os estados `403/429/slow`. Para forçar um cenário **só naquela chamada**, use `?scenario=` ou o header `X-Mock-Scenario`.
@@ -63,7 +65,7 @@ Schema mínimo (`.devmock/schemas/user.json`):
 
 Próximas versões são planejadas **sem data** e priorizadas por feedback — veja o [Roadmap](https://github.com/GabrielLeandroSilva/Devmock/wiki/Roadmap). Já publicado: [Versões](https://github.com/GabrielLeandroSilva/Devmock/wiki/Vers%C3%B5es) · [Correções](https://github.com/GabrielLeandroSilva/Devmock/wiki/Corre%C3%A7%C3%B5es).
 
-Última versão: **v1.3.0** — cenário por requisição (`?scenario=` / `X-Mock-Scenario`) e Detect ampliado.
+Última versão: **v1.4.0** — botão **Ações** na Tree e cenário aplicado por clique nos Schemas (mouse-first).
 
 ## Links
 

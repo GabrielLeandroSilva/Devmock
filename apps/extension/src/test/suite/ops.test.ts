@@ -13,12 +13,14 @@ import {
   doSaveFakeData,
   doSetErrorRate,
   doSwitchScenario,
+  doSwitchScenarios,
   doValidate,
   endpointUrl,
   formatLogEntry,
   scenarioOf,
 } from "../../ops.js";
 import { devmockDir, listSchemas, readConfig, staleSinceLastExport } from "../../project.js";
+import { buildActions } from "../../actions.js";
 
 suite("ops no host (fs real, sem mocks)", () => {
   let root = "";
@@ -44,6 +46,20 @@ suite("ops no host (fs real, sem mocks)", () => {
   test("switch grava activeScenarios", () => {
     doSwitchScenario(root, "GET /users", "Empty");
     assert.strictEqual(readConfig(root).activeScenarios["GET /users"], "Empty");
+  });
+
+  test("switch multi grava vários endpoints e preserva os demais", () => {
+    doSwitchScenario(root, "GET /orders", "Forbidden");
+    const applied = doSwitchScenarios(
+      root,
+      ["GET /users", "GET /users", "GET /products"],
+      "Empty",
+    );
+    assert.strictEqual(applied, 2);
+    const cfg = readConfig(root);
+    assert.strictEqual(cfg.activeScenarios["GET /users"], "Empty");
+    assert.strictEqual(cfg.activeScenarios["GET /products"], "Empty");
+    assert.strictEqual(cfg.activeScenarios["GET /orders"], "Forbidden");
   });
 
   test("export gera 6 artefatos + stale detecta mudança", () => {
@@ -185,19 +201,41 @@ suite("ops no host (fs real, sem mocks)", () => {
   test("W1 — comandos/menus da Tree no package.json", () => {    const pkg = JSON.parse(readFileSync(join(__dirname, "../../../package.json"), "utf8")) as {
       contributes: {
         commands: { command: string; icon?: string }[];
-        menus: Record<string, { command: string; when?: string }[]>;
+        menus: Record<string, { command: string; when?: string; group?: string }[]>;
       };
     };
     const cmds = pkg.contributes.commands;
     assert.ok(cmds.some((c) => c.command === "devmock.setErrorRate"));
     assert.ok(cmds.some((c) => c.command === "devmock.openEndpoint"));
+    assert.ok(cmds.some((c) => c.command === "devmock.actions"));
+    assert.ok(cmds.some((c) => c.command === "devmock.applyScenario"));
+    assert.strictEqual(cmds.find((c) => c.command === "devmock.actions")?.icon, "$(ellipsis)");
     assert.strictEqual(cmds.find((c) => c.command === "devmock.start")?.icon, "$(play)");
     assert.strictEqual(cmds.find((c) => c.command === "devmock.stop")?.icon, "$(debug-stop)");
     const title = pkg.contributes.menus["view/title"];
-    assert.ok(title.some((m) => m.command === "devmock.start" && /&&\s*!devmock\.serverRunning/.test(m.when ?? "")));
-    assert.ok(title.some((m) => m.command === "devmock.stop" && /&&\s*devmock\.serverRunning/.test(m.when ?? "")));
+    assert.ok(title.some((m) => m.command === "devmock.actions" && m.group === "navigation@0"));
+    assert.ok(title.some((m) => m.command === "devmock.refresh" && m.group === "navigation@1"), "Refresh continua no header");
+    assert.ok(!title.some((m) => m.command === "devmock.createSchema"), "New Schema saiu do header");
+    assert.ok(title.some((m) => m.command === "devmock.start" && m.group === "navigation@2" && /&&\s*!devmock\.serverRunning/.test(m.when ?? "")));
+    assert.ok(title.some((m) => m.command === "devmock.stop" && m.group === "navigation@2" && /&&\s*devmock\.serverRunning/.test(m.when ?? "")));
     const ctx = pkg.contributes.menus["view/item/context"];
     assert.ok(!ctx.some((m) => m.command === "devmock.start" || m.command === "devmock.stop"));
+
+    // Contrato builder ↔ package.json: um typo em ActionItem.command não passa silencioso.
+    const states = [
+      { initialized: false, schemaCount: 0, serverRunning: false },
+      { initialized: true, schemaCount: 0, serverRunning: false },
+      { initialized: true, schemaCount: 2, serverRunning: false },
+      { initialized: true, schemaCount: 2, serverRunning: true },
+    ];
+    for (const state of states) {
+      for (const action of buildActions(state)) {
+        assert.ok(
+          cmds.some((c) => c.command === action.command),
+          `ação "${action.command}" sem comando no package.json`,
+        );
+      }
+    }
   });
 
   test("W2 — doDetect encontra interfaces e cria os Schemas (ref entre eles)", () => {

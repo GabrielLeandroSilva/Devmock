@@ -25,6 +25,9 @@ Define o contrato uma vez e use-o para desenvolver, testar, documentar, comparti
 | Export Contract… | OpenAPI JSON+YAML, JSON Schema, `types.ts`, Markdown, HTML |
 | Validate Real API… | Compara a API real com o contrato (Compatible/Warning/Breaking) |
 | Show Request Log | Método, rota, status, ms, cenário e bodies (truncados em 1KB) |
+| Ações (header da Tree) | Concentra os comandos na Tree, conforme o estado (sem projeto, sem Schema, parado/rodando) |
+
+Na Tree, o botão **Ações** concentra os comandos; clique num **cenário** para aplicá-lo a um ou mais Schemas.
 
 CLI equivalente: `devmock init|start|generate|export|import|validate` (pacote `devmock` em breve no npm).
 
@@ -38,7 +41,7 @@ VS Code `^1.101.0`. Sem telemetria, 100% local, tudo em arquivos versionáveis.
 
 Próximas versões: [Roadmap](https://github.com/GabrielLeandroSilva/Devmock/wiki/Roadmap) · histórico: [Versões](https://github.com/GabrielLeandroSilva/Devmock/wiki/Vers%C3%B5es) e [Correções](https://github.com/GabrielLeandroSilva/Devmock/wiki/Corre%C3%A7%C3%B5es).
 
-Última versão: **v1.3.0** — cenário por requisição (`?scenario=` / `X-Mock-Scenario`) e Detect ampliado.
+Última versão: **v1.4.0** — botão **Ações** na Tree e cenário aplicado por clique nos Schemas (mouse-first).
 
 ## Links
 

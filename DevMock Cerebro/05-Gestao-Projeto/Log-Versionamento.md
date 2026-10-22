@@ -133,7 +133,16 @@ updated: 2026-10-10
 | v1.9.35 | 2026-10-20 | des | T2 entregue: Detect com clientes variados/genéricos, config-object, `fetch` com método e base/URL normalizada; core 111 testes | `feat(detect): amplia padrões de chamadas HTTP (T2)` | ✅ em des, em revisão |
 | v1.9.36 | 2026-10-20 | des | Fechamento v1.3.0: Manual-Teste-v1.3, versão `1.3.0`, CHANGELOG, README; gate automático (core 111/cob 90.83 · cli 15/cob 96.46 · host 27); wiki pronta p/ publish | `docs(release): fecha v1.3.0 - manual, versao e docs` | ✅ concluído |
 | ext-v1.3.0 | 2026-10-21 | tag em des | 🚀 PUBLICADO na Marketplace (cenário por requisição, Detect ampliado, qualidade) | `Published devmock.devmock-vscode v1.3.0` via publish.yml (run 39524527077; 1ª tentativa caiu por ETIMEDOUT no download do VS Code; rerun ok) | ✅ ao vivo |
-| v1.9.37 | 2026-10-21 | des | Pós-publicação v1.3.0: wiki, Log, Home/EAP; PR `#26` (des→main) | `docs(release): publica v1.3.0 e sincroniza docs` | ⏳ em des, PR #26 em revisão |
+| v1.9.37 | 2026-10-21 | des | Pós-publicação v1.3.0: wiki, Log, Home/EAP; PR `#26` (des→main) | `docs(release): publica v1.3.0 e sincroniza docs` | ✅ em main (PR #26, merge `9df6dac`) |
+| v1.9.38 | 2026-10-21 | des | Pós-promoção v1.3.0 (PR #26) | `docs(git): registra promoção v1.3.0 em main` | ✅ em des |
+| - | 2026-10-21 | - | 📝 Texto do post de lançamento v1.3.0 gerado ([[Agente-LinkedIn]]: curto + completo + hashtags + CTA + arte); postagem manual pendente | marco de divulgação, sem versão | ⏳ aguarda postagem |
+| v1.9.40 | 2026-10-21 | des | Agentes: **Code-Reviewer** (read-only, 2 eixos) e **DevOps-Automator** (CI/CD/release enxuto) a partir dos anexos; `AGENTS.md`; anexos removidos após a criação | `docs(agentes): adiciona code-reviewer e devops-automator` | ✅ em des |
+| v1.9.41 | 2026-10-21 | des | Planejamento v1.4.0: **Ações** no header + **cenário por clique** (mouse-first); plano 11, PRD-03 (RF-12..14), PRD-04, Home/EAP, wiki/README | `docs(release): planeja v1.4.0 - acoes e cenario por clique` | ✅ em des |
+| v1.9.42 | 2026-10-21 | des | M1 v1.4.0: botão **Ações** (QuickPick agrupado, estado dinâmico, New Schema fora do header); host **36** testes; Code-Reviewer + QA-Testes | `feat(extension): botão Ações na Tree (M1)` | ✅ em des |
+| v1.9.43 | 2026-10-21 | des | M2 v1.4.0: **cenário por clique** (multi-seleção de Schemas, GET de coleção, reload vivo, dedupe); host **41** testes; Code-Reviewer + QA-Testes | `feat(extension): cenário por clique na Tree (M2)` | ✅ em des |
+| v1.9.44 | 2026-10-21 | des | Fechamento v1.4.0: Manual-Teste-v1.4 (só-mouse), versão `1.4.0`, CHANGELOG, README; gate core 111 · cli 15 · host 41 | `docs(release): fecha v1.4.0 - manual, versao e docs` | ✅ concluído |
+| ext-v1.4.0 | 2026-10-22 | tag em des | 🚀 PUBLICADO na Marketplace (**Ações** no header + **cenário por clique**, mouse-first) | `Published devmock.devmock-vscode v1.4.0` via publish.yml (run 39709686570) | ✅ ao vivo |
+| v1.9.45 | 2026-10-22 | des | Pós-publicação v1.4.0: wiki, Log, Home/EAP; PR `#27` (des→main) | `docs(release): publica v1.4.0 e sincroniza docs` | ⏳ em des, PR #27 em revisão |
 
 ## Consulta (Dataview — notas de gestão)
 

@@ -54,10 +54,18 @@ export function doSaveFakeData(
   return { file, count: rows.length, seed };
 }
 
-export function doSwitchScenario(root: string, endpoint: string, scenario: string): void {
+export function doSwitchScenarios(root: string, endpoints: string[], scenario: string): number {
+  const unique = [...new Set(endpoints)];
+  if (unique.length === 0) return 0;
   const cfg = readConfig(root);
-  cfg.activeScenarios = { ...cfg.activeScenarios, [endpoint]: scenario };
-  writeFileSync(join(devmockDir(root), "config.json"), `${JSON.stringify(cfg, null, 2)}\n`);
+  cfg.activeScenarios = { ...cfg.activeScenarios };
+  for (const endpoint of unique) cfg.activeScenarios[endpoint] = scenario;
+  writeConfig(root, cfg);
+  return unique.length;
+}
+
+export function doSwitchScenario(root: string, endpoint: string, scenario: string): void {
+  doSwitchScenarios(root, [endpoint], scenario);
 }
 
 export interface ExportResult {
