@@ -62,7 +62,7 @@ Dev precisa de experiência visual simples (TreeView) + edição direta dos arqu
 ## 5. Requisitos Não-Funcionais
 - Ativação <500ms; Tree atualiza em <200ms após salvar arquivo
 - Funciona com multi-root workspace (um `.devmock/` por pasta)
-- Textos PT-BR na UI; termos técnicos em inglês
+- Textos PT-BR na UI; termos técnicos em inglês. No botão **Ações**, botão e grupos em PT-BR e itens espelhando o título do comando (inglês).
 
 ## 6. Regras de Negócio
 - Sem `.devmock/` → CTA único `[ Initialize Project ]`, resto desabilitado
@@ -76,7 +76,7 @@ Dev precisa de experiência visual simples (TreeView) + edição direta dos arqu
 - [x] #task 🔼 **[v1.2.0]** Editar `errorRate` pela Settings grava no `config.json` e reflete na Tree 🏷️ fase/codigo
 - [x] #task 🔼 **[v1.2.0]** Schema e Endpoints exibem o cenário ativo; clique em GET abre no navegador 🏷️ fase/codigo
 - [x] #task 🔼 **[v1.2.0]** Nó Mock Server mostra Start/Stop inline conforme o estado 🏷️ fase/codigo
-- [ ] #task 🔼 **[v1.4.0]** Header com **Ações** + Refresh + Start/Stop; New Schema acessível pelo Ações 🏷️ fase/codigo
+- [x] #task 🔼 **[v1.4.0]** Header com **Ações** + Refresh + Start/Stop; New Schema acessível pelo Ações 🏷️ fase/codigo
 - [ ] #task 🔼 **[v1.4.0]** Clique no cenário aplica aos Schemas selecionados (GET de coleção) sem restart 🏷️ fase/codigo
 
 ## 8. Riscos e Dependências

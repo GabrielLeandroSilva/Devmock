@@ -26,6 +26,7 @@ import {
   formatLogEntry,
 } from "./ops.js";
 import { buildTree, type TreeNode } from "./tree.js";
+import { buildActions, buildQuickPickItems } from "./actions.js";
 import {
   devmockDir,
   listSchemas,
@@ -205,6 +206,26 @@ export function activate(context: vscode.ExtensionContext): void {
     watcher,
     vscode.workspace.onDidChangeWorkspaceFolders(refresh),
     vscode.commands.registerCommand("devmock.refresh", refresh),
+    vscode.commands.registerCommand("devmock.actions", async () => {
+      const root = workspaceRoot();
+      const initialized = !!root && existsSync(devmockDir(root));
+      const schemaCount = initialized && root ? listSchemas(root).length : 0;
+      const actions = buildActions({ initialized, schemaCount, serverRunning: !!state.server });
+      const picks = buildQuickPickItems(actions).map(
+        (item): vscode.QuickPickItem & { commandId?: string } =>
+          item.kind === "separator"
+            ? { label: item.label, kind: vscode.QuickPickItemKind.Separator }
+            : { label: item.label, description: item.description, commandId: item.command },
+      );
+      const picked = await vscode.window.showQuickPick(picks, { placeHolder: "Ações do DevMock" });
+      if (!picked?.commandId) return;
+      // Fire-and-forget (AUD-12), mas sem engolir rejeição do comando escolhido.
+      void vscode.commands.executeCommand(picked.commandId).then(undefined, (err: unknown) => {
+        void vscode.window.showErrorMessage(
+          `DevMock: ${err instanceof Error ? err.message : String(err)}`,
+        );
+      });
+    }),
     vscode.commands.registerCommand("devmock.setErrorRate", async () => {
       const root = workspaceRoot();
       if (!root || !existsSync(devmockDir(root))) {

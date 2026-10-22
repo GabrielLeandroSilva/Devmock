@@ -55,6 +55,11 @@
         "icon": "$(refresh)"
       },
       {
+        "command": "devmock.actions",
+        "title": "DevMock: Ações",
+        "icon": "$(ellipsis)"
+      },
+      {
         "command": "devmock.createSchema",
         "title": "DevMock: New Schema…"
       },
@@ -106,24 +111,24 @@
     "menus": {
       "view/title": [
         {
+          "command": "devmock.actions",
+          "when": "view == devmock.project",
+          "group": "navigation@0"
+        },
+        {
           "command": "devmock.refresh",
           "when": "view == devmock.project",
           "group": "navigation@1"
         },
         {
-          "command": "devmock.createSchema",
-          "when": "view == devmock.project",
-          "group": "navigation@2"
-        },
-        {
           "command": "devmock.start",
           "when": "view == devmock.project && !devmock.serverRunning",
-          "group": "navigation@3"
+          "group": "navigation@2"
         },
         {
           "command": "devmock.stop",
           "when": "view == devmock.project && devmock.serverRunning",
-          "group": "navigation@3"
+          "group": "navigation@2"
         }
       ],
       "view/item/context": [

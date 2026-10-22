@@ -39,16 +39,16 @@ Hoje várias ações só existem na Command Palette. A 1.4.0 leva essas ações 
 - Clique em Documentation para abrir o `.md`/HTML.
 
 ## 3. Definition of Done (por item)
-- **M1:** header mostra **Ações** + Refresh + Start/Stop; New Schema não está mais no header e aparece no Ações; todos os comandos listados são alcançáveis; itens indisponíveis ocultos; `executeCommand` sem `await` (não trava).
+- **M1:** header mostra **Ações** + Refresh + Start/Stop; New Schema não está mais no header e aparece no Ações; todos os comandos listados são alcançáveis; itens indisponíveis ocultos; `executeCommand` sem `await` (não trava). **Status:** ✅ implementado, revisado pelo Code-Reviewer (sem blockers) e auditado pelo QA-Testes (host **36** testes).
 - **M2:** clique em qualquer cenário abre multi-seleção de Schemas (com cenário atual e rota); confirmar grava **um único** `config.json`, aplica em `GET /<schema>`, recarrega o server se rodando, dá refresh e mostra toast; cancelar não altera nada.
 - **M3:** estados sem projeto/sem Schema/parado/rodando cobertos por teste do builder.
 - **S1:** descrição e `contextValue` presentes no nó.
 - **S2:** PRD-03 sem a referência obsoleta.
 
 ## 4. Passos de execução (checklist)
-- [/] #task ⏫ M1 — `actions.ts` (builder puro) + comando `devmock.actions` 🏷️ fase/codigo
-- [/] #task ⏫ M1 — `package.json`: Ações em `navigation@0`, New Schema fora do header 🏷️ fase/codigo
-- [/] #task ⏫ M1 — testes do builder + contrato do `package.json` 🏷️ fase/codigo
+- [x] #task ⏫ M1 — `actions.ts` (builder puro) + comando `devmock.actions` 🏷️ fase/codigo
+- [x] #task ⏫ M1 — `package.json`: Ações em `navigation@0`, New Schema fora do header 🏷️ fase/codigo
+- [x] #task ⏫ M1 — testes do builder + contrato do `package.json` 🏷️ fase/codigo
 - [/] #task ⏫ M2 — `doSwitchScenarios` (grava uma vez) + delegar `doSwitchScenario` 🏷️ fase/codigo
 - [/] #task ⏫ M2 — nó de cenário com `command`/`contextValue` + `buildScenarioPick` 🏷️ fase/codigo
 - [/] #task ⏫ M2 — comando `devmock.applyScenario` (multi-seleção, reload, refresh) 🏷️ fase/codigo
