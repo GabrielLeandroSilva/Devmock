@@ -142,7 +142,8 @@ updated: 2026-10-10
 | v1.9.43 | 2026-10-21 | des | M2 v1.4.0: **cenário por clique** (multi-seleção de Schemas, GET de coleção, reload vivo, dedupe); host **41** testes; Code-Reviewer + QA-Testes | `feat(extension): cenário por clique na Tree (M2)` | ✅ em des |
 | v1.9.44 | 2026-10-21 | des | Fechamento v1.4.0: Manual-Teste-v1.4 (só-mouse), versão `1.4.0`, CHANGELOG, README; gate core 111 · cli 15 · host 41 | `docs(release): fecha v1.4.0 - manual, versao e docs` | ✅ concluído |
 | ext-v1.4.0 | 2026-10-22 | tag em des | 🚀 PUBLICADO na Marketplace (**Ações** no header + **cenário por clique**, mouse-first) | `Published devmock.devmock-vscode v1.4.0` via publish.yml (run 39709686570) | ✅ ao vivo |
-| v1.9.45 | 2026-10-22 | des | Pós-publicação v1.4.0: wiki, Log, Home/EAP; PR `#27` (des→main) | `docs(release): publica v1.4.0 e sincroniza docs` | ⏳ em des, PR #27 em revisão |
+| v1.9.45 | 2026-10-22 | des | Pós-publicação v1.4.0: wiki, Log, Home/EAP; PR `#27` (des→main) | `docs(release): publica v1.4.0 e sincroniza docs` | ✅ em main (PR #27, merge `c6b15f3`) |
+| v1.9.46 | 2026-10-22 | des | Pós-promoção v1.4.0 (PR #27) | `docs(git): registra promoção v1.4.0 em main` | ✅ em des |
 
 ## Consulta (Dataview — notas de gestão)
 
