@@ -2,6 +2,14 @@
 
 Formato [Keep a Changelog](https://keepachangelog.com/). Versões da extension são independentes das tags do monorepo.
 
+## [1.4.0] — 2026-10-21 — Mouse-first: Ações + cenário por clique
+### Added
+- **Botão Ações** no header da Tree: QuickPick agrupado com os comandos (Init, New/Edit Schema, Create API, Import, Generate/Save, Export, Validate, Start/Stop, Switch Scenario, Set Error Rate, Show Log, Refresh). Os itens refletem o estado: sem `.devmock/` só Initialize+Refresh; sem Schema esconde as ações que dependem dele; rodando mostra Stop e Show Log
+- **Cenário por clique**: clique num cenário → multi-seleção de **Schemas** → aplica o cenário no `GET` de coleção de cada um, sem restart; a Tree mostra `✓` e `N schema(s)`
+### Changed
+- **New Schema** saiu do header da Tree e passou a viver no botão **Ações** (Refresh e Start/Stop continuam no header)
+- O `✓` do nó de cenário agora usa a mesma contagem da rota de coleção exibida no Schema
+
 ## [1.3.0] — 2026-10-20 — Cenário por requisição + Detect ampliado
 ### Added
 - **Cenário por requisição**: force `Empty`, `Forbidden`, `Server Error`, etc. **sem trocar o cenário global** — `GET /users?scenario=Empty` ou header `X-Mock-Scenario: Forbidden`. Precedência **request > ativo > Default**; cenário desconhecido cai no ativo (nunca quebra); CORS libera o header

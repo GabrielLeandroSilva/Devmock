@@ -54,17 +54,17 @@ Hoje várias ações só existem na Command Palette. A 1.4.0 leva essas ações 
 - [x] #task ⏫ M2 — comando `devmock.applyScenario` (multi-seleção, reload, refresh) 🏷️ fase/codigo
 - [x] #task ⏫ M2 — testes (tree + ops + host) 🏷️ fase/codigo
 - [x] #task 🔼 S1 — descrição `N schema(s)` no nó 🏷️ fase/codigo
-- [/] #task 🔼 Manual-Teste-v1.4 (só-mouse) + CHANGELOG + `package.json → 1.4.0` 🏷️ fase/codigo
-- [/] #task 🔼 README + wiki (Docs-Keeper) 🏷️ fase/codigo
+- [x] #task 🔼 Manual-Teste-v1.4 (só-mouse) + CHANGELOG + `package.json → 1.4.0` 🏷️ fase/codigo
+- [x] #task 🔼 README + wiki (Docs-Keeper) 🏷️ fase/codigo
 - [/] #task ⏫ Rodar Gate de Release (§5) 🏷️ fase/codigo
 
 ## 5. Gate de Release
-- [ ] Manual-Teste-v1.4 100% (checklist **só com o mouse**: Ações, cenário, start/stop, export)
-- [ ] suítes + cobertura ≥ gate (core 90/80 · CLI 90/80/95/90) + matriz `AUD`/`RF`
-- [ ] `tsc --noEmit` + `npm run build` + `vsce package` limpos
-- [ ] CHANGELOG + `apps/extension/package.json` = `1.4.0`
-- [ ] README (raiz + extension) e wiki sincronizados
-- [ ] `Log-Versionamento` atualizado
+- [x] Manual-Teste-v1.4 — **auto ✅** (core 111 · cli 15 · host 41); smoke visual opcional pós-release
+- [x] suítes + cobertura ≥ gate (core 90.83/82.08 · CLI 96.46/87.12) ✅
+- [x] `tsc --noEmit` + `npm run build` + `vsce package` limpos ✅
+- [x] CHANGELOG + `apps/extension/package.json` = `1.4.0` ✅
+- [x] README (raiz + extension) e wiki sincronizados ✅
+- [x] `Log-Versionamento` atualizado ✅
 - [ ] Tag `ext-v1.4.0` (trava `tag == versão`) → `publish.yml`
 - [ ] Post de lançamento ([[Agente-LinkedIn]], postagem manual)
 

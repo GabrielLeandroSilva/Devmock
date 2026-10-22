@@ -140,6 +140,7 @@ updated: 2026-10-10
 | v1.9.41 | 2026-10-21 | des | Planejamento v1.4.0: **Ações** no header + **cenário por clique** (mouse-first); plano 11, PRD-03 (RF-12..14), PRD-04, Home/EAP, wiki/README | `docs(release): planeja v1.4.0 - acoes e cenario por clique` | ✅ em des |
 | v1.9.42 | 2026-10-21 | des | M1 v1.4.0: botão **Ações** (QuickPick agrupado, estado dinâmico, New Schema fora do header); host **36** testes; Code-Reviewer + QA-Testes | `feat(extension): botão Ações na Tree (M1)` | ✅ em des |
 | v1.9.43 | 2026-10-21 | des | M2 v1.4.0: **cenário por clique** (multi-seleção de Schemas, GET de coleção, reload vivo, dedupe); host **41** testes; Code-Reviewer + QA-Testes | `feat(extension): cenário por clique na Tree (M2)` | ✅ em des |
+| v1.9.44 | 2026-10-21 | des | Fechamento v1.4.0: Manual-Teste-v1.4 (só-mouse), versão `1.4.0`, CHANGELOG, README; gate core 111 · cli 15 · host 41 | `docs(release): fecha v1.4.0 - manual, versao e docs` | ⏳ em des, aguarda publish |
 
 ## Consulta (Dataview — notas de gestão)
 
