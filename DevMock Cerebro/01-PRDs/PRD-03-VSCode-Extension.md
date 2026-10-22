@@ -77,7 +77,8 @@ Dev precisa de experiência visual simples (TreeView) + edição direta dos arqu
 - [x] #task 🔼 **[v1.2.0]** Schema e Endpoints exibem o cenário ativo; clique em GET abre no navegador 🏷️ fase/codigo
 - [x] #task 🔼 **[v1.2.0]** Nó Mock Server mostra Start/Stop inline conforme o estado 🏷️ fase/codigo
 - [x] #task 🔼 **[v1.4.0]** Header com **Ações** + Refresh + Start/Stop; New Schema acessível pelo Ações 🏷️ fase/codigo
-- [ ] #task 🔼 **[v1.4.0]** Clique no cenário aplica aos Schemas selecionados (GET de coleção) sem restart 🏷️ fase/codigo
+- [x] #task 🔼 **[v1.4.0]** Clique no cenário aplica aos Schemas selecionados (GET de coleção) sem restart 🏷️ fase/codigo
+- [x] #task 🔼 **[v1.4.0]** Nó de cenário com `contextValue` e descrição `N schema(s)` 🏷️ fase/codigo
 
 ## 8. Riscos e Dependências
 - Depende de PRD-01 (formato de Schema) e PRD-02 (start/stop)

@@ -79,10 +79,48 @@ suite("Tree (builder puro) — T3a", () => {
     assert.strictEqual(post?.description, undefined);
   });
 
-  test("Scenarios marca o ativo com ✓", () => {
+  test("Scenarios marca o ativo, conta Schemas e aplica no clique", () => {
     const nodes = buildTree(state(), { label: "Scenarios" });
-    assert.ok(nodes.some((n) => n.label === "✓ Empty"));
-    assert.ok(nodes.some((n) => n.label === "Default"));
+    const active = nodes.find((n) => n.label === "✓ Empty");
+    assert.ok(active);
+    assert.strictEqual(active?.description, "1 schema(s)");
+    assert.strictEqual(active?.contextValue, "scenario");
+    assert.strictEqual(active?.command?.command, "devmock.applyScenario");
+    assert.deepStrictEqual(active?.command?.arguments, ["Empty"]);
+
+    const idle = nodes.find((n) => n.label === "Default");
+    assert.ok(idle);
+    assert.strictEqual(idle?.description, undefined);
+    assert.deepStrictEqual(idle?.command?.arguments, ["Default"]);
+  });
+
+  test("Scenarios: ✓ acompanha a contagem (só GET de coleção)", () => {
+    const nodes = buildTree(
+      state({ config: { ...DEFAULT_CONFIG, activeScenarios: { "GET /users/:id": "Empty" } } }),
+      { label: "Scenarios" },
+    );
+    const empty = nodes.find((n) => n.label === "Empty");
+    assert.ok(empty);
+    assert.strictEqual(empty?.description, undefined);
+  });
+
+  test("Scenarios: descrição conta cada Schema com o cenário ativo", () => {
+    const order: Schema = {
+      name: "Order",
+      fields: [{ name: "id", type: "uuid", required: true }],
+    };
+    const nodes = buildTree(
+      state({
+        schemas: [user, order],
+        config: {
+          ...DEFAULT_CONFIG,
+          activeScenarios: { "GET /users": "Empty", "GET /orders": "Empty" },
+        },
+      }),
+      { label: "Scenarios" },
+    );
+    const empty = nodes.find((n) => n.label === "✓ Empty");
+    assert.strictEqual(empty?.description, "2 schema(s)");
   });
 
   test("Documentation e Settings refletem o Schema e a config", () => {

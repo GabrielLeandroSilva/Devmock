@@ -13,6 +13,7 @@ import {
   doSaveFakeData,
   doSetErrorRate,
   doSwitchScenario,
+  doSwitchScenarios,
   doValidate,
   endpointUrl,
   formatLogEntry,
@@ -45,6 +46,20 @@ suite("ops no host (fs real, sem mocks)", () => {
   test("switch grava activeScenarios", () => {
     doSwitchScenario(root, "GET /users", "Empty");
     assert.strictEqual(readConfig(root).activeScenarios["GET /users"], "Empty");
+  });
+
+  test("switch multi grava vários endpoints e preserva os demais", () => {
+    doSwitchScenario(root, "GET /orders", "Forbidden");
+    const applied = doSwitchScenarios(
+      root,
+      ["GET /users", "GET /users", "GET /products"],
+      "Empty",
+    );
+    assert.strictEqual(applied, 2);
+    const cfg = readConfig(root);
+    assert.strictEqual(cfg.activeScenarios["GET /users"], "Empty");
+    assert.strictEqual(cfg.activeScenarios["GET /products"], "Empty");
+    assert.strictEqual(cfg.activeScenarios["GET /orders"], "Forbidden");
   });
 
   test("export gera 6 artefatos + stale detecta mudança", () => {
@@ -193,6 +208,7 @@ suite("ops no host (fs real, sem mocks)", () => {
     assert.ok(cmds.some((c) => c.command === "devmock.setErrorRate"));
     assert.ok(cmds.some((c) => c.command === "devmock.openEndpoint"));
     assert.ok(cmds.some((c) => c.command === "devmock.actions"));
+    assert.ok(cmds.some((c) => c.command === "devmock.applyScenario"));
     assert.strictEqual(cmds.find((c) => c.command === "devmock.actions")?.icon, "$(ellipsis)");
     assert.strictEqual(cmds.find((c) => c.command === "devmock.start")?.icon, "$(play)");
     assert.strictEqual(cmds.find((c) => c.command === "devmock.stop")?.icon, "$(debug-stop)");

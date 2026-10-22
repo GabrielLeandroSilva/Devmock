@@ -88,6 +88,10 @@
         "title": "DevMock: Switch Scenario…"
       },
       {
+        "command": "devmock.applyScenario",
+        "title": "DevMock: Apply Scenario…"
+      },
+      {
         "command": "devmock.export",
         "title": "DevMock: Export Contract…"
       },

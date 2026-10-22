@@ -1,6 +1,7 @@
 import * as assert from "node:assert";
+import { type Schema } from "@devmock/core";
 import * as vscode from "vscode";
-import { buildActions, buildQuickPickItems, type ActionState } from "../../actions.js";
+import { buildActions, buildQuickPickItems, buildScenarioPick, type ActionState } from "../../actions.js";
 
 function commands(state: ActionState): string[] {
   return buildActions(state).map((a) => a.command);
@@ -87,9 +88,23 @@ suite("Ações da Tree (M1)", () => {
     assert.strictEqual(items[2].command, "devmock.refresh");
   });
 
-  test("comando Ações registrado no host", async () => {
+  test("cenário: pick lista Schemas, rota de coleção e pré-seleciona o atual", () => {
+    const schemas: Schema[] = [
+      { name: "User", fields: [{ name: "id", type: "uuid", required: true }] },
+      { name: "Order", fields: [{ name: "id", type: "uuid", required: true }] },
+    ];
+    const picks = buildScenarioPick(schemas, { activeScenarios: { "GET /users": "Empty" } }, "Empty");
+    assert.deepStrictEqual(picks.map((p) => p.label), ["User", "Order"]);
+    assert.deepStrictEqual(picks.map((p) => p.route), ["GET /users", "GET /orders"]);
+    assert.deepStrictEqual(picks.map((p) => p.picked), [true, false]);
+    assert.match(picks[0].description, /cenário: Empty · GET \/users/);
+    assert.match(picks[1].description, /cenário: Default · GET \/orders/);
+  });
+
+  test("comandos Ações e Apply Scenario registrados no host", async () => {
     const all = await vscode.commands.getCommands(true);
     assert.ok(all.includes("devmock.actions"), "comando devmock.actions não registrado");
+    assert.ok(all.includes("devmock.applyScenario"), "comando devmock.applyScenario não registrado");
   });
 
   test("Ações encaminha a seleção Create API ao comando", async () => {

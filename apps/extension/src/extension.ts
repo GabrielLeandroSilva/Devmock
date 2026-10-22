@@ -21,12 +21,13 @@ import {
   doSaveFakeData,
   doSetErrorRate,
   doSwitchScenario,
+  doSwitchScenarios,
   doValidate,
   endpointUrl,
   formatLogEntry,
 } from "./ops.js";
 import { buildTree, type TreeNode } from "./tree.js";
-import { buildActions, buildQuickPickItems } from "./actions.js";
+import { buildActions, buildQuickPickItems, buildScenarioPick } from "./actions.js";
 import {
   devmockDir,
   listSchemas,
@@ -446,6 +447,54 @@ export function activate(context: vscode.ExtensionContext): void {
         void vscode.window.showInformationMessage(`Cenário ${scenario} ativo em ${endpoint}.`);
       }
       refresh();
+    }),
+    vscode.commands.registerCommand("devmock.applyScenario", async (scenarioArg?: string) => {
+      const root = workspaceRoot();
+      if (!root || !existsSync(devmockDir(root))) {
+        void vscode.window.showErrorMessage("DevMock: rode `DevMock: Initialize Project` primeiro.");
+        return;
+      }
+      const schemas = listSchemas(root);
+      if (schemas.length === 0) {
+        void vscode.window.showErrorMessage("DevMock: nenhum Schema válido.");
+        return;
+      }
+      // Clique no nó passa o cenário; pela paleta, escolhe primeiro.
+      const scenario =
+        scenarioArg ??
+        (await vscode.window.showQuickPick(SCENARIO_NAMES, { placeHolder: "Cenário" }));
+      if (!scenario) return;
+      const picks = buildScenarioPick(schemas, readConfig(root), scenario).map((pick) => ({
+        label: pick.label,
+        description: pick.description,
+        picked: pick.picked,
+        route: pick.route,
+      }));
+      const selected = await vscode.window.showQuickPick(picks, {
+        placeHolder: `Schemas para aplicar "${scenario}"`,
+        canPickMany: true,
+      });
+      if (!selected) return;
+      if (selected.length === 0) {
+        void vscode.window.showWarningMessage("DevMock: nenhum Schema selecionado.");
+        return;
+      }
+      try {
+        doSwitchScenarios(root, selected.map((pick) => pick.route), scenario);
+        if (state.server) {
+          // Aplica sem restart (PRD-04): recarrega cenários no servidor vivo.
+          state.server.reload({ config: readConfig(root), scenarios: readScenarios(root) });
+        }
+      } catch (err) {
+        void vscode.window.showErrorMessage(
+          `DevMock: ${err instanceof Error ? err.message : String(err)}`,
+        );
+        return;
+      }
+      refresh();
+      void vscode.window.showInformationMessage(
+        `DevMock: cenário ${scenario} aplicado a ${selected.length} schema(s).`,
+      );
     }),
     vscode.commands.registerCommand("devmock.export", async () => {
       const root = workspaceRoot();

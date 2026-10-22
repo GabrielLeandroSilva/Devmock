@@ -139,6 +139,7 @@ updated: 2026-10-10
 | v1.9.40 | 2026-10-21 | des | Agentes: **Code-Reviewer** (read-only, 2 eixos) e **DevOps-Automator** (CI/CD/release enxuto) a partir dos anexos; `AGENTS.md`; anexos removidos após a criação | `docs(agentes): adiciona code-reviewer e devops-automator` | ✅ em des |
 | v1.9.41 | 2026-10-21 | des | Planejamento v1.4.0: **Ações** no header + **cenário por clique** (mouse-first); plano 11, PRD-03 (RF-12..14), PRD-04, Home/EAP, wiki/README | `docs(release): planeja v1.4.0 - acoes e cenario por clique` | ✅ em des |
 | v1.9.42 | 2026-10-21 | des | M1 v1.4.0: botão **Ações** (QuickPick agrupado, estado dinâmico, New Schema fora do header); host **36** testes; Code-Reviewer + QA-Testes | `feat(extension): botão Ações na Tree (M1)` | ✅ em des |
+| v1.9.43 | 2026-10-21 | des | M2 v1.4.0: **cenário por clique** (multi-seleção de Schemas, GET de coleção, reload vivo, dedupe); host **41** testes; Code-Reviewer + QA-Testes | `feat(extension): cenário por clique na Tree (M2)` | ✅ em des |
 
 ## Consulta (Dataview — notas de gestão)
 

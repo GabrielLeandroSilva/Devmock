@@ -22,13 +22,13 @@ Hoje várias ações só existem na Command Palette. A 1.4.0 leva essas ações 
 | ID | Item | Origem | Status atual no código |
 |----|------|--------|------------------------|
 | **M1** | **Botão Ações no header** da Tree: `devmock.actions` abre um QuickPick agrupado com os comandos (Init, New/Edit Schema, Create API, Import, Generate/Save, Export, Validate, Start/Stop, Switch Scenario, Set Error Rate, Show Log, Refresh). Ítens indisponíveis são ocultados (sem `.devmock/`, sem Schema, server parado). **New Schema sai do header**; **Refresh** e **Start/Stop** ficam. | Pedido do mantenedor · [[PRD-03-VSCode-Extension]] §3 | `view/title` tem Refresh/New Schema/Start/Stop; comandos só na paleta |
-| **M2** | **Cenário por clique**: nó de cenário ganha comando; clique → QuickPick **multi-seleção de Schemas** → aplica o cenário no **`GET` de coleção** de cada um (`activeScenarios["GET /<plural>"]`), grava uma vez, recarrega o server vivo e dá refresh. | Pedido do mantenedor · [[PRD-04-Scenarios]] §6 | nó só lista nomes (sem `command`) |
+| **M2** | **Cenário por clique**: nó de cenário ganha comando; clique → QuickPick **multi-seleção de Schemas** → aplica o cenário no **`GET` de coleção** de cada um (`activeScenarios["GET /<plural>"]`), grava uma vez, recarrega o server vivo e dá refresh. | Pedido do mantenedor · [[PRD-04-Scenarios]] §6 | ✅ v1.4.0 (M2) — host 41 testes |
 | **M3** | **Ações refletem o estado**: sem projeto → só Initialize (+Refresh); sem Schemas → esconde Edit/Generate/Save/Export/Validate/Start; rodando → mostra Stop + Show Log, senão Start. | UX mouse-first | — |
 
 ### Should
 | ID | Item | Origem |
 |----|------|--------|
-| **S1** | Nós de cenário com `contextValue: "scenario"` e descrição `N schema(s)` (quantos usam o cenário). | UX/descoberta |
+| **S1** | Nós de cenário com `contextValue: "scenario"` e descrição `N schema(s)` (quando N > 0); o `✓` usa a mesma contagem (só GET de coleção). | UX/descoberta |
 | **S2** | Limpar no PRD-03 a nota antiga “v1.4.0: modo edição no Studio” (já entregue). | higiene de docs |
 
 ### Fora (v1.5+)
@@ -40,20 +40,20 @@ Hoje várias ações só existem na Command Palette. A 1.4.0 leva essas ações 
 
 ## 3. Definition of Done (por item)
 - **M1:** header mostra **Ações** + Refresh + Start/Stop; New Schema não está mais no header e aparece no Ações; todos os comandos listados são alcançáveis; itens indisponíveis ocultos; `executeCommand` sem `await` (não trava). **Status:** ✅ implementado, revisado pelo Code-Reviewer (sem blockers) e auditado pelo QA-Testes (host **36** testes).
-- **M2:** clique em qualquer cenário abre multi-seleção de Schemas (com cenário atual e rota); confirmar grava **um único** `config.json`, aplica em `GET /<schema>`, recarrega o server se rodando, dá refresh e mostra toast; cancelar não altera nada.
+- **M2:** clique em qualquer cenário abre multi-seleção de Schemas (com cenário atual e rota); confirmar grava **um único** `config.json`, aplica em `GET /<schema>`, recarrega o server se rodando, dá refresh e mostra toast; cancelar não altera nada. **Status:** ✅ implementado, revisado (Code-Reviewer) e auditado (QA-Testes, host **41**).
 - **M3:** estados sem projeto/sem Schema/parado/rodando cobertos por teste do builder.
-- **S1:** descrição e `contextValue` presentes no nó.
+- **S1:** descrição e `contextValue` presentes no nó (descrição só com N > 0); `✓` consistente com a contagem. ✅
 - **S2:** PRD-03 sem a referência obsoleta.
 
 ## 4. Passos de execução (checklist)
 - [x] #task ⏫ M1 — `actions.ts` (builder puro) + comando `devmock.actions` 🏷️ fase/codigo
 - [x] #task ⏫ M1 — `package.json`: Ações em `navigation@0`, New Schema fora do header 🏷️ fase/codigo
 - [x] #task ⏫ M1 — testes do builder + contrato do `package.json` 🏷️ fase/codigo
-- [/] #task ⏫ M2 — `doSwitchScenarios` (grava uma vez) + delegar `doSwitchScenario` 🏷️ fase/codigo
-- [/] #task ⏫ M2 — nó de cenário com `command`/`contextValue` + `buildScenarioPick` 🏷️ fase/codigo
-- [/] #task ⏫ M2 — comando `devmock.applyScenario` (multi-seleção, reload, refresh) 🏷️ fase/codigo
-- [/] #task ⏫ M2 — testes (tree + ops + host) 🏷️ fase/codigo
-- [/] #task 🔼 S1 — descrição `N schema(s)` no nó 🏷️ fase/codigo
+- [x] #task ⏫ M2 — `doSwitchScenarios` (grava uma vez) + delegar `doSwitchScenario` 🏷️ fase/codigo
+- [x] #task ⏫ M2 — nó de cenário com `command`/`contextValue` + `buildScenarioPick` 🏷️ fase/codigo
+- [x] #task ⏫ M2 — comando `devmock.applyScenario` (multi-seleção, reload, refresh) 🏷️ fase/codigo
+- [x] #task ⏫ M2 — testes (tree + ops + host) 🏷️ fase/codigo
+- [x] #task 🔼 S1 — descrição `N schema(s)` no nó 🏷️ fase/codigo
 - [/] #task 🔼 Manual-Teste-v1.4 (só-mouse) + CHANGELOG + `package.json → 1.4.0` 🏷️ fase/codigo
 - [/] #task 🔼 README + wiki (Docs-Keeper) 🏷️ fase/codigo
 - [/] #task ⏫ Rodar Gate de Release (§5) 🏷️ fase/codigo

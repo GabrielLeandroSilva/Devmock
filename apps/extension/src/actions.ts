@@ -1,3 +1,6 @@
+import { routesFor, type DevMockConfig, type Schema } from "@devmock/core";
+import { scenarioOf } from "./ops.js";
+
 /** Grupo de ações no QuickPick (separadores da UI). */
 export type ActionGroup = "project" | "schemas" | "data" | "server" | "view";
 
@@ -14,6 +17,38 @@ export interface ActionItem {
   icon?: string;
   command: string;
   group: ActionGroup;
+}
+
+/** Config mínima para montar a seleção de cenário. */
+export type ScenarioConfig = Pick<DevMockConfig, "activeScenarios">;
+
+/** Item da multi-seleção de Schemas ao clicar num cenário (M2). */
+export interface ScenarioPickItem {
+  label: string;
+  description: string;
+  route: string;
+  picked: boolean;
+}
+
+/**
+ * Monta a multi-seleção de Schemas para aplicar um cenário (M2).
+ * A rota é a do `GET` de coleção — a mesma exibida no nó do Schema.
+ */
+export function buildScenarioPick(
+  schemas: Schema[],
+  config: ScenarioConfig,
+  scenario: string,
+): ScenarioPickItem[] {
+  return schemas.map((schema) => {
+    const route = routesFor(schema)[0];
+    const current = scenarioOf(config.activeScenarios, route);
+    return {
+      label: schema.name,
+      description: `cenário: ${current} · ${route}`,
+      route,
+      picked: current === scenario,
+    };
+  });
 }
 
 /** Rótulo humano de cada grupo (separadores do QuickPick). */
