@@ -56,6 +56,7 @@ Exemplo (`user-empty.json`): `{ "endpoint": "GET /users", "scenario": "Empty", "
 ## 6. Regras de Negócio
 - Cenário ativo tem precedência sobre config default (PRD-02 RF)
 - Apagar cenário ativo → volta para `Default` automaticamente
+- **Clique na Tree (v1.4.0):** aplicar um cenário a um ou mais Schemas grava `activeScenarios["GET /<plural>"]` de cada um (rota de coleção exibida no nó Schema); POST/`:id` seguem via `Switch Scenario…`
 
 ## 7. Critérios de Aceite
 - [ ] #task ⏫ Alternar Default→Empty→401→500 muda a resposta sem restart 🏷️ fase/1

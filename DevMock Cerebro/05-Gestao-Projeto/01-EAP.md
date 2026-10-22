@@ -45,7 +45,8 @@ Decompor o MVP até pacotes de trabalho auditáveis (cada pacote = 1 PRD ou 1 en
 ├── 3.2 v1.1.1 — patch: Stop lento (AUD-16)
 ├── 3.3 v1.2.0 — ✅ Tree UX + Detect from project (PRD-09) + HTML docs → [[08-Plano-Release-v1.2.0]]
 ├── 3.4 Infra — stacks: Node ≥22 (out/2026); futuro mínimo Node 24 → [[06-Stacks-e-Versoes]]
-└── 3.5 v1.3.0 — ✅ cenário por requisição + Detect ampliado + qualidade → [[10-Plano-Release-v1.3.0]]
+├── 3.5 v1.3.0 — ✅ cenário por requisição + Detect ampliado + qualidade → [[10-Plano-Release-v1.3.0]]
+└── 3.6 v1.4.0 — Ações + cenário por clique (mouse-first) → [[11-Plano-Release-v1.4.0]]
 ```
 
 Critério de pacote pronto: aceites do PRD em `aprovado` + testes do Coder verdes + docs exportadas sem diff espúrio.

@@ -40,6 +40,8 @@ Próximas versões: [Roadmap](https://github.com/GabrielLeandroSilva/Devmock/wik
 
 Última versão: **v1.3.0** — cenário por requisição (`?scenario=` / `X-Mock-Scenario`) e Detect ampliado.
 
+- **v1.4.0 (planejado):** botão **Ações** na Tree e cenário aplicado por clique nos Schemas (uso pelo mouse)
+
 ## Links
 
 - Repositório e docs vivas: [GabrielLeandroSilva/Devmock](https://github.com/GabrielLeandroSilva/Devmock)

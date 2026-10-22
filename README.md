@@ -65,6 +65,8 @@ Próximas versões são planejadas **sem data** e priorizadas por feedback — v
 
 Última versão: **v1.3.0** — cenário por requisição (`?scenario=` / `X-Mock-Scenario`) e Detect ampliado.
 
+- **v1.4.0 (planejado):** botão **Ações** na Tree e cenário aplicado por clique nos Schemas (uso pelo mouse)
+
 ## Links
 
 - [Wiki — guia completo](https://github.com/GabrielLeandroSilva/Devmock/wiki)
