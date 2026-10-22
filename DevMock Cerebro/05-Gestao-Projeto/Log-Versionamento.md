@@ -136,6 +136,7 @@ updated: 2026-10-10
 | v1.9.37 | 2026-10-21 | des | Pós-publicação v1.3.0: wiki, Log, Home/EAP; PR `#26` (des→main) | `docs(release): publica v1.3.0 e sincroniza docs` | ✅ em main (PR #26, merge `9df6dac`) |
 | v1.9.38 | 2026-10-21 | des | Pós-promoção v1.3.0 (PR #26) | `docs(git): registra promoção v1.3.0 em main` | ✅ em des |
 | - | 2026-10-21 | - | 📝 Texto do post de lançamento v1.3.0 gerado ([[Agente-LinkedIn]]: curto + completo + hashtags + CTA + arte); postagem manual pendente | marco de divulgação, sem versão | ⏳ aguarda postagem |
+| v1.9.40 | 2026-10-21 | des | Agentes: **Code-Reviewer** (read-only, 2 eixos) e **DevOps-Automator** (CI/CD/release enxuto) a partir dos anexos; `AGENTS.md`; anexos removidos após a criação | `docs(agentes): adiciona code-reviewer e devops-automator` | ✅ em des |
 
 ## Consulta (Dataview — notas de gestão)
 

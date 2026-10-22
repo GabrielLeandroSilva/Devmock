@@ -27,7 +27,7 @@ Convenções de trabalho deste repositório (leia junto das instruções globais
 - Regressão rastreável: bugs por **ID `AUD-xx`** (catálogo no `Agente-Auditor`) com teste nomeado `it('AUD-xx — …')`. Aceites de PRD cobertos (matriz em `07-Estrategia-Testes`).
 
 ## Agentes (vault `DevMock Cerebro/04-Prompts-Agentes`)
-- **Auditor** (acha bugs + catálogo AUD) · **QA-Testes** (dono das suítes/CI/cobertura; subagente `.opencode/agent/qa-testes.md`) · **Coder-TS** (implementa) · **Git-Guardião** (versão/tag/PR) · **Docs-Keeper** (mantém README + wiki) · **PRD-Writer** · **LinkedIn**.
+- **Auditor** (acha bugs + catálogo AUD) · **QA-Testes** (dono das suítes/CI/cobertura; subagente `.opencode/agent/qa-testes.md`) · **Code-Reviewer** (revisão read-only de diff/PR em 2 eixos; subagente `.opencode/agent/code-reviewer.md`) · **DevOps** (CI/CD e release enxuto; subagente `.opencode/agent/devops-automator.md`) · **Coder-TS** (implementa) · **Git-Guardião** (versão/tag/PR) · **Docs-Keeper** (mantém README + wiki) · **PRD-Writer** · **LinkedIn**.
 
 ## Documentação pública
 - README (raiz + `apps/extension`) e a wiki (`Devmock.wiki.git`) são espelhos do produto — mantidos pelo **Docs-Keeper** a cada release.
