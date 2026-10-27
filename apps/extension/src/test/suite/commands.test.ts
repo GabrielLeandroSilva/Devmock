@@ -155,6 +155,40 @@ suite("comandos no host (API real do VS Code)", () => {
     }
   });
 
+  test("start com Schema inválido mostra erro e não sobe", async () => {
+    const root = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+    assert.ok(root, "fixture workspace deve estar aberto");
+    const badPath = join(root, ".devmock", "schemas", "bad-routes.json");
+    const windowApi = vscode.window as unknown as {
+      showErrorMessage: (...args: unknown[]) => Thenable<unknown>;
+    };
+    const original = windowApi.showErrorMessage;
+    const errors: unknown[] = [];
+    windowApi.showErrorMessage = (...args) => {
+      errors.push(args[0]);
+      return Promise.resolve(undefined);
+    };
+    try {
+      writeFileSync(
+        badPath,
+        JSON.stringify({
+          name: "Bad",
+          fields: [{ name: "id", type: "uuid", required: true }],
+          routes: [{ method: "GET", path: "/bad", kind: "list", response: { status: "abc" } }],
+        }),
+      );
+      await vscode.commands.executeCommand("devmock.start");
+      assert.ok(
+        errors.some((e) => /inválid/i.test(String(e))),
+        "deveria mostrar erro de Schema inválido",
+      );
+    } finally {
+      windowApi.showErrorMessage = original;
+      rmSync(badPath, { force: true });
+      await vscode.commands.executeCommand("devmock.stop");
+    }
+  });
+
   test("refresh não quebra e painel Studio abre", async () => {
     await vscode.commands.executeCommand("devmock.refresh");
     await vscode.commands.executeCommand("devmock.createSchema");

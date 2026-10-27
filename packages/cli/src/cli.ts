@@ -69,12 +69,14 @@ async function cmdStart(cwd: string): Promise<void> {
     return;
   }
 
-  const server = createMockServer(schemas, { config, scenarios });
+  let server: ReturnType<typeof createMockServer>;
   let port: number;
   try {
+    server = createMockServer(schemas, { config, scenarios });
     port = await server.listen();
   } catch (err) {
-    console.error(`DevMock: ${err instanceof Error ? err.message : String(err)}`);
+    const message = err instanceof Error ? err.message : String(err);
+    console.error(message.startsWith("DevMock:") ? message : `DevMock: ${message}`);
     process.exitCode = 1;
     return;
   }
@@ -99,6 +101,7 @@ function loadProject(dir: string): {
 
   const schemasDir = join(dir, "schemas");
   if (existsSync(schemasDir)) {
+    const candidates: { file: string; schema: Schema }[] = [];
     for (const f of readdirSync(schemasDir).filter((x) => x.endsWith(".json"))) {
       let parsed: unknown;
       try {
@@ -107,12 +110,23 @@ function loadProject(dir: string): {
         warnings.push(`${f} ignorado: JSON inválido.`);
         continue;
       }
-      const diags = validateSchema(parsed as Schema);
-      if (diags.some((d) => d.severity === "error")) {
-        warnings.push(`${f} ignorado: ${diags.find((d) => d.severity === "error")?.message ?? "schema inválido"}`);
+      if (!parsed || typeof parsed !== "object") {
+        warnings.push(`${f} ignorado: schema inválido.`);
         continue;
       }
-      schemas.push(parsed as Schema);
+      candidates.push({ file: f, schema: parsed as Schema });
+    }
+    // Refs só podem ser checadas com todos os nomes conhecidos (PRD-01).
+    const known = candidates
+      .map((candidate) => candidate.schema.name)
+      .filter((name): name is string => typeof name === "string" && name.length > 0);
+    for (const { file, schema } of candidates) {
+      const diags = validateSchema(schema, known);
+      if (diags.some((d) => d.severity === "error")) {
+        warnings.push(`${file} ignorado: ${diags.find((d) => d.severity === "error")?.message ?? "schema inválido"}`);
+        continue;
+      }
+      schemas.push(schema);
     }
   }
 

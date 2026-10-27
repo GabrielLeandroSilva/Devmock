@@ -1,6 +1,6 @@
 import type { Diagnostic, HttpMethod, RouteKind, Schema, SchemaRoute } from "./types.js";
 import { FIELD_TYPES, HTTP_METHODS, ROUTE_KINDS } from "./constants.js";
-import { routeKey, routeLabel, schemaRoutes } from "./mock/routes.js";
+import { routeLabel, schemaRoutes } from "./mock/routes.js";
 
 /**
  * Valida um Schema. Retorna diagnósticos com campo + motivo
@@ -9,7 +9,7 @@ import { routeKey, routeLabel, schemaRoutes } from "./mock/routes.js";
 export function validateSchema(schema: Schema, knownSchemas: string[] = []): Diagnostic[] {
   const diags: Diagnostic[] = [];
 
-  if (!schema.name || !schema.name.trim()) {
+  if (typeof schema.name !== "string" || !schema.name.trim()) {
     diags.push({ field: "name", message: "Schema precisa de um nome.", severity: "error" });
     return diags;
   }
@@ -22,7 +22,11 @@ export function validateSchema(schema: Schema, knownSchemas: string[] = []): Dia
   let hasRequired = false;
 
   for (const f of schema.fields) {
-    if (!f.name || !f.name.trim()) {
+    if (!f || typeof f !== "object") {
+      diags.push({ field: "(sem nome)", message: "Campo inválido.", severity: "error" });
+      continue;
+    }
+    if (typeof f.name !== "string" || !f.name.trim()) {
       diags.push({ field: "(sem nome)", message: "Campo sem nome.", severity: "error" });
       continue;
     }
@@ -37,7 +41,7 @@ export function validateSchema(schema: Schema, knownSchemas: string[] = []): Dia
       continue;
     }
     if (f.type === "enum") {
-      if (!f.values || f.values.length === 0) {
+      if (!Array.isArray(f.values) || f.values.length === 0) {
         diags.push({ field: f.name, message: "Enum precisa de ao menos um valor.", severity: "error" });
       }
     }
@@ -102,12 +106,24 @@ const NEEDS_PARAM: RouteKind[] = ["item", "update", "patch", "delete"];
 function validatePath(path: string): string | undefined {
   if (!path) return "path é obrigatório.";
   if (/\s/.test(path)) return "path não pode ter espaço.";
+  if (path.includes("%")) return "path não pode ter % (use o caractere literal).";
   if (path === "/") return "path não pode ser a raiz (/).";
   if (!path.startsWith("/")) return "path precisa começar com /.";
   if (path.endsWith("/")) return "path não pode terminar com /.";
   if (path.includes("//")) return "path não pode ter //.";
   if (/[?#]/.test(path)) return "path não pode ter query ou hash.";
   return undefined;
+}
+
+/** Shape da rota (params viram `:`) para detectar ambiguidade de matching. */
+function routeShapeKey(route: SchemaRoute): string {
+  const method = String(route.method ?? "").toUpperCase();
+  const path = typeof route.path === "string" ? route.path.toLowerCase() : "";
+  const shape = path
+    .split("/")
+    .map((segment) => (segment.startsWith(":") ? ":" : segment))
+    .join("/");
+  return `${method} ${shape}`;
 }
 
 function validateRouteList(routes: SchemaRoute[]): Diagnostic[] {
@@ -157,10 +173,10 @@ function validateRouteList(routes: SchemaRoute[]): Diagnostic[] {
         });
       } else if (route.response.status !== undefined) {
         const status = route.response.status;
-        if (!Number.isInteger(status) || status < 100 || status > 599) {
+        if (!Number.isInteger(status) || status < 200 || status > 599) {
           diags.push({
             field,
-            message: "response.status deve ser inteiro entre 100 e 599.",
+            message: "response.status deve ser inteiro entre 200 e 599.",
             severity: "error",
           });
         }
@@ -191,7 +207,7 @@ function validateRouteList(routes: SchemaRoute[]): Diagnostic[] {
       });
     }
 
-    const key = routeKey(route);
+    const key = routeShapeKey(route);
     if (seen.has(key)) {
       diags.push({ field, message: "Rota duplicada (método + path).", severity: "error" });
     }
@@ -208,7 +224,7 @@ export function validateProject(schemas: Schema[]): Diagnostic[] {
 
   for (const schema of schemas) {
     for (const route of schemaRoutes(schema)) {
-      const key = routeKey(route);
+      const key = routeShapeKey(route);
       const owner = seen.get(key);
       if (owner !== undefined && owner !== schema.name) {
         diags.push({

@@ -57,8 +57,10 @@ export const NOT_FOUND_BODY = {
 };
 
 export const ERROR_BODY: Record<number, { error: string; message: string }> = {
+  400: { error: "BAD_REQUEST", message: "Requisição inválida." },
   401: { error: "UNAUTHORIZED", message: "Não autorizado." },
   403: { error: "FORBIDDEN", message: "Acesso proibido." },
+  405: { error: "METHOD_NOT_ALLOWED", message: "Método não permitido para esta rota." },
   429: { error: "RATE_LIMITED", message: "Muitas requisições. Tente de novo em instantes." },
   500: { error: "INTERNAL_ERROR", message: "Erro interno do servidor." },
 };
@@ -69,12 +71,12 @@ export const ERROR_BODY: Record<number, { error: string; message: string }> = {
  * Arquivo sempre tem precedência sobre o embutido.
  */
 export const BUILTIN_SCENARIOS: Record<string, EndpointConfig> = {
-  Default: { status: 200 },
-  Empty: { status: 200, body: { data: [], total: 0 } },
+  Default: {},
+  Empty: { body: { data: [], total: 0 } },
   Unauthorized: { status: 401 },
   Forbidden: { status: 403 },
   "Server Error": { status: 500 },
-  "Slow Network": { status: 200, delayMs: 5000 },
+  "Slow Network": { delayMs: 5000 },
   "Rate Limited": { status: 429 },
 };
 
@@ -104,6 +106,7 @@ export function basePath(schema: Schema): string {
 
 /** CRUD padrão gerado a partir do Schema (PRD-02 RF-01). */
 export function defaultRoutes(schema: Schema): SchemaRoute[] {
+  if (!schema || typeof schema.name !== "string" || !schema.name.trim()) return [];
   const p = basePath(schema);
   return [
     { method: "GET", path: p, kind: "list" },
@@ -117,6 +120,7 @@ export function defaultRoutes(schema: Schema): SchemaRoute[] {
 
 /** Rotas efetivas: as declaradas no Schema ou o CRUD padrão (ausente). */
 export function schemaRoutes(schema: Schema): SchemaRoute[] {
+  if (!schema || typeof schema !== "object") return [];
   // JSON editado à mão pode trazer `routes` não-array/entradas nulas; nunca derrubar a UI.
   return Array.isArray(schema.routes)
     ? schema.routes.filter((route) => route && typeof route === "object")
@@ -160,7 +164,14 @@ export function resolveEndpoint(
   key: string,
   opts: MockServerOptions,
   scenarioOverride?: string,
-): { cfg: Required<Pick<EndpointConfig, "status" | "delayMs" | "records">> & EndpointConfig; scenario: string } {
+): {
+  cfg: Required<Pick<EndpointConfig, "status" | "delayMs" | "records">> & EndpointConfig;
+  scenario: string;
+  /** Endpoint/cenário definiu status explicitamente (vence o default da rota). */
+  statusExplicit: boolean;
+  /** Endpoint/cenário definiu body explicitamente (vence o body da rota). */
+  bodyExplicit: boolean;
+} {
   const endpointCfg = opts.endpoints?.[key] ?? {};
   const scenarios = opts.scenarios?.[key] ?? {};
   // Precedência: request (query/header) > cenário do endpoint > ativo > Default.
@@ -174,6 +185,8 @@ export function resolveEndpoint(
   return {
     cfg: { ...DEFAULT_ENDPOINT, ...merged },
     scenario: activeName ?? "Default",
+    statusExplicit: endpointCfg.status !== undefined || scenarioCfg.status !== undefined,
+    bodyExplicit: endpointCfg.body !== undefined || scenarioCfg.body !== undefined,
   };
 }
 

@@ -106,6 +106,48 @@ describe("devmock cli (E2E)", () => {
     }
   });
 
+  it("loadProject valida refs com todos os Schemas conhecidos", async () => {
+    await initWithUser();
+    writeFileSync(
+      join(dir, ".devmock", "schemas", "company.json"),
+      JSON.stringify({ name: "Company", fields: [{ name: "id", type: "uuid", required: true }] }),
+    );
+    writeFileSync(
+      join(dir, ".devmock", "schemas", "user.json"),
+      JSON.stringify({
+        name: "User",
+        fields: [
+          { name: "id", type: "uuid", required: true },
+          { name: "company", type: "ref", ref: "Company" },
+        ],
+      }),
+    );
+    const r = await cli("export", dir);
+    expect(r.code).toBe(0);
+    expect(existsSync(join(dir, ".devmock", "docs", "user.md"))).toBe(true);
+    expect(existsSync(join(dir, ".devmock", "docs", "company.md"))).toBe(true);
+  });
+
+  it("loadProject ignora Schema com ref quebrada após validar os nomes conhecidos", async () => {
+    await initWithUser();
+    writeFileSync(
+      join(dir, ".devmock", "schemas", "order.json"),
+      JSON.stringify({
+        name: "Order",
+        fields: [
+          { name: "id", type: "uuid", required: true },
+          { name: "customer", type: "ref", ref: "MissingCustomer" },
+        ],
+      }),
+    );
+
+    const r = await cli("export", dir);
+    expect(r.code).toBe(0);
+    expect(r.err).toMatch(/order\.json ignorado: Referência quebrada: "MissingCustomer"/);
+    expect(existsSync(join(dir, ".devmock", "docs", "user.md"))).toBe(true);
+    expect(existsSync(join(dir, ".devmock", "docs", "order.md"))).toBe(false);
+  });
+
   it("import yaml cria schema e respeita --force", async () => {
     await initWithUser();
     const yaml = "openapi: 3.0.3\ninfo:\n  title: L\n  version: '1'\npaths: {}\ncomponents:\n  schemas:\n    Customer:\n      type: object\n      required: [id]\n      properties:\n        id:\n          type: string\n";
@@ -162,6 +204,26 @@ describe("erros e caminhos de borda (T3b)", () => {
     const noSchema = await cli("start");
     expect(noSchema.code).toBe(1);
     expect(noSchema.err).toMatch(/nenhum Schema/);
+  });
+
+  it("start com rotas duplicadas falha com mensagem acionável", async () => {
+    await initWithUser();
+    writeFileSync(
+      join(dir, ".devmock", "schemas", "user.json"),
+      JSON.stringify({ ...USER_SCHEMA, routes: [{ method: "GET", path: "/dup", kind: "list" }] }),
+    );
+    writeFileSync(
+      join(dir, ".devmock", "schemas", "customer.json"),
+      JSON.stringify({
+        name: "Customer",
+        fields: [{ name: "id", type: "uuid", required: true }],
+        routes: [{ method: "GET", path: "/dup", kind: "list" }],
+      }),
+    );
+    const r = await cli("start");
+    expect(r.code).toBe(1);
+    expect(r.err).toMatch(/rotas inválidas|schemas\/rotas inválidos|duplicada/i);
+    expect(r.err).not.toMatch(/DevMock: DevMock:/);
   });
 
   it("generate sem schema/sem .devmock falha e sem --out vai ao stdout", async () => {

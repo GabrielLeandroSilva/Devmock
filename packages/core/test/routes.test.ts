@@ -86,6 +86,7 @@ describe("PRD-02 RF-08 — rotas por Schema (v1.5.0)", () => {
     ["barra final", [{ method: "GET", path: "/users/", kind: "list" }], /terminar com \//],
     ["barra dupla", [{ method: "GET", path: "/v1//users", kind: "list" }], /\/\//],
     ["query", [{ method: "GET", path: "/users?x=1", kind: "list" }], /query/],
+    ["path percent-encoded", [{ method: "GET", path: "/usu%C3%A1rios", kind: "list" }], /%/],
     ["path com espaço", [{ method: "GET", path: " /users ", kind: "list" }], /espaço/],
     ["kind inválido", [{ method: "GET", path: "/users", kind: "nope" }], /kind inválido/],
     ["método inválido", [{ method: "TRACE", path: "/users", kind: "custom" }], /Método inválido/],
@@ -110,6 +111,25 @@ describe("PRD-02 RF-08 — rotas por Schema (v1.5.0)", () => {
   ] as const)("rejeita %s", (_name, routes, re) => {
     const schema = withRoutes(routes as unknown as SchemaRoute[]);
     expect(messages(schema)).toEqual(expect.arrayContaining([expect.stringMatching(re)]));
+  });
+
+  it("não lança com JSON de tipos errados (mensagens acionáveis)", () => {
+    expect(() => validateSchema({ name: 123, fields: [] } as unknown as Schema)).not.toThrow();
+    expect(messages({ name: 123, fields: [] } as unknown as Schema)).toEqual(
+      expect.arrayContaining([expect.stringMatching(/nome/i)]),
+    );
+
+    expect(() => validateSchema({ name: "X", fields: [null] } as unknown as Schema)).not.toThrow();
+    expect(messages({ name: "X", fields: [null] } as unknown as Schema)).toEqual(
+      expect.arrayContaining([expect.stringMatching(/Campo/i)]),
+    );
+
+    expect(() =>
+      validateSchema({ name: "X", fields: [{ name: 123, type: "string" }] } as unknown as Schema),
+    ).not.toThrow();
+    expect(
+      messages({ name: "X", fields: [{ name: 123, type: "string" }] } as unknown as Schema),
+    ).toEqual(expect.arrayContaining([expect.stringMatching(/Campo sem nome/i)]));
   });
 
   it("routes não-array é erro e não derruba os helpers", () => {

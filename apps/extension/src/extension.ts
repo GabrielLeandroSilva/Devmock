@@ -302,13 +302,14 @@ export function activate(context: vscode.ExtensionContext): void {
       }
       const cfg = readConfig(root);
       const scenarios = readScenarios(root);
-      state.server = createMockServer(schemas, { config: cfg, scenarios });
       try {
+        state.server = createMockServer(schemas, { config: cfg, scenarios });
         state.port = await state.server.listen();
       } catch (err) {
         state.server = undefined;
         syncServerContext();
-        void vscode.window.showErrorMessage(`DevMock: ${err instanceof Error ? err.message : String(err)}`);
+        const message = err instanceof Error ? err.message : String(err);
+        void vscode.window.showErrorMessage(message.startsWith("DevMock:") ? message : `DevMock: ${message}`);
         return;
       }
       syncServerContext();

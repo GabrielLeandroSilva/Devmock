@@ -75,9 +75,9 @@ Com o Schema pronto, o front precisa de uma API local imediata (`GET/POST/PUT/PA
 - [ ] #task ⏫ `POST /users` retorna 201 e o objeto aparece no `GET` seguinte 🏷️ fase/1
 - [ ] #task ⏫ Delay de 300ms respeitado (±100ms) e log exibe método/roto/status/ms 🏷️ fase/1
 - [ ] #task 🔼 Trocar porta em `config.json` e restart funciona sem resíduo 🏷️ fase/1
-- [ ] #task 🔼 **[v1.5.0]** `GET /v1/users` e `GET /v1/users/:id` resolvem o mesmo Schema (rota aninhada) 🏷️ fase/codigo
-- [ ] #task 🔼 **[v1.5.0]** Ação custom (`POST /auth/login`) responde o `response` da rota (ou cenário) 🏷️ fase/codigo
-- [ ] #task 🔼 **[v1.5.0]** PUT substitui, PATCH faz merge; JSON inválido → 400; `DELETE` coleção → 405 🏷️ fase/codigo
+- [x] #task 🔼 **[v1.5.0]** `GET /v1/users` e `GET /v1/users/:id` resolvem o mesmo Schema (rota aninhada) 🏷️ fase/codigo
+- [x] #task 🔼 **[v1.5.0]** Ação custom (`POST /auth/login`) responde o `response` da rota (ou cenário) 🏷️ fase/codigo
+- [x] #task 🔼 **[v1.5.0]** PUT substitui, PATCH faz merge; JSON inválido → 400; `DELETE` coleção → 405 🏷️ fase/codigo
 
 ## 8. Riscos e Dependências
 - Depende de PRD-01 (Schema válido + Fake Data determinística)
