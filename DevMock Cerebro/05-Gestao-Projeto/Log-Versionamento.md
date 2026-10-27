@@ -145,6 +145,7 @@ updated: 2026-10-10
 | v1.9.45 | 2026-10-22 | des | Pós-publicação v1.4.0: wiki, Log, Home/EAP; PR `#27` (des→main) | `docs(release): publica v1.4.0 e sincroniza docs` | ✅ em main (PR #27, merge `c6b15f3`) |
 | v1.9.46 | 2026-10-22 | des | Pós-promoção v1.4.0 (PR #27) | `docs(git): registra promoção v1.4.0 em main` | ✅ em des |
 | v1.9.47 | 2026-10-22 | des | Agente **Technical-Writer** (Divio, README 5s, exemplos executáveis) + fronteira no Docs-Keeper; anexo removido após a criação | `docs(agentes): adiciona technical-writer` | ✅ em des |
+| v1.9.48 | 2026-10-22 | des | Agente **LinkedIn** atualizado (pilares, 3 ganchos, tipos de post, link no 1º comentário) + subagente; anexo removido | `docs(agentes): atualiza linkedin e adiciona subagente` | ✅ em des |
 
 ## Consulta (Dataview — notas de gestão)
 
