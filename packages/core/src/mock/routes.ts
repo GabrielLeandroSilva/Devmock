@@ -1,4 +1,4 @@
-import type { DevMockConfig, Schema } from "../types.js";
+import type { DevMockConfig, Schema, SchemaRoute } from "../types.js";
 
 /** Config por endpoint (PRD-02 §11). */
 export interface EndpointConfig {
@@ -102,17 +102,58 @@ export function basePath(schema: Schema): string {
   return `/${plural(schema.name)}`;
 }
 
-/** Caminhos de rota gerados a partir do Schema (PRD-02 RF-01). */
-export function routesFor(schema: Schema): string[] {
+/** CRUD padrão gerado a partir do Schema (PRD-02 RF-01). */
+export function defaultRoutes(schema: Schema): SchemaRoute[] {
   const p = basePath(schema);
   return [
-    `GET ${p}`,
-    `GET ${p}/:id`,
-    `POST ${p}`,
-    `PUT ${p}/:id`,
-    `PATCH ${p}/:id`,
-    `DELETE ${p}/:id`,
+    { method: "GET", path: p, kind: "list" },
+    { method: "GET", path: `${p}/:id`, kind: "item" },
+    { method: "POST", path: p, kind: "create" },
+    { method: "PUT", path: `${p}/:id`, kind: "update" },
+    { method: "PATCH", path: `${p}/:id`, kind: "patch" },
+    { method: "DELETE", path: `${p}/:id`, kind: "delete" },
   ];
+}
+
+/** Rotas efetivas: as declaradas no Schema ou o CRUD padrão (ausente). */
+export function schemaRoutes(schema: Schema): SchemaRoute[] {
+  // JSON editado à mão pode trazer `routes` não-array/entradas nulas; nunca derrubar a UI.
+  return Array.isArray(schema.routes)
+    ? schema.routes.filter((route) => route && typeof route === "object")
+    : defaultRoutes(schema);
+}
+
+/** Chave canônica de config/cenário/log: `"METHOD /path"` em minúsculas (AUD-04). */
+export function routeKey(route: SchemaRoute): string {
+  const method = String(route?.method ?? "").toUpperCase();
+  const path = typeof route?.path === "string" ? route.path : "";
+  return `${method} ${path.toLowerCase()}`;
+}
+
+/** String de exibição, preservando o case declarado no path. */
+export function routeLabel(route: SchemaRoute): string {
+  const method = String(route?.method ?? "").toUpperCase();
+  const path = typeof route?.path === "string" ? route.path : "";
+  return `${method} ${path}`;
+}
+
+/** Caminhos de rota efetivos (PRD-02 RF-01; v1.5.0 respeita `Schema.routes`). */
+export function routesFor(schema: Schema): string[] {
+  return schemaRoutes(schema).map(routeKey);
+}
+
+/** Rota de coleção: `kind: list` ou o primeiro GET sem parâmetro. */
+export function listRoute(schema: Schema): SchemaRoute | undefined {
+  const routes = schemaRoutes(schema);
+  return (
+    routes.find((route) => route && route.kind === "list") ??
+    routes.find(
+      (route) =>
+        route &&
+        String(route.method).toUpperCase() === "GET" &&
+        !String(route.path).includes(":"),
+    )
+  );
 }
 
 export function resolveEndpoint(

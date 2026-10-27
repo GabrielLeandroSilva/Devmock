@@ -147,6 +147,7 @@ updated: 2026-10-10
 | v1.9.47 | 2026-10-22 | des | Agente **Technical-Writer** (Divio, README 5s, exemplos executáveis) + fronteira no Docs-Keeper; anexo removido após a criação | `docs(agentes): adiciona technical-writer` | ✅ em des |
 | v1.9.48 | 2026-10-22 | des | Agente **LinkedIn** atualizado (pilares, 3 ganchos, tipos de post, link no 1º comentário) + subagente; anexo removido | `docs(agentes): atualiza linkedin e adiciona subagente` | ✅ em des |
 | v1.9.49 | 2026-10-22 | des | Planejamento v1.5.0: **mapa de rotas por Schema** (custom), POST/PATCH/DELETE na Tree, semântica PUT/400/405; plano 12, PRD-02/03/04/05, Home/EAP, wiki/README | `docs(release): planeja v1.5.0 - rotas completas` | ✅ em des |
+| v1.9.50 | 2026-10-22 | des | M1 v1.5.0: `Schema.routes` + defaults + validação (path/kind/params/duplicatas) + `routeKey` canônico; core **140**/host **44**; Code-Reviewer + QA-Testes | `feat(core): mapa de rotas por Schema (M1)` | ✅ em des |
 
 ## Consulta (Dataview — notas de gestão)
 

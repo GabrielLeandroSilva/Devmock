@@ -101,6 +101,30 @@ suite("Ações da Tree (M1)", () => {
     assert.match(picks[1].description, /cenário: Default · GET \/orders/);
   });
 
+  test("cenário: respeita a rota list customizada (canônica)", () => {
+    const schema: Schema = {
+      name: "User",
+      fields: [{ name: "id", type: "uuid", required: true }],
+      routes: [
+        { method: "GET", path: "/v1/Users", kind: "list" },
+        { method: "GET", path: "/v1/Users/:id", kind: "item" },
+      ],
+    };
+    const picks = buildScenarioPick([schema], { activeScenarios: { "GET /v1/users": "Empty" } }, "Empty");
+    assert.deepStrictEqual(picks.map((p) => p.route), ["GET /v1/users"]);
+    assert.match(picks[0].description, /GET \/v1\/Users/);
+    assert.strictEqual(picks[0].picked, true);
+  });
+
+  test("cenário: Schema sem rota de coleção é omitido do pick", () => {
+    const schema: Schema = {
+      name: "User",
+      fields: [{ name: "id", type: "uuid", required: true }],
+      routes: [{ method: "GET", path: "/v1/users/:id", kind: "item" }],
+    };
+    assert.deepStrictEqual(buildScenarioPick([schema], { activeScenarios: {} }, "Empty"), []);
+  });
+
   test("comandos Ações e Apply Scenario registrados no host", async () => {
     const all = await vscode.commands.getCommands(true);
     assert.ok(all.includes("devmock.actions"), "comando devmock.actions não registrado");

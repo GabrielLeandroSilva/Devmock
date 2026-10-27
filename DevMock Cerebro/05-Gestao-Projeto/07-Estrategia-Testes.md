@@ -78,6 +78,7 @@ Cada PRD ([[Indice-PRDs]]) confrontado com os testes existentes. **S2 entregue e
 | 02 | RF-05 Start/stop pelo painel | `commands.test.ts` "start sobe HTTP real; stop derruba" | ✅ |
 | 02 | RF-06 `GET /:id` inexistente → 404 | `mockServer.test.ts` "GET /users/:id … 404" | ✅ |
 | 02 | RF-07 Porta em uso acionável | `mockServer.test.ts` "porta ocupada…" · `regression.test.ts` AUD-05 | ✅ |
+| 02 | RF-08 `Schema.routes` (mapa + validação) | `routes.test.ts` "PRD-02 RF-08 …" (29 casos) | ✅ |
 | 02 | §7 Trocar porta + restart sem resíduo | `prd.test.ts` "PRD-02 §7" | ✅ |
 | 03 | RF-01 Init idempotente | `commands.test.ts` "init é idempotente" · `00-smoke.test.ts` | ✅ |
 | 03 | RF-03 Start/Stop painel | `commands.test.ts` "start sobe HTTP real" | ✅ |

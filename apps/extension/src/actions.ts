@@ -1,4 +1,4 @@
-import { routesFor, type DevMockConfig, type Schema } from "@devmock/core";
+import { listRoute, routeKey, routeLabel, type DevMockConfig, type Schema } from "@devmock/core";
 import { scenarioOf } from "./ops.js";
 
 /** Grupo de ações no QuickPick (separadores da UI). */
@@ -39,15 +39,19 @@ export function buildScenarioPick(
   config: ScenarioConfig,
   scenario: string,
 ): ScenarioPickItem[] {
-  return schemas.map((schema) => {
-    const route = routesFor(schema)[0];
-    const current = scenarioOf(config.activeScenarios, route);
-    return {
-      label: schema.name,
-      description: `cenário: ${current} · ${route}`,
-      route,
-      picked: current === scenario,
-    };
+  return schemas.flatMap((schema) => {
+    const route = listRoute(schema);
+    if (!route) return [];
+    const key = routeKey(route);
+    const current = scenarioOf(config.activeScenarios, key);
+    return [
+      {
+        label: schema.name,
+        description: `cenário: ${current} · ${routeLabel(route)}`,
+        route: key,
+        picked: current === scenario,
+      },
+    ];
   });
 }
 

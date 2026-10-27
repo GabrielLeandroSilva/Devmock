@@ -123,6 +123,21 @@ suite("Tree (builder puro) — T3a", () => {
     assert.strictEqual(empty?.description, "2 schema(s)");
   });
 
+  test("Schema usa a rota list customizada no cenário", () => {
+    const custom = state({
+      schemas: [
+        {
+          name: "User",
+          fields: [{ name: "id", type: "uuid", required: true }],
+          routes: [{ method: "GET", path: "/v1/Users", kind: "list" }],
+        },
+      ],
+      config: { ...DEFAULT_CONFIG, activeScenarios: { "GET /v1/users": "Empty" } },
+    });
+    const [node] = buildTree(custom, { label: "Schemas" });
+    assert.match(node.description ?? "", /cenário: Empty/);
+  });
+
   test("Documentation e Settings refletem o Schema e a config", () => {
     assert.deepStrictEqual(labels(buildTree(state(), { label: "Documentation" })), ["User.md"]);
     const settings = buildTree(state(), { label: "Settings" });

@@ -21,8 +21,8 @@ Hoje o Core já responde as 6 rotas, mas o path é fixo (`/${plural(name)}`) e a
 ### Must
 | ID | Item | Origem | Status atual |
 |----|------|--------|--------------|
-| **M1** | **`Schema.routes`**: `{ method, path, kind, response?, summary? }[]`; ausente = CRUD padrão (6 rotas); validação (path, `kind`×método, `method+path` único, `:param`) | [[PRD-02-Mock-Server]] §3 | path fixo em `plural(name)` |
-| **M2** | **Router**: tabela método+pattern, `:param`, estático vence param, params extraídos, chave de log/config = pattern | [[PRD-02-Mock-Server]] §3 | `resolveStore(parts)` por 1º segmento |
+| **M1** | **`Schema.routes`**: `{ method, path, kind, response?, summary? }[]`; ausente = CRUD padrão (6 rotas); validação (path, `kind`×método, `method+path` único, `:param`) | [[PRD-02-Mock-Server]] §3 | ✅ v1.5.0 (M1) — core 140/host 44 |
+| **M2** | **Router**: tabela método+pattern, `:param`, estático vence param, params extraídos, chave de log/config = pattern; ligar `validateProject` no load (server/extension) | [[PRD-02-Mock-Server]] §3 | `resolveStore(parts)` por 1º segmento |
 | **M3** | **Semântica**: PUT substitui, PATCH merge, JSON inválido → 400, `DELETE` coleção → 405, `custom` usa `response` (precedência request > endpoint > rota > default) | [[PRD-02-Mock-Server]] §3 | PUT=PATCH; inválido vira `{}` |
 | **M4** | **UI**: clique em qualquer endpoint → menu (Switch scenario, Copy as cURL; browser só GET sem `:id`); `Switch Scenario` lista todas as rotas; cenário por método; descrição em todos os nós | [[PRD-03-VSCode-Extension]] §3 | só GET tem ação/cenário |
 | **M5** | **Studio**: seção Rotas (método/path/kind/response), adicionar/remover, “Restaurar CRUD padrão”; salva `routes` só quando customizado | [[PRD-03-VSCode-Extension]] §3 | formulário só name/fields |
@@ -42,7 +42,7 @@ Hoje o Core já responde as 6 rotas, mas o path é fixo (`/${plural(name)}`) e a
 - GraphQL/WebSocket.
 
 ## 3. Definition of Done (por item)
-- **M1:** `routes` ausente mantém as 6 rotas; `routes` presente substitui o conjunto; validação rejeita path inválido, `kind` incompatível e `method+path` duplicado; `:param` aceito.
+- **M1:** `routes` ausente mantém as 6 rotas; `routes` presente substitui o conjunto; validação rejeita path inválido, `kind` incompatível e `method+path` duplicado; `:param` aceito. **Status:** ✅ implementado, revisado (Code-Reviewer) e auditado (QA-Testes; core **140**, host **44**).
 - **M2:** `GET /v1/users` e `GET /v1/users/:id` resolvem o mesmo Schema; rota estática vence `:param`; log/config usam `"METHOD /pattern"`.
 - **M3:** PUT substitui (mantém `id`), PATCH faz merge; POST/PUT/PATCH com JSON inválido → 400; `DELETE` coleção → 405 com `Allow`; `custom` usa `response` e cenário/endpoint sobrescrevem.
 - **M4:** todo endpoint abre o menu; Switch Scenario lista todos os métodos; cenário aplica por endpoint; cURL copia método/URL/body; GET sem `:id` abre no browser.
@@ -51,7 +51,7 @@ Hoje o Core já responde as 6 rotas, mas o path é fixo (`/${plural(name)}`) e a
 - **M7:** docs/superfícies sincronizadas.
 
 ## 4. Passos de execução (checklist)
-- [/] #task ⏫ M1 — tipos `SchemaRoute`/`RouteKind` + defaults + validação + helpers (`routesFor`, `listRoute`) 🏷️ fase/codigo
+- [x] #task ⏫ M1 — tipos `SchemaRoute`/`RouteKind` + defaults + validação + helpers (`routesFor`, `listRoute`) 🏷️ fase/codigo
 - [/] #task ⏫ M2 — router por método+pattern (estático > `:param`) + store/params 🏷️ fase/codigo
 - [/] #task ⏫ M3 — PUT replace, PATCH merge, 400/405, `response` custom + precedência 🏷️ fase/codigo
 - [/] #task ⏫ M4 — menu do endpoint + cURL + `Switch Scenario` todas as rotas 🏷️ fase/codigo

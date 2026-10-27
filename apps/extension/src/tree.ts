@@ -1,4 +1,12 @@
-import { SCENARIO_NAMES, routesFor, type DevMockConfig, type Schema } from "@devmock/core";
+import {
+  SCENARIO_NAMES,
+  listRoute,
+  routeKey,
+  routeLabel,
+  schemaRoutes,
+  type DevMockConfig,
+  type Schema,
+} from "@devmock/core";
 import { scenarioOf } from "./ops.js";
 
 /** Nó da Tree em formato puro (sem tipos do VS Code) — testável fora do host. */
@@ -42,24 +50,28 @@ export function buildTree(state: TreeState, el?: TreeNode): TreeNode[] {
   const cfg = state.config;
   switch (el.label) {
     case "Schemas":
-      return state.schemas.map((s) => ({
-        label: s.name,
-        description: `${s.fields.length} campos · cenário: ${scenarioOf(cfg.activeScenarios, routesFor(s)[0])}`,
-        contextValue: "schema",
-        schemaName: s.name,
-        command: { command: "devmock.editSchema", title: "Editar Schema", arguments: [s.name] },
-      }));
+      return state.schemas.map((s) => {
+        const route = listRoute(s);
+        return {
+          label: s.name,
+          description: `${s.fields.length} campos · cenário: ${route ? scenarioOf(cfg.activeScenarios, routeKey(route)) : "—"}`,
+          contextValue: "schema",
+          schemaName: s.name,
+          command: { command: "devmock.editSchema", title: "Editar Schema", arguments: [s.name] },
+        };
+      });
     case "Endpoints":
       return state.schemas.flatMap((s) =>
-        routesFor(s).map((r) => {
-          const isGet = r.startsWith("GET ");
-          const openable = isGet && !r.includes(":id");
+        schemaRoutes(s).map((route) => {
+          const key = routeKey(route);
+          const isGet = String(route.method).toUpperCase() === "GET";
+          const openable = isGet && !String(route.path).includes(":");
           return {
-            label: r,
-            description: isGet ? `cenário: ${scenarioOf(cfg.activeScenarios, r)}` : undefined,
+            label: routeLabel(route),
+            description: isGet ? `cenário: ${scenarioOf(cfg.activeScenarios, key)}` : undefined,
             contextValue: isGet ? "endpointGet" : "endpoint",
             command: openable
-              ? { command: "devmock.openEndpoint", title: "Abrir no navegador", arguments: [r] }
+              ? { command: "devmock.openEndpoint", title: "Abrir no navegador", arguments: [key] }
               : undefined,
           };
         }),
@@ -67,7 +79,10 @@ export function buildTree(state: TreeState, el?: TreeNode): TreeNode[] {
     case "Scenarios": {
       const active = cfg.activeScenarios ?? {};
       return SCENARIO_NAMES.map((name) => {
-        const count = state.schemas.filter((s) => scenarioOf(active, routesFor(s)[0]) === name).length;
+        const count = state.schemas.filter((s) => {
+          const route = listRoute(s);
+          return route ? scenarioOf(active, routeKey(route)) === name : false;
+        }).length;
         return {
           label: (count > 0 ? "✓ " : "") + name,
           description: count > 0 ? `${count} schema(s)` : undefined,
