@@ -4,9 +4,9 @@ type: prd
 status: revisao
 fase: 1
 tags: [devmock/mvp, devmock/docs]
-related: ["[[PRD-01-Core-Schema-Data]]", "[[08-Plano-Release-v1.2.0]]", "[[DevMock-Produto-e-Fluxos]]"]
+related: ["[[PRD-01-Core-Schema-Data]]", "[[08-Plano-Release-v1.2.0]]", "[[12-Plano-Release-v1.5.0]]", "[[DevMock-Produto-e-Fluxos]]"]
 created: 2026-10-10
-updated: 2026-10-17
+updated: 2026-10-22
 ---
 
 # PRD-05 — Documentação e Export do Contrato
@@ -31,6 +31,11 @@ Sem contrato compartilhável, o backend não sabe o que implementar e o front n�
 - **HTML docs**: página única com âncoras por recurso, **CSS inline** (offline, sem CDN), gerada ao lado do Markdown em `.devmock/docs/index.html`
 - Novo artefato `html` no export → entra no `staleDetector` por artefato
 
+### Dentro (v1.5.0)
+- Export reflete **`Schema.routes`**: OpenAPI gera `paths` por método/rota (inclui custom e aninhada); MD/HTML listam todas as rotas
+- `response`/`summary` da rota entram no OpenAPI; re-export continua idempotente
+- Rotas custom com `:param` viram `parameters` no OpenAPI
+
 ### Fora (futuro)
 - Import OpenAPI (PRD-06) ✅ · validação real (PRD-07) ✅
 
@@ -43,6 +48,7 @@ Sem contrato compartilhável, o backend não sabe o que implementar e o front n�
 | RF-04 | Gerar `types.ts` com enums como union e `balance: number` | Must | §16 |
 | RF-05 | Comando único `Export Contract` com checklist de artefatos | Must | §16 |
 | RF-06 | Gerar `docs/index.html` (página única, âncoras, CSS inline/offline) | Should | v1.2.0 |
+| RF-07 | Export refletir `Schema.routes` (OpenAPI por rota, MD/HTML com todas, `response`/`summary`) | Must | v1.5.0 |
 
 ## 5. Requisitos Não-Funcionais
 - OpenAPI gerado valida sem erros em `swagger-parser`
@@ -58,6 +64,7 @@ Sem contrato compartilhável, o backend não sabe o que implementar e o front n�
 - [ ] #task ⏫ `types.ts` compila limpo e reflete o enum de status 🏷️ fase/1
 - [ ] #task 🔼 Re-export sem mudança no Schema gera diff vazio 🏷️ fase/1
 - [x] #task 🔼 **[v1.2.0]** HTML docs: página única abre offline (sem rede) e re-export é idempotente 🏷️ fase/codigo
+- [ ] #task 🔼 **[v1.5.0]** Export com rota custom (`GET /v1/users`) e ação (`POST /auth/login`) refletidos no OpenAPI/MD/HTML 🏷️ fase/codigo
 
 ## 8. Riscos e Dependências
 - Depende de PRD-01 (Schema + tipos de campo)

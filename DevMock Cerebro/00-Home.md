@@ -29,6 +29,7 @@ updated: 2026-10-10
 - **v1.2.0** — ✅ publicada (Tree UX, Detect from project, HTML docs) → [[08-Plano-Release-v1.2.0]]
 - **v1.3.0** — ✅ publicada (cenário por requisição, Detect ampliado, qualidade) → [[10-Plano-Release-v1.3.0]]
 - **v1.4.0** — ✅ publicada (Ações no header + cenário por clique, mouse-first) → [[11-Plano-Release-v1.4.0]]
+- **v1.5.0** — planejado: mapa de rotas por Schema + POST/PATCH/DELETE na Tree → [[12-Plano-Release-v1.5.0]]
 - **Infra (contínuo)** — Node **≥22** desde out/2026; **futuro: mínimo Node 24** → [[06-Stacks-e-Versoes]]
 
 ## Status geral (Dataview)

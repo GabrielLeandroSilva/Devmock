@@ -67,6 +67,8 @@ Próximas versões são planejadas **sem data** e priorizadas por feedback — v
 
 Última versão: **v1.4.0** — botão **Ações** na Tree e cenário aplicado por clique nos Schemas (mouse-first).
 
+- **v1.5.0 (planejado):** mapa de rotas por Schema (inclui ações custom) e POST/PATCH/DELETE na Tree (cenário/cURL)
+
 ## Links
 
 - [Wiki — guia completo](https://github.com/GabrielLeandroSilva/Devmock/wiki)

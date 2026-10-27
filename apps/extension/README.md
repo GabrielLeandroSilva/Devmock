@@ -43,6 +43,8 @@ Próximas versões: [Roadmap](https://github.com/GabrielLeandroSilva/Devmock/wik
 
 Última versão: **v1.4.0** — botão **Ações** na Tree e cenário aplicado por clique nos Schemas (mouse-first).
 
+- **v1.5.0 (planejado):** mapa de rotas por Schema (inclui ações custom) e POST/PATCH/DELETE na Tree (cenário/cURL)
+
 ## Links
 
 - Repositório e docs vivas: [GabrielLeandroSilva/Devmock](https://github.com/GabrielLeandroSilva/Devmock)

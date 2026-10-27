@@ -17,7 +17,7 @@ FROM "05-Gestao-Projeto"
 SORT file.name ASC
 ```
 
-Documentos: Charter, EAP, Cronograma-Fases, MVP-Scope, Riscos, Métricas, Plano-Release-v1.1.0, Estrategia-Testes, Plano-Release-v1.2.0, Plano-Release-v1.3.0, Plano-Release-v1.4.0. Template: `T-Task-Note`.
+Documentos: Charter, EAP, Cronograma-Fases, MVP-Scope, Riscos, Métricas, Plano-Release-v1.1.0, Estrategia-Testes, Plano-Release-v1.2.0, Plano-Release-v1.3.0, Plano-Release-v1.4.0, Plano-Release-v1.5.0. Template: `T-Task-Note`.
 
 ## Tasks do projeto
 

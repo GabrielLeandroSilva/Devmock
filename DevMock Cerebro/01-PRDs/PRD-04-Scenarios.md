@@ -4,9 +4,9 @@ type: prd
 status: revisao
 fase: 1
 tags: [devmock/mvp, devmock/scenarios]
-related: ["[[PRD-02-Mock-Server]]", "[[10-Plano-Release-v1.3.0]]", "[[DevMock-Produto-e-Fluxos]]"]
+related: ["[[PRD-02-Mock-Server]]", "[[10-Plano-Release-v1.3.0]]", "[[12-Plano-Release-v1.5.0]]", "[[DevMock-Produto-e-Fluxos]]"]
 created: 2026-10-10
-updated: 2026-10-20
+updated: 2026-10-22
 ---
 
 # PRD-04 — Cenários de Resposta
@@ -32,6 +32,11 @@ Front precisa testar todos os estados da UI sem o backend quebrar de verdade: `D
 - Cenário desconhecido **não quebra**: cai no ativo (ou Default) e registra no log
 - CORS libera o header `x-mock-scenario`
 
+### Dentro (v1.5.0)
+- **Cenário por método/rota**: `Switch Scenario…` lista todas as rotas (GET/POST/PUT/PATCH/DELETE e custom) e grava `activeScenarios["METHOD /pattern"]`
+- O clique global no cenário continua aplicando no `GET` de coleção (`kind: "list"`); o por-método vem do nó do endpoint
+- Chave do cenário = pattern da rota (`PATCH /users/:id`, `POST /auth/login`)
+
 ### Fora (futuro)
 - `Forbidden`, `Rate Limited` e `errorRate` ✅ (v1.1.0) · cenários condicionais complexos (ex.: body matching) — futuro
 
@@ -46,6 +51,7 @@ Front precisa testar todos os estados da UI sem o backend quebrar de verdade: `D
 | RF-06 | Cenário por **query** (`?scenario=…`) e por **header** (`X-Mock-Scenario`) na mesma requisição | Must | v1.3.0 |
 | RF-07 | Precedência request > cenário ativo > Default; desconhecido não quebra | Must | v1.3.0 |
 | RF-08 | CORS permite o header `x-mock-scenario` | Must | v1.3.0 |
+| RF-09 | Cenário por **qualquer método/rota** (inclui custom); chave `"METHOD /pattern"` | Must | v1.5.0 |
 
 Exemplo (`user-empty.json`): `{ "endpoint": "GET /users", "scenario": "Empty", "status": 200, "body": { "data": [], "total": 0 } }`
 
@@ -56,7 +62,7 @@ Exemplo (`user-empty.json`): `{ "endpoint": "GET /users", "scenario": "Empty", "
 ## 6. Regras de Negócio
 - Cenário ativo tem precedência sobre config default (PRD-02 RF)
 - Apagar cenário ativo → volta para `Default` automaticamente
-- **Clique na Tree (v1.4.0):** aplicar um cenário a um ou mais Schemas grava `activeScenarios["GET /<plural>"]` de cada um (rota de coleção exibida no nó Schema); POST/`:id` seguem via `Switch Scenario…`
+- **Clique na Tree (v1.4.0):** aplicar um cenário a um ou mais Schemas grava `activeScenarios["GET /<plural>"]` de cada um (rota de coleção exibida no nó Schema); **v1.5.0:** qualquer rota pode receber cenário pelo nó do endpoint ou pelo `Switch Scenario…`
 
 ## 7. Critérios de Aceite
 - [ ] #task ⏫ Alternar Default→Empty→401→500 muda a resposta sem restart 🏷️ fase/1
@@ -64,6 +70,7 @@ Exemplo (`user-empty.json`): `{ "endpoint": "GET /users", "scenario": "Empty", "
 - [ ] #task 🔼 `Slow Network` atrasa ~5s e o front consegue testar loading/timeout 🏷️ fase/1
 - [x] #task ⏫ **[v1.3.0]** `?scenario=Empty` retorna envelope vazio e `X-Mock-Scenario: 403` retorna 403 🏷️ fase/codigo
 - [x] #task 🔼 **[v1.3.0]** Precedência request > ativo > Default; cenário desconhecido cai no ativo sem quebrar 🏷️ fase/codigo
+- [ ] #task 🔼 **[v1.5.0]** Cenário aplicável a qualquer método/rota (inclui custom) sem restart 🏷️ fase/codigo
 
 ## 8. Riscos e Dependências
 - Depende de PRD-02 (precedência + log mostra cenário ativo)

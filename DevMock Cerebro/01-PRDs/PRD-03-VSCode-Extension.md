@@ -4,9 +4,9 @@ type: prd
 status: revisao
 fase: 1
 tags: [devmock/mvp, devmock/extension]
-related: ["[[PRD-01-Core-Schema-Data]]", "[[PRD-02-Mock-Server]]", "[[PRD-09-Detect-From-Project]]", "[[08-Plano-Release-v1.2.0]]", "[[11-Plano-Release-v1.4.0]]", "[[DevMock-Produto-e-Fluxos]]"]
+related: ["[[PRD-01-Core-Schema-Data]]", "[[PRD-02-Mock-Server]]", "[[PRD-09-Detect-From-Project]]", "[[08-Plano-Release-v1.2.0]]", "[[11-Plano-Release-v1.4.0]]", "[[12-Plano-Release-v1.5.0]]", "[[DevMock-Produto-e-Fluxos]]"]
 created: 2026-10-10
-updated: 2026-10-21
+updated: 2026-10-22
 ---
 
 # PRD-03 — VS Code Extension
@@ -37,6 +37,11 @@ Dev precisa de experiência visual simples (TreeView) + edição direta dos arqu
 - **Mouse-first:** botão **Ações** no header da Tree concentra os comandos da extensão; `New Schema` sai do header; Refresh e Start/Stop ficam
 - **Cenário por clique:** clique num cenário → multi-seleção de Schemas → aplica no `GET` de coleção (regra em [[PRD-04-Scenarios]])
 
+### Dentro (v1.5.0)
+- **Editor de rotas no Studio**: tabela método/path/kind/response, adicionar/remover e “Restaurar CRUD padrão”
+- **POST/PATCH/DELETE de primeira classe**: clique em qualquer endpoint abre menu (Switch scenario, Copy as cURL; browser só GET sem `:id`)
+- **Cenário por método**: `Switch Scenario…` lista todas as rotas e grava por endpoint; descrição em todos os nós
+
 ### Fora (futuro)
 - CLI (`devmock init/start/generate/export/validate`) — PRD-08 ✅ (entregue)
 - HTML docs — PRD-05 (v1.2.0)
@@ -58,6 +63,10 @@ Dev precisa de experiência visual simples (TreeView) + edição direta dos arqu
 | RF-12 | Botão **Ações** no header: QuickPick agrupado com os comandos; `New Schema` sai do header; Refresh e Start/Stop ficam; itens indisponíveis ocultos | Must | v1.4.0 |
 | RF-13 | Clique num **cenário** → multi-seleção de Schemas → aplica no `GET` de coleção; grava `config.json` uma vez; recarrega o server vivo | Must | v1.4.0 |
 | RF-14 | Nó de cenário com `contextValue` e descrição `N schema(s)` | Should | v1.4.0 |
+| RF-15 | Studio edita **rotas** (método/path/kind/response), restaura o CRUD padrão e salva | Must | v1.5.0 |
+| RF-16 | Clique em **qualquer endpoint** abre menu: Switch scenario, Copy as cURL; browser só GET sem `:id` | Must | v1.5.0 |
+| RF-17 | `Switch Scenario…` lista **todas** as rotas; cenário é por endpoint (qualquer método) | Must | v1.5.0 |
+| RF-18 | Nós de Endpoint mostram cenário/descrição em todos os métodos | Should | v1.5.0 |
 
 ## 5. Requisitos Não-Funcionais
 - Ativação <500ms; Tree atualiza em <200ms após salvar arquivo
@@ -79,6 +88,9 @@ Dev precisa de experiência visual simples (TreeView) + edição direta dos arqu
 - [x] #task 🔼 **[v1.4.0]** Header com **Ações** + Refresh + Start/Stop; New Schema acessível pelo Ações 🏷️ fase/codigo
 - [x] #task 🔼 **[v1.4.0]** Clique no cenário aplica aos Schemas selecionados (GET de coleção) sem restart 🏷️ fase/codigo
 - [x] #task 🔼 **[v1.4.0]** Nó de cenário com `contextValue` e descrição `N schema(s)` 🏷️ fase/codigo
+- [ ] #task 🔼 **[v1.5.0]** Studio edita rotas (método/path/kind/response) e restaura o padrão 🏷️ fase/codigo
+- [ ] #task 🔼 **[v1.5.0]** Clique em POST/PATCH/DELETE abre menu (cenário/cURL); GET abre no browser 🏷️ fase/codigo
+- [ ] #task 🔼 **[v1.5.0]** `Switch Scenario…` lista todas as rotas e aplica por endpoint 🏷️ fase/codigo
 
 ## 8. Riscos e Dependências
 - Depende de PRD-01 (formato de Schema) e PRD-02 (start/stop)

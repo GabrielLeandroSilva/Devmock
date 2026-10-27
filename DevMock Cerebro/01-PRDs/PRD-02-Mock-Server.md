@@ -4,9 +4,9 @@ type: prd
 status: revisao
 fase: 1
 tags: [devmock/mvp, devmock/mock]
-related: ["[[PRD-01-Core-Schema-Data]]", "[[DevMock-Produto-e-Fluxos]]"]
+related: ["[[PRD-01-Core-Schema-Data]]", "[[12-Plano-Release-v1.5.0]]", "[[DevMock-Produto-e-Fluxos]]"]
 created: 2026-10-10
-updated: 2026-10-10
+updated: 2026-10-22
 ---
 
 # PRD-02 — Mock Server REST
@@ -30,6 +30,13 @@ Com o Schema pronto, o front precisa de uma API local imediata (`GET/POST/PUT/PA
 - Start/stop + indicador `🟢 localhost:4010` + troca de porta em `config.json`
 - Persistência em memória por sessão (POST cria, DELETE remove até restart)
 
+### Dentro (v1.5.0)
+- **Mapa de rotas por Schema** (`routes`): `{ method, path, kind, response?, summary? }[]`; ausente = CRUD padrão (6 rotas)
+- **Rota customizada**: path base livre (`/v1/users`), aninhado e/ou ação fora do CRUD (`POST /auth/login`, `POST /users/:id/activate`)
+- **Router** por método + pattern, com `:param`; estático vence param; `method+path` único
+- **Resposta custom** (`status`/`body`) na rota; cenário/endpoint config têm precedência
+- **Semântica**: PUT substitui (mantém `id`); PATCH faz merge; JSON inválido → 400; `DELETE` de coleção → 405
+
 ### Fora (futuro)
 - Latência avançada, error rate, rate limit (§11) — v1.1
 - Request logs avançados com body/inspect — pós-MVP
@@ -45,6 +52,11 @@ Com o Schema pronto, o front precisa de uma API local imediata (`GET/POST/PUT/PA
 | RF-05 | Start/stop pelo painel + status visível | Must | §13 |
 | RF-06 | `GET /:id` inexistente → `404` com body `{error, message}` | Should | §12 |
 | RF-07 | Liberar porta em uso com mensagem acionável (qual PID, como trocar) | Should | §13 |
+| RF-08 | `Schema.routes` opcional; ausente = CRUD padrão; presente = substitui o conjunto | Must | v1.5.0 |
+| RF-09 | Router por método+path com `:param`; estático > param; colisão rejeitada | Must | v1.5.0 |
+| RF-10 | PUT substitui, PATCH faz merge; JSON inválido → 400; `DELETE` coleção → 405 | Must | v1.5.0 |
+| RF-11 | Rota `custom` com `response {status, body}`; precedência request > endpoint > rota > default | Must | v1.5.0 |
+| RF-12 | Rotas aninhadas e ações fora do CRUD (`/v1/users`, `/auth/login`) | Must | v1.5.0 |
 
 ## 5. Requisitos Não-Funcionais
 - Boot do server <1s; resposta p95 <50ms + `delayMs` configurado
@@ -55,6 +67,7 @@ Com o Schema pronto, o front precisa de uma API local imediata (`GET/POST/PUT/PA
 - Schema inválido → rota nem é registrada; erro aponta o PRD-01
 - `records` default 20; `delayMs` default 300
 - Cenário ativo (PRD-04) tem precedência sobre config default do endpoint
+- **v1.5.0:** `routes` presente **substitui** o CRUD padrão (não soma); chave de cenário/config/log = `"METHOD /pattern"`
 
 ## 7. Critérios de Aceite
 - [ ] #task ⏫ `GET /users` retorna 20 users paginados com envelope correto 🏷️ fase/1
@@ -62,6 +75,9 @@ Com o Schema pronto, o front precisa de uma API local imediata (`GET/POST/PUT/PA
 - [ ] #task ⏫ `POST /users` retorna 201 e o objeto aparece no `GET` seguinte 🏷️ fase/1
 - [ ] #task ⏫ Delay de 300ms respeitado (±100ms) e log exibe método/roto/status/ms 🏷️ fase/1
 - [ ] #task 🔼 Trocar porta em `config.json` e restart funciona sem resíduo 🏷️ fase/1
+- [ ] #task 🔼 **[v1.5.0]** `GET /v1/users` e `GET /v1/users/:id` resolvem o mesmo Schema (rota aninhada) 🏷️ fase/codigo
+- [ ] #task 🔼 **[v1.5.0]** Ação custom (`POST /auth/login`) responde o `response` da rota (ou cenário) 🏷️ fase/codigo
+- [ ] #task 🔼 **[v1.5.0]** PUT substitui, PATCH faz merge; JSON inválido → 400; `DELETE` coleção → 405 🏷️ fase/codigo
 
 ## 8. Riscos e Dependências
 - Depende de PRD-01 (Schema válido + Fake Data determinística)

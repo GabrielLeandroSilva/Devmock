@@ -146,6 +146,7 @@ updated: 2026-10-10
 | v1.9.46 | 2026-10-22 | des | Pós-promoção v1.4.0 (PR #27) | `docs(git): registra promoção v1.4.0 em main` | ✅ em des |
 | v1.9.47 | 2026-10-22 | des | Agente **Technical-Writer** (Divio, README 5s, exemplos executáveis) + fronteira no Docs-Keeper; anexo removido após a criação | `docs(agentes): adiciona technical-writer` | ✅ em des |
 | v1.9.48 | 2026-10-22 | des | Agente **LinkedIn** atualizado (pilares, 3 ganchos, tipos de post, link no 1º comentário) + subagente; anexo removido | `docs(agentes): atualiza linkedin e adiciona subagente` | ✅ em des |
+| v1.9.49 | 2026-10-22 | des | Planejamento v1.5.0: **mapa de rotas por Schema** (custom), POST/PATCH/DELETE na Tree, semântica PUT/400/405; plano 12, PRD-02/03/04/05, Home/EAP, wiki/README | `docs(release): planeja v1.5.0 - rotas completas` | ✅ em des |
 
 ## Consulta (Dataview — notas de gestão)
 
