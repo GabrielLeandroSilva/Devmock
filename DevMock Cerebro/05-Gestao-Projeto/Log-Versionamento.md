@@ -151,6 +151,7 @@ updated: 2026-10-10
 | v1.9.51 | 2026-10-22 | des | M2/M3 v1.5.0: router por Schema (custom/aninhada, aliases), validação/400/405, PUT replace/PATCH merge, precedência status/body; core **180** · CLI **18** · host **45**; Code-Reviewer + QA-Testes | `feat(core): router e semântica das rotas (M2/M3)` | ✅ em des |
 | v1.9.52 | 2026-10-22 | des | M4 v1.5.0: menu do endpoint (cenário/cURL/browser), `Switch Scenario` todas as rotas, cenário por método, contador por rota; host **60**; Code-Reviewer + QA-Testes | `feat(extension): menu de ações do endpoint (M4)` | ✅ em des |
 | v1.9.53 | 2026-10-22 | des | M5 v1.5.0: editor de rotas no Studio (toggle/tabela, add/reset, `summary` passthrough, `jsonForHtml`); host **61**; review+QA; **dívida Webview** registrada | `feat(extension): editor de rotas no Studio (M5)` | ⏳ em des, aguarda Manual-Teste |
+| v1.9.54 | 2026-10-22 | des | M6 v1.5.0: OpenAPI/MD/HTML por rota, validate `kind: list` + skip, `Location`/expose, `summary`; core **193** · CLI **20** · host **62**; review+QA | `feat(core): export e validate com rotas custom (M6)` | ✅ em des |
 
 ## Consulta (Dataview — notas de gestão)
 

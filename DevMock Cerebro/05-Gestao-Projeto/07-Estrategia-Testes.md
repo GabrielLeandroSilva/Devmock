@@ -111,8 +111,10 @@ Cada PRD ([[Indice-PRDs]]) confrontado com os testes existentes. **S2 entregue e
 | 05 | RF-04 `types.ts` (enum union, BRL number) | `export.test.ts` "enum vira union, BRL vira number" | ✅ |
 | 05 | RF-05 Export Contract (comando único) | `ops.test.ts` · `cli.test.ts` "export gera 5 artefatos" | ✅ |
 | 05 | §8 Re-export idempotente | `export.test.ts` "re-export do mesmo Schema gera saída idêntica" | ✅ |
+| 05 | RF-07 Export por `Schema.routes` (OpenAPI/MD/HTML, summary) | `export.test.ts` "v1.5.0 — rotas custom no export" | ✅ |
 | 06 | RF-01…05 Import OpenAPI (fixture, warnings, YAML, --force) | `import.test.ts` (4) · `cli.test.ts` "import yaml…" · `ops.test.ts` "import cria…" | ✅ |
 | 07 | RF-01…06 Contract Validation | `validate.test.ts` (11) · `cli.test.ts` "validate…" · `ops.test.ts` "validate contra mock real" | ✅ |
+| 07 | RF-07 Validate na rota list custom; skip com aviso | `validate.test.ts` "v1.5.0 — rotas custom no validate" · `cli.test.ts` "validate pula…" · host (aviso) | ✅ |
 | 08 | RF-01 `generate` (records/seed/--out) | `cli.test.ts` "generate é determinístico e --out grava" | ✅ |
 | 08 | RF-02 `export` 5 artefatos **+ `.hashes.json`** | `cli.test.ts` "export gera 5 artefatos" (sem hashes) | ⚠️ órfão (c) |
 | 08 | RF-03 CI verde no PR | `guards.test.ts` AUD-15 · `.github/workflows/ci.yml` | ✅ |

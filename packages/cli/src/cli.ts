@@ -208,6 +208,10 @@ async function cmdValidate(args: string[]): Promise<void> {
       console.log(`✕ ${r.endpoint} — erro: ${r.error}`);
       continue;
     }
+    if (r.skipped) {
+      console.log(`- ${r.endpoint} — pulado: ${r.skipped}`);
+      continue;
+    }
     const icon = r.breaking > 0 ? "✕" : r.warnings > 0 ? "⚠" : "✓";
     console.log(`${icon} ${r.endpoint} — ${r.compatible} compatible, ${r.warnings} warnings, ${r.breaking} breaking (${r.checked} verificados)`);
     for (const f of r.findings) {
@@ -216,6 +220,7 @@ async function cmdValidate(args: string[]): Promise<void> {
   }
   const total = summarize(reports);
   console.log(`\n${total.compatible} compatible, ${total.warnings} warnings, ${total.breaking} breaking.`);
+  if (total.skipped > 0) console.log(`${total.skipped} endpoint(s) pulado(s).`);
   if (total.breaking > 0) process.exitCode = 1;
 }
 
@@ -337,17 +342,23 @@ function cmdExport(args: string[]): void {
     process.exitCode = 1;
     return;
   }
-  mkdirSync(join(dir, "openapi"), { recursive: true });
-  mkdirSync(join(dir, "docs"), { recursive: true });
-  writeFileSync(join(dir, "openapi", "generated.json"), `${JSON.stringify(buildOpenApi(schemas), null, 2)}\n`);
-  writeFileSync(join(dir, "openapi", "generated.yaml"), toYaml(buildOpenApi(schemas)));
-  writeFileSync(join(dir, "openapi", "schemas.json"), `${JSON.stringify(buildJsonSchemas(schemas), null, 2)}\n`);
-  writeFileSync(join(dir, "docs", "types.ts"), buildTypes(schemas));
-  for (const s of schemas) {
-    writeFileSync(join(dir, "docs", `${s.name.toLowerCase()}.md`), buildDocFor(s));
+  try {
+    mkdirSync(join(dir, "openapi"), { recursive: true });
+    mkdirSync(join(dir, "docs"), { recursive: true });
+    writeFileSync(join(dir, "openapi", "generated.json"), `${JSON.stringify(buildOpenApi(schemas), null, 2)}\n`);
+    writeFileSync(join(dir, "openapi", "generated.yaml"), toYaml(buildOpenApi(schemas)));
+    writeFileSync(join(dir, "openapi", "schemas.json"), `${JSON.stringify(buildJsonSchemas(schemas), null, 2)}\n`);
+    writeFileSync(join(dir, "docs", "types.ts"), buildTypes(schemas));
+    for (const s of schemas) {
+      writeFileSync(join(dir, "docs", `${s.name.toLowerCase()}.md`), buildDocFor(s));
+    }
+    writeFileSync(join(dir, "docs", "index.html"), buildHtmlDocs(schemas));
+    const hashes = mergeExportHashes(undefined, schemas, ALL_ARTIFACTS);
+    writeFileSync(join(dir, "openapi", ".hashes.json"), `${JSON.stringify(hashes, null, 2)}\n`);
+    console.log(`DevMock: contrato exportado (${schemas.length} schema(s), 6 artefatos + .hashes.json).`);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.error(message.startsWith("DevMock:") ? message : `DevMock: ${message}`);
+    process.exitCode = 1;
   }
-  writeFileSync(join(dir, "docs", "index.html"), buildHtmlDocs(schemas));
-  const hashes = mergeExportHashes(undefined, schemas, ALL_ARTIFACTS);
-  writeFileSync(join(dir, "openapi", ".hashes.json"), `${JSON.stringify(hashes, null, 2)}\n`);
-  console.log(`DevMock: contrato exportado (${schemas.length} schema(s), 6 artefatos + .hashes.json).`);
 }

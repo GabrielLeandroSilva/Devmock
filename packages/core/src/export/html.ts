@@ -1,4 +1,4 @@
-import { routesFor } from "../mock/routes.js";
+import { routeLabel, schemaRoutes } from "../mock/routes.js";
 import type { Schema, SchemaField } from "../types.js";
 import { paginatedExampleJson } from "./example.js";
 
@@ -50,19 +50,29 @@ export function buildHtmlDocs(schemas: Schema[]): string {
             `<tr><td><code>${esc(f.name)}</code></td><td>${esc(fieldLabel(f))}</td><td>${f.required ? "sim" : "não"}</td><td>${esc(f.generator ?? "—")}</td></tr>`,
         )
         .join("");
-      const endpoints = routesFor(s)
-        .map((r) => `<li><code>${esc(r)}</code></li>`)
+      const endpoints = schemaRoutes(s)
+        .map((route) => {
+          const summary = route.summary ? ` — ${esc(route.summary)}` : "";
+          return `<li><code>${esc(routeLabel(route))}</code>${summary}</li>`;
+        })
         .join("");
+      const hasList = schemaRoutes(s).some((route) => route.kind === "list");
+      const pagination = hasList
+        ? `<h3>Query Parameters</h3>
+<table><thead><tr><th>Nome</th><th>Tipo</th></tr></thead><tbody><tr><td><code>page</code></td><td>number</td></tr><tr><td><code>limit</code></td><td>number</td></tr></tbody></table>`
+        : "";
+      const listExample = hasList
+        ? `<h3>Response 200</h3>
+<pre><code>${esc(paginatedExampleJson(s))}</code></pre>`
+        : "";
       return `<section id="${esc(s.name.toLowerCase())}">
 <h2>${esc(s.name)}</h2>
 <h3>Endpoints</h3>
 <ul class="endpoints">${endpoints}</ul>
-<h3>Query Parameters</h3>
-<table><thead><tr><th>Nome</th><th>Tipo</th></tr></thead><tbody><tr><td><code>page</code></td><td>number</td></tr><tr><td><code>limit</code></td><td>number</td></tr></tbody></table>
+${pagination}
 <h3>Campos</h3>
 <table><thead><tr><th>Campo</th><th>Tipo</th><th>Obrigatório</th><th>Gerador</th></tr></thead><tbody>${rows}</tbody></table>
-<h3>Response 200</h3>
-<pre><code>${esc(paginatedExampleJson(s))}</code></pre>
+${listExample}
 </section>`;
     })
     .join("\n");

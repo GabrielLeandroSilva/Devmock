@@ -108,6 +108,7 @@ function validatePath(path: string): string | undefined {
   if (/\s/.test(path)) return "path não pode ter espaço.";
   if (path.includes("%")) return "path não pode ter % (use o caractere literal).";
   if (path === "/") return "path não pode ser a raiz (/).";
+  if (/[{}]/.test(path)) return "path deve usar :param, não {param}.";
   if (!path.startsWith("/")) return "path precisa começar com /.";
   if (path.endsWith("/")) return "path não pode terminar com /.";
   if (path.includes("//")) return "path não pode ter //.";

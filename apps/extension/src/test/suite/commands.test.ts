@@ -36,6 +36,44 @@ suite("comandos no host (API real do VS Code)", () => {
     }
   });
 
+  test("validate avisa quando todos os Schemas são pulados", async () => {
+    const root = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+    assert.ok(root, "fixture workspace deve estar aberto");
+    const schemaPath = join(root, ".devmock", "schemas", "user.json");
+    const originalSchema = readFileSync(schemaPath, "utf8");
+    const windowApi = vscode.window as unknown as {
+      showInputBox: (...args: unknown[]) => Promise<string | undefined>;
+      showWarningMessage: (...args: unknown[]) => Thenable<unknown>;
+    };
+    const originalShowInputBox = windowApi.showInputBox;
+    const originalShowWarningMessage = windowApi.showWarningMessage;
+    const warnings: unknown[] = [];
+
+    windowApi.showInputBox = async () => "http://127.0.0.1:1";
+    windowApi.showWarningMessage = (...args: unknown[]) => {
+      warnings.push(args[0]);
+      return Promise.resolve(undefined);
+    };
+    writeFileSync(
+      schemaPath,
+      JSON.stringify({
+        ...JSON.parse(originalSchema),
+        routes: [{ method: "GET", path: "/users/:id", kind: "item" }],
+      }),
+    );
+    try {
+      await vscode.commands.executeCommand("devmock.validate");
+      assert.ok(
+        warnings.some((message) => /nenhum endpoint validado \(1 pulado\(s\)\)/.test(String(message))),
+        "deve informar que a validação não fez requests porque o Schema foi pulado",
+      );
+    } finally {
+      windowApi.showInputBox = originalShowInputBox;
+      windowApi.showWarningMessage = originalShowWarningMessage;
+      writeFileSync(schemaPath, originalSchema);
+    }
+  });
+
   test("applyScenario sem argumento escolhe cenário, permite cancelar e recarrega o server vivo", async () => {
     const windowApi = vscode.window as unknown as {
       showQuickPick: (...args: unknown[]) => Promise<unknown>;

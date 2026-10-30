@@ -128,6 +128,25 @@ describe("devmock cli (E2E)", () => {
     expect(existsSync(join(dir, ".devmock", "docs", "company.md"))).toBe(true);
   });
 
+  it("export com rotas duplicadas falha com mensagem", async () => {
+    await initWithUser();
+    writeFileSync(
+      join(dir, ".devmock", "schemas", "user.json"),
+      JSON.stringify({ ...USER_SCHEMA, routes: [{ method: "GET", path: "/dup", kind: "list" }] }),
+    );
+    writeFileSync(
+      join(dir, ".devmock", "schemas", "customer.json"),
+      JSON.stringify({
+        name: "Customer",
+        fields: [{ name: "id", type: "uuid", required: true }],
+        routes: [{ method: "GET", path: "/dup", kind: "list" }],
+      }),
+    );
+    const r = await cli("export", dir);
+    expect(r.code).toBe(1);
+    expect(r.err).toMatch(/duplicada/i);
+  });
+
   it("loadProject ignora Schema com ref quebrada após validar os nomes conhecidos", async () => {
     await initWithUser();
     writeFileSync(
@@ -175,6 +194,23 @@ describe("devmock cli (E2E)", () => {
       await server.close();
     }
   }, 30000);
+
+  it("validate pula Schema sem rota de coleção", async () => {
+    await initWithUser();
+    writeFileSync(
+      join(dir, ".devmock", "schemas", "user.json"),
+      JSON.stringify({
+        ...USER_SCHEMA,
+        routes: [
+          { method: "POST", path: "/auth/login", kind: "custom", response: { status: 200 } },
+        ],
+      }),
+    );
+    const r = await cli("validate", "http://127.0.0.1:1", dir);
+    expect(r.code).toBe(0);
+    expect(r.out).toMatch(/pulado/);
+    expect(r.out).toMatch(/1 endpoint\(s\) pulado\(s\)/);
+  });
 });
 
 describe("erros e caminhos de borda (T3b)", () => {

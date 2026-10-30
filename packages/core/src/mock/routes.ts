@@ -160,6 +160,26 @@ export function listRoute(schema: Schema): SchemaRoute | undefined {
   );
 }
 
+/** Resumo padrão por kind quando a rota não declara `summary`. */
+export function defaultRouteSummary(route: SchemaRoute, schemaName: string): string {
+  switch (route.kind) {
+    case "list":
+      return `Returns a list of ${schemaName}.`;
+    case "item":
+      return `Returns a ${schemaName} by id.`;
+    case "create":
+      return `Creates a ${schemaName}.`;
+    case "update":
+      return `Replaces a ${schemaName}.`;
+    case "patch":
+      return `Partially updates a ${schemaName}.`;
+    case "delete":
+      return `Deletes a ${schemaName}.`;
+    default:
+      return `${String(route.method).toUpperCase()} ${route.path}`;
+  }
+}
+
 export function resolveEndpoint(
   key: string,
   opts: MockServerOptions,

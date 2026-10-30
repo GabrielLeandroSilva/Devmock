@@ -258,7 +258,6 @@ export function createMockServer(schemas: Schema[], opts: MockServerOptions = {}
           body: { error: "METHOD_NOT_ALLOWED", message: "Método não permitido para esta rota." },
           headers: {
             allow: [...allowed, ...(allowed.includes("OPTIONS") ? [] : ["OPTIONS"])].join(", "),
-            "access-control-expose-headers": "allow",
           },
         });
         return;
@@ -413,7 +412,11 @@ export function createMockServer(schemas: Schema[], opts: MockServerOptions = {}
         // B1: POST cria na sessão (201 + objeto aparece no GET seguinte).
         const created = { ...(store.rows[0] ?? {}), ...body, id: randomUUID() };
         store.rows.unshift(created);
-        return { status: statusFor(201), body: created };
+        return {
+          status: statusFor(201),
+          body: created,
+          headers: { location: `${route.path}/${created.id}` },
+        };
       }
       case "update":
       case "patch": {
@@ -470,6 +473,7 @@ export function createMockServer(schemas: Schema[], opts: MockServerOptions = {}
         "access-control-allow-origin": "*",
         "access-control-allow-methods": "GET,POST,PUT,PATCH,DELETE,OPTIONS",
         "access-control-allow-headers": CORS_ALLOW_HEADERS,
+        "access-control-expose-headers": "location, allow",
         ...ctx.headers,
         ...reply.headers,
       };

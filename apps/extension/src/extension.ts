@@ -606,6 +606,10 @@ export function activate(context: vscode.ExtensionContext): void {
               channel.appendLine(`✕ ${r.endpoint} — erro: ${r.error}`);
               continue;
             }
+            if (r.skipped) {
+              channel.appendLine(`- ${r.endpoint} — pulado: ${r.skipped}`);
+              continue;
+            }
             const icon = r.breaking > 0 ? "✕" : r.warnings > 0 ? "⚠" : "✓";
             channel.appendLine(
               `${icon} ${r.endpoint} — ${r.compatible} compatible, ${r.warnings} warnings, ${r.breaking} breaking (${r.checked} verificados)`,
@@ -617,10 +621,15 @@ export function activate(context: vscode.ExtensionContext): void {
             }
           }
           channel.appendLine(`\n${total.compatible} compatible, ${total.warnings} warnings, ${total.breaking} breaking.`);
+          if (total.skipped > 0) channel.appendLine(`${total.skipped} endpoint(s) pulado(s).`);
           channel.show(true);
           if (total.breaking > 0) {
             void vscode.window.showWarningMessage(
               `DevMock: ${total.breaking} breaking change(s) na API real — ver Output.`,
+            );
+          } else if (total.checked === 0 && total.skipped > 0) {
+            void vscode.window.showWarningMessage(
+              `DevMock: nenhum endpoint validado (${total.skipped} pulado(s)).`,
             );
           } else {
             void vscode.window.showInformationMessage("DevMock: API real compatível com o contrato. ✓");

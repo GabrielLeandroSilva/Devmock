@@ -64,7 +64,7 @@ Sem contrato compartilhável, o backend não sabe o que implementar e o front n�
 - [ ] #task ⏫ `types.ts` compila limpo e reflete o enum de status 🏷️ fase/1
 - [ ] #task 🔼 Re-export sem mudança no Schema gera diff vazio 🏷️ fase/1
 - [x] #task 🔼 **[v1.2.0]** HTML docs: página única abre offline (sem rede) e re-export é idempotente 🏷️ fase/codigo
-- [ ] #task 🔼 **[v1.5.0]** Export com rota custom (`GET /v1/users`) e ação (`POST /auth/login`) refletidos no OpenAPI/MD/HTML 🏷️ fase/codigo
+- [x] #task 🔼 **[v1.5.0]** Export com rota custom (`GET /v1/users`) e ação (`POST /auth/login`) refletidos no OpenAPI/MD/HTML 🏷️ fase/codigo
 
 ## 8. Riscos e Dependências
 - Depende de PRD-01 (Schema + tipos de campo)

@@ -34,6 +34,21 @@ const order: Schema = {
   ],
 };
 
+const customRoutes: Schema = {
+  name: "Account",
+  fields: [{ name: "id", type: "uuid", required: true }],
+  routes: [
+    { method: "GET", path: "/v1/accounts", kind: "list", summary: "Lista contas" },
+    { method: "GET", path: "/v1/accounts/:id", kind: "item" },
+    {
+      method: "POST",
+      path: "/auth/login",
+      kind: "custom",
+      response: { status: 200, body: { token: "x" } },
+    },
+  ],
+};
+
 describe("buildOpenApi (PRD-05 RF-02)", () => {
   it("gera documento 3.x com paths CRUD e components", () => {
     const doc = buildOpenApi([user, order]) as any;
@@ -42,6 +57,14 @@ describe("buildOpenApi (PRD-05 RF-02)", () => {
     expect(Object.keys(doc.paths)).toContain("/users/{id}");
     expect(doc.paths["/users"].get.parameters.map((p: any) => p.name)).toEqual(["page", "limit"]);
     expect(doc.paths["/users"].post.responses["201"]).toBeDefined();
+    expect(doc.paths["/users/{id}"].put).toMatchObject({
+      requestBody: { required: true },
+      responses: { "200": { description: "User updated." } },
+    });
+    expect(doc.paths["/users/{id}"].patch).toMatchObject({
+      requestBody: { required: true },
+      responses: { "200": { description: "User updated." } },
+    });
     expect(doc.components.schemas.User.properties.balance).toMatchObject({ type: "number" });
     expect(doc.components.schemas.User.properties.status).toEqual({
       type: "string",
@@ -233,5 +256,138 @@ describe("idempotência + stale (PRD-05 §8)", () => {
     expect(after.User.markdown).toBeDefined();
     expect(after.User.openapi).toBe(after.User.markdown);
     expect(after.User.types).toBeUndefined();
+  });
+});
+
+describe("v1.5.0 — rotas custom no export", () => {
+  it("OpenAPI reflete paths, summary e response custom", async () => {
+    const doc = buildOpenApi([customRoutes]) as any;
+    expect(doc.paths["/v1/accounts"].get.summary).toBe("Lista contas");
+    expect(doc.paths["/v1/accounts/{id}"].get.parameters).toContainEqual({
+      name: "id",
+      in: "path",
+      required: true,
+      schema: { type: "string" },
+    });
+    expect(doc.paths["/auth/login"].post.responses["200"].content["application/json"].example).toEqual({
+      token: "x",
+    });
+    const api = (await SwaggerParser.validate(
+      JSON.parse(JSON.stringify(doc)),
+    )) as unknown as { openapi: string };
+    expect(api.openapi.startsWith("3.")).toBe(true);
+  }, 30000);
+
+  it("Markdown lista as rotas custom", () => {
+    const md = buildDocFor(customRoutes);
+    expect(md).toContain("## GET /v1/accounts");
+    expect(md).toContain("Lista contas");
+    expect(md).toContain("## POST /auth/login");
+  });
+
+  it("HTML lista as rotas custom", () => {
+    const html = buildHtmlDocs([customRoutes]);
+    expect(html).toContain("GET /v1/accounts");
+    expect(html).toContain("POST /auth/login");
+    expect(html).toContain("Lista contas");
+  });
+
+  it("Markdown ignora response fora de custom", () => {
+    const item: Schema = {
+      name: "Item",
+      fields: [{ name: "id", type: "uuid", required: true }],
+      routes: [
+        {
+          method: "GET",
+          path: "/items/:id",
+          kind: "item",
+          response: { status: 418, body: { teapot: true } },
+        },
+      ],
+    };
+    const md = buildDocFor(item);
+    expect(md).toContain("### Response 200");
+    expect(md).not.toContain("418");
+    expect(md).not.toContain("teapot");
+  });
+
+  it("OpenAPI sanitiza status inválido de rota custom", async () => {
+    const invalid: Schema = {
+      name: "X",
+      fields: [{ name: "id", type: "uuid", required: true }],
+      routes: [
+        {
+          method: "POST",
+          path: "/x",
+          kind: "custom",
+          response: { status: 999 as unknown as number, body: { ok: true } },
+        },
+      ],
+    };
+    const doc = buildOpenApi([invalid]) as any;
+    expect(doc.paths["/x"].post.responses["200"]).toBeDefined();
+    await SwaggerParser.validate(JSON.parse(JSON.stringify(doc)));
+  }, 30000);
+
+  it("OpenAPI recusa rota duplicada", () => {
+    const a: Schema = {
+      name: "A",
+      fields: [{ name: "id", type: "uuid", required: true }],
+      routes: [{ method: "GET", path: "/dup", kind: "list" }],
+    };
+    const b: Schema = {
+      name: "B",
+      fields: [{ name: "id", type: "uuid", required: true }],
+      routes: [{ method: "GET", path: "/dup", kind: "list" }],
+    };
+    expect(() => buildOpenApi([a, b])).toThrow(/duplicada/i);
+  });
+
+  it("HTML sem list não mostra paginação/Response 200", () => {
+    const onlyCustom: Schema = {
+      name: "Auth",
+      fields: [{ name: "id", type: "uuid", required: true }],
+      routes: [{ method: "POST", path: "/auth/login", kind: "custom", response: { status: 200 } }],
+    };
+    const html = buildHtmlDocs([onlyCustom]);
+    expect(html).toContain("POST /auth/login");
+    expect(html).not.toContain("Query Parameters");
+    expect(html).not.toContain("Response 200");
+  });
+
+  it("custom 204/304 não documenta body", () => {
+    const noContent: Schema = {
+      name: "Note",
+      fields: [{ name: "id", type: "uuid", required: true }],
+      routes: [
+        {
+          method: "DELETE",
+          path: "/notes/:id",
+          kind: "custom",
+          response: { status: 204, body: { deleted: true } },
+        },
+        {
+          method: "GET",
+          path: "/notes/:id/cache",
+          kind: "custom",
+          response: { status: 304, body: { cached: true } },
+        },
+      ],
+    };
+    const md = buildDocFor(noContent);
+    expect(md).toContain("### Response 204");
+    expect(md).not.toContain("deleted");
+    expect(md).toContain("### Response 304");
+    expect(md).not.toContain("cached");
+    const doc = buildOpenApi([noContent]) as any;
+    expect(doc.paths["/notes/{id}"].delete.responses["204"].content).toBeUndefined();
+    expect(doc.paths["/notes/{id}/cache"].get.responses["304"].content).toBeUndefined();
+
+    const html = buildHtmlDocs([noContent]);
+    expect(html).toContain("DELETE /notes/:id");
+    expect(html).toContain("GET /notes/:id/cache");
+    expect(html).not.toContain("Query Parameters");
+    expect(html).not.toContain("deleted");
+    expect(html).not.toContain("cached");
   });
 });

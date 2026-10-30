@@ -26,15 +26,15 @@ Hoje o Core já responde as 6 rotas, mas o path é fixo (`/${plural(name)}`) e a
 | **M3** | **Semântica**: PUT substitui, PATCH merge, JSON inválido → 400, `DELETE` coleção → 405, `custom` usa `response` (precedência request > endpoint > rota > default) | [[PRD-02-Mock-Server]] §3 | ✅ v1.5.0 (M3) |
 | **M4** | **UI**: clique em qualquer endpoint → menu (Switch scenario, Copy as cURL; browser só GET sem `:id`); `Switch Scenario` lista todas as rotas; cenário por método; descrição em todos os nós | [[PRD-03-VSCode-Extension]] §3 | ✅ v1.5.0 (M4) — host 60 |
 | **M5** | **Studio**: seção Rotas (método/path/kind/response), adicionar/remover, “Restaurar CRUD padrão”; salva `routes` só quando customizado | [[PRD-03-VSCode-Extension]] §3 | ⏳ v1.5.0 (M5) — implementado; aguarda Manual-Teste |
-| **M6** | **Propagação**: OpenAPI (paths por rota), MD/HTML (todas as rotas), `validate` (usa `kind: list`), CLI | [[PRD-05-Docs-Export]] §3 | exports assumem `plural` |
+| **M6** | **Propagação**: OpenAPI (paths por rota), MD/HTML (todas as rotas), `validate` (usa `kind: list`), CLI | [[PRD-05-Docs-Export]] §3 | ✅ v1.5.0 (M6) — core 193/CLI 20/host 62 |
 | **M7** | **Docs**: PRDs, manual, README/wiki, CHANGELOG, Log | — | — |
 
 ### Should
 | ID | Item | Origem |
 |----|------|--------|
-| **S1** | `Location` no POST 201; `Allow` no 405 | PRD-02 §12 |
+| **S1** | `Location` no POST 201 (exposto no CORS); `Allow` no 405 | PRD-02 §12 |
 | **S2** | `summary` por rota no OpenAPI/MD | PRD-05 §16 |
-| **S3** | Guia de migração (chaves usam o pattern canônico em minúsculas, inclusive nomes de param) | — |
+| **S3** | Guia de migração (chaves usam o pattern canônico em minúsculas, inclusive nomes de param) | — | ⏳ M7 (CHANGELOG/README) |
 
 ### Fora (v1.6+)
 - Auth/rate limit por rota; middlewares.
@@ -47,7 +47,7 @@ Hoje o Core já responde as 6 rotas, mas o path é fixo (`/${plural(name)}`) e a
 - **M3:** PUT substitui (mantém `id`), PATCH faz merge; POST/PUT/PATCH com JSON inválido → 400; `DELETE` coleção → 405 com `Allow`; `custom` usa `response` e cenário/endpoint sobrescrevem. **Status:** ✅ implementado, revisado e auditado.
 - **M4:** todo endpoint abre o menu; Switch Scenario lista todos os métodos; cenário aplica por endpoint; cURL copia método/URL/body; GET sem `:id` abre no browser. **Status:** ✅ implementado, revisado (Code-Reviewer) e auditado (QA-Testes; host **60**).
 - **M5:** Studio edita rotas, restaura o padrão e salva; schema sem customização continua sem `routes`. **Status:** ⏳ implementado/revisado; QA aceitou com dívida da Webview; falta o **Manual-Teste-v1.5**.
-- **M6:** OpenAPI/MD/HTML refletem rotas custom; validate usa a rota `list`; CLI export/validate acompanham.
+- **M6:** OpenAPI/MD/HTML refletem rotas custom; validate usa a rota `list`; CLI export/validate acompanham. **Status:** ✅ implementado, revisado (Code-Reviewer) e auditado (QA-Testes; core **193** · CLI **20** · host **62**).
 - **M7:** docs/superfícies sincronizadas.
 
 ## 4. Passos de execução (checklist)
@@ -56,10 +56,10 @@ Hoje o Core já responde as 6 rotas, mas o path é fixo (`/${plural(name)}`) e a
 - [x] #task ⏫ M3 — PUT replace, PATCH merge, 400/405, `response` custom + precedência 🏷️ fase/codigo
 - [x] #task ⏫ M4 — menu do endpoint + cURL + `Switch Scenario` todas as rotas 🏷️ fase/codigo
 - [/] #task ⏫ M5 — editor de rotas no Studio (webview + `StudioMessage`) 🏷️ fase/codigo
-- [/] #task ⏫ M6 — OpenAPI/MD/HTML/validate/CLI com rotas custom 🏷️ fase/codigo
-- [/] #task 🔼 S1 — `Location`/`Allow` 🏷️ fase/codigo
-- [/] #task 🔼 S2 — `summary` nas docs 🏷️ fase/codigo
-- [/] #task 🔼 Testes core + host + regressão (default intacto) 🏷️ fase/codigo
+- [x] #task ⏫ M6 — OpenAPI/MD/HTML/validate/CLI com rotas custom 🏷️ fase/codigo
+- [x] #task 🔼 S1 — `Location`/`Allow` 🏷️ fase/codigo
+- [x] #task 🔼 S2 — `summary` nas docs 🏷️ fase/codigo
+- [x] #task 🔼 Testes core + host + regressão (default intacto) 🏷️ fase/codigo
 - [/] #task 🔼 Manual-Teste-v1.5 + CHANGELOG + `package.json → 1.5.0` 🏷️ fase/codigo
 - [/] #task 🔼 README + wiki (Docs-Keeper) 🏷️ fase/codigo
 - [/] #task ⏫ Rodar Gate de Release (§5) 🏷️ fase/codigo

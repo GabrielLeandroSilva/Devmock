@@ -87,6 +87,7 @@ describe("PRD-02 RF-08 — rotas por Schema (v1.5.0)", () => {
     ["barra dupla", [{ method: "GET", path: "/v1//users", kind: "list" }], /\/\//],
     ["query", [{ method: "GET", path: "/users?x=1", kind: "list" }], /query/],
     ["path percent-encoded", [{ method: "GET", path: "/usu%C3%A1rios", kind: "list" }], /%/],
+    ["path com chaves", [{ method: "GET", path: "/users/{id}", kind: "custom" }], /:param/],
     ["path com espaço", [{ method: "GET", path: " /users ", kind: "list" }], /espaço/],
     ["kind inválido", [{ method: "GET", path: "/users", kind: "nope" }], /kind inválido/],
     ["método inválido", [{ method: "TRACE", path: "/users", kind: "custom" }], /Método inválido/],

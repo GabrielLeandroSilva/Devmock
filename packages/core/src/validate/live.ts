@@ -1,4 +1,4 @@
-import { plural } from "../mock/routes.js";
+import { routeKey, schemaRoutes } from "../mock/routes.js";
 import type { Schema } from "../types.js";
 import { compare, type Finding } from "./compare.js";
 
@@ -10,6 +10,8 @@ export interface EndpointReport {
   breaking: number;
   findings: Finding[];
   error?: string;
+  /** Motivo para não validar (ex.: Schema sem rota `kind: list`). */
+  skipped?: string;
 }
 
 export interface ValidationOptions {
@@ -37,7 +39,33 @@ export async function validateLive(
   const reports: EndpointReport[] = [];
 
   for (const schema of schemas) {
-    const endpoint = `GET /${plural(schema.name)}`;
+    const lists = schemaRoutes(schema).filter((route) => route.kind === "list");
+    const route = lists.find((item) => !String(item.path ?? "").includes(":")) ?? lists[0];
+    if (!route) {
+      reports.push({
+        endpoint: schema.name,
+        checked: 0,
+        compatible: 0,
+        warnings: 0,
+        breaking: 0,
+        findings: [],
+        skipped: "Sem rota de coleção (kind list).",
+      });
+      continue;
+    }
+    if (route.path.includes(":")) {
+      reports.push({
+        endpoint: routeKey(route),
+        checked: 0,
+        compatible: 0,
+        warnings: 0,
+        breaking: 0,
+        findings: [],
+        skipped: "Rota list aninhada não é validada (sem amostra de id).",
+      });
+      continue;
+    }
+    const endpoint = routeKey(route);
     const report: EndpointReport = {
       endpoint,
       checked: 0,
@@ -48,7 +76,9 @@ export async function validateLive(
     };
     let payload: unknown;
     try {
-      const res = await fetch(`${base}/${plural(schema.name)}`, { signal: AbortSignal.timeout(timeoutMs) });
+      const res = await fetch(`${base}${route.path}`, {
+        signal: AbortSignal.timeout(timeoutMs),
+      });
       const text = await res.text();
       try {
         payload = text ? JSON.parse(text) : null;
@@ -96,10 +126,18 @@ function unwrap(payload: unknown): unknown[] {
 }
 
 /** Agregado no formato do §23: "X compatible, Y warnings, Z breaking". */
-export function summarize(reports: EndpointReport[]): { compatible: number; warnings: number; breaking: number } {
+export function summarize(reports: EndpointReport[]): {
+  compatible: number;
+  warnings: number;
+  breaking: number;
+  skipped: number;
+  checked: number;
+} {
   return {
     compatible: reports.reduce((n, r) => n + r.compatible, 0),
     warnings: reports.reduce((n, r) => n + r.warnings, 0),
     breaking: reports.reduce((n, r) => n + r.breaking, 0) + reports.filter((r) => r.error).length,
+    skipped: reports.filter((r) => r.skipped).length,
+    checked: reports.reduce((n, r) => n + r.checked, 0),
   };
 }

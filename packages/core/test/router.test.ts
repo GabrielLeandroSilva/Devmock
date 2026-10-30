@@ -56,6 +56,9 @@ describe("router por Schema (v1.5.0 M2)", () => {
         body: JSON.stringify({ name: "Novo" }),
       });
       expect(created.status).toBe(201);
+      expect(created.headers.get("location")).toMatch(/^\/v1\/users\/[^/]+$/);
+      expect(created.headers.get("access-control-expose-headers")).toContain("location");
+      expect(created.headers.get("access-control-expose-headers")).toContain("allow");
 
       const patched = await fetch(`${base}/v1/users/${id}`, {
         method: "PATCH",
@@ -598,6 +601,7 @@ describe("router por Schema (v1.5.0 M2)", () => {
       expect(allow).toMatch(/POST/);
       expect(allow).toMatch(/OPTIONS/);
       expect(await res.json()).toMatchObject({ error: "METHOD_NOT_ALLOWED" });
+      expect(res.headers.get("access-control-expose-headers")).toContain("location");
       expect(res.headers.get("access-control-expose-headers")).toContain("allow");
       expect(server.logs().at(-1)?.status).toBe(405);
     } finally {
