@@ -65,24 +65,25 @@ export function buildTree(state: TreeState, el?: TreeNode): TreeNode[] {
         schemaRoutes(s).map((route) => {
           const key = routeKey(route);
           const isGet = String(route.method).toUpperCase() === "GET";
-          const openable = isGet && !String(route.path).includes(":");
           return {
             label: routeLabel(route),
-            description: isGet ? `cenário: ${scenarioOf(cfg.activeScenarios, key)}` : undefined,
+            description: `cenário: ${scenarioOf(cfg.activeScenarios, key)}`,
             contextValue: isGet ? "endpointGet" : "endpoint",
-            command: openable
-              ? { command: "devmock.openEndpoint", title: "Abrir no navegador", arguments: [key] }
-              : undefined,
+            schemaName: s.name,
+            command: {
+              command: "devmock.endpointActions",
+              title: "Ações do endpoint",
+              arguments: [key, s.name],
+            },
           };
         }),
       );
     case "Scenarios": {
       const active = cfg.activeScenarios ?? {};
       return SCENARIO_NAMES.map((name) => {
-        const count = state.schemas.filter((s) => {
-          const route = listRoute(s);
-          return route ? scenarioOf(active, routeKey(route)) === name : false;
-        }).length;
+        const count = state.schemas.filter((s) =>
+          schemaRoutes(s).some((route) => active[routeKey(route)] === name),
+        ).length;
         return {
           label: (count > 0 ? "✓ " : "") + name,
           description: count > 0 ? `${count} schema(s)` : undefined,

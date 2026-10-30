@@ -6,6 +6,7 @@ import {
   DEFAULT_CONFIG,
   SCENARIO_NAMES,
   createMockServer,
+  generate,
   generatorNames,
   routesFor,
   type MockServer,
@@ -27,7 +28,7 @@ import {
   formatLogEntry,
 } from "./ops.js";
 import { buildTree, type TreeNode } from "./tree.js";
-import { buildActions, buildQuickPickItems, buildScenarioPick } from "./actions.js";
+import { buildActions, buildCurl, buildEndpointMenu, buildQuickPickItems, buildScenarioPick } from "./actions.js";
 import {
   devmockDir,
   listSchemas,
@@ -271,6 +272,47 @@ export function activate(context: vscode.ExtensionContext): void {
       }
       await vscode.env.openExternal(vscode.Uri.parse(url));
     }),
+    vscode.commands.registerCommand("devmock.endpointActions", async (key?: string, schemaName?: string) => {
+      if (!key) return;
+      const [method, path] = key.split(" ", 2);
+      if (!method || !path) return;
+      const items = buildEndpointMenu(method, path).map((item) => ({
+        label: item.icon ? `$(${item.icon}) ${item.label}` : item.label,
+        description: item.description,
+        action: item.action,
+      }));
+      const picked = await vscode.window.showQuickPick(items, { placeHolder: key });
+      if (!picked) return;
+
+      if (picked.action === "scenario") {
+        await vscode.commands.executeCommand("devmock.switchScenario", key);
+        return;
+      }
+      if (picked.action === "browser") {
+        await vscode.commands.executeCommand("devmock.openEndpoint", key);
+        return;
+      }
+
+      const root = workspaceRoot();
+      if (!root) return;
+      const cfg = readConfig(root);
+      const port = state.port ?? cfg.port;
+      let body: string | undefined;
+      const normalized = method.toUpperCase();
+      if (normalized === "POST" || normalized === "PUT" || normalized === "PATCH") {
+        const schema = listSchemas(root).find((s) => s.name === schemaName);
+        if (schema) {
+          const sample = { ...generate(schema, 1, cfg.seedDefault)[0] };
+          delete sample.id;
+          body = JSON.stringify(sample);
+        }
+      }
+      const command = buildCurl(method, `http://localhost:${port}${path}`, body);
+      await vscode.env.clipboard.writeText(command);
+      void vscode.window.showInformationMessage(
+        `DevMock: cURL copiado (POSIX)${state.server ? "" : " — servidor parado"}.`,
+      );
+    }),
     vscode.commands.registerCommand("devmock.init", async () => {
       const root = workspaceRoot();
       if (!root) {
@@ -426,15 +468,17 @@ export function activate(context: vscode.ExtensionContext): void {
       }
       refresh();
     }),
-    vscode.commands.registerCommand("devmock.switchScenario", async () => {
+    vscode.commands.registerCommand("devmock.switchScenario", async (routeArg?: string) => {
       const root = workspaceRoot();
       if (!root || !existsSync(devmockDir(root))) {
         void vscode.window.showErrorMessage("DevMock: rode `DevMock: Initialize Project` primeiro.");
         return;
       }
       const schemas = listSchemas(root);
-      const endpoints = schemas.flatMap((s) => routesFor(s).filter((r) => r.startsWith("GET ")));
-      const endpoint = await vscode.window.showQuickPick(endpoints, { placeHolder: "Endpoint" });
+      const endpoints = schemas.flatMap((s) => routesFor(s));
+      const endpoint =
+        routeArg ??
+        (await vscode.window.showQuickPick(endpoints, { placeHolder: "Endpoint" }));
       if (!endpoint) return;
       const scenario = await vscode.window.showQuickPick(
         SCENARIO_NAMES,

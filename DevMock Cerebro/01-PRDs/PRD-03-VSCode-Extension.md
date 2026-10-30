@@ -64,9 +64,9 @@ Dev precisa de experiência visual simples (TreeView) + edição direta dos arqu
 | RF-13 | Clique num **cenário** → multi-seleção de Schemas → aplica no `GET` de coleção; grava `config.json` uma vez; recarrega o server vivo | Must | v1.4.0 |
 | RF-14 | Nó de cenário com `contextValue` e descrição `N schema(s)` | Should | v1.4.0 |
 | RF-15 | Studio edita **rotas** (método/path/kind/response), restaura o CRUD padrão e salva | Must | v1.5.0 |
-| RF-16 | Clique em **qualquer endpoint** abre menu: Switch scenario, Copy as cURL; browser só GET sem `:id` | Must | v1.5.0 |
+| RF-16 | Clique em **qualquer endpoint** abre menu: Switch scenario, Copy as cURL (POSIX); browser só GET sem `:id`. URL/cURL usam a chave canônica minúscula; o label preserva o case | Must | v1.5.0 |
 | RF-17 | `Switch Scenario…` lista **todas** as rotas; cenário é por endpoint (qualquer método) | Must | v1.5.0 |
-| RF-18 | Nós de Endpoint mostram cenário/descrição em todos os métodos | Should | v1.5.0 |
+| RF-18 | Nós de Endpoint mostram cenário/descrição em todos os métodos; o resumo de **Scenarios** conta Schemas com cenário explícito em qualquer rota | Should | v1.5.0 |
 
 ## 5. Requisitos Não-Funcionais
 - Ativação <500ms; Tree atualiza em <200ms após salvar arquivo
@@ -89,8 +89,8 @@ Dev precisa de experiência visual simples (TreeView) + edição direta dos arqu
 - [x] #task 🔼 **[v1.4.0]** Clique no cenário aplica aos Schemas selecionados (GET de coleção) sem restart 🏷️ fase/codigo
 - [x] #task 🔼 **[v1.4.0]** Nó de cenário com `contextValue` e descrição `N schema(s)` 🏷️ fase/codigo
 - [ ] #task 🔼 **[v1.5.0]** Studio edita rotas (método/path/kind/response) e restaura o padrão 🏷️ fase/codigo
-- [ ] #task 🔼 **[v1.5.0]** Clique em POST/PATCH/DELETE abre menu (cenário/cURL); GET abre no browser 🏷️ fase/codigo
-- [ ] #task 🔼 **[v1.5.0]** `Switch Scenario…` lista todas as rotas e aplica por endpoint 🏷️ fase/codigo
+- [x] #task 🔼 **[v1.5.0]** Clique em POST/PATCH/DELETE abre menu (cenário/cURL); GET abre no browser 🏷️ fase/codigo
+- [x] #task 🔼 **[v1.5.0]** `Switch Scenario…` lista todas as rotas e aplica por endpoint 🏷️ fase/codigo
 
 ## 8. Riscos e Dependências
 - Depende de PRD-01 (formato de Schema) e PRD-02 (start/stop)

@@ -189,6 +189,165 @@ suite("comandos no host (API real do VS Code)", () => {
     }
   });
 
+  test("switchScenario lista todas as rotas e aplica por método", async () => {
+    const root = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+    assert.ok(root, "fixture workspace deve estar aberto");
+    const configPath = join(root, ".devmock", "config.json");
+    const before = readFileSync(configPath, "utf8");
+    const windowApi = vscode.window as unknown as {
+      showQuickPick: (...args: unknown[]) => Promise<unknown>;
+    };
+    const original = windowApi.showQuickPick;
+    let endpoints: string[] = [];
+    let call = 0;
+    windowApi.showQuickPick = async (...args: unknown[]) => {
+      call += 1;
+      if (call === 1) {
+        endpoints = args[0] as string[];
+        return "POST /users";
+      }
+      return "Forbidden";
+    };
+    try {
+      await vscode.commands.executeCommand("devmock.switchScenario");
+      assert.deepStrictEqual([...endpoints].sort(), [
+        "DELETE /users/:id",
+        "GET /users",
+        "GET /users/:id",
+        "PATCH /users/:id",
+        "POST /users",
+        "PUT /users/:id",
+      ]);
+      const cfg = JSON.parse(readFileSync(configPath, "utf8")) as {
+        activeScenarios: Record<string, string>;
+      };
+      assert.strictEqual(cfg.activeScenarios["POST /users"], "Forbidden");
+    } finally {
+      writeFileSync(configPath, before);
+      windowApi.showQuickPick = original;
+    }
+  });
+
+  test("endpointActions copia cURL de POST com body sem id", async () => {
+    const windowApi = vscode.window as unknown as {
+      showQuickPick: (...args: unknown[]) => Promise<unknown>;
+    };
+    const originalShow = windowApi.showQuickPick;
+    windowApi.showQuickPick = async (...args: unknown[]) => {
+      const items = args[0] as { action?: string }[];
+      return items.find((item) => item.action === "curl");
+    };
+    try {
+      await vscode.commands.executeCommand("devmock.endpointActions", "POST /users", "User");
+      const copied = await vscode.env.clipboard.readText();
+      assert.match(copied, /^curl -X POST 'http:\/\/localhost:4123\/users'/);
+      assert.match(copied, /Content-Type: application\/json/);
+      assert.match(copied, /-d '/);
+      assert.match(copied, /"name":/);
+      assert.doesNotMatch(copied, /"id"/);
+    } finally {
+      windowApi.showQuickPick = originalShow;
+    }
+  });
+
+  test("endpointActions não oferece browser em GET com :id", async () => {
+    const windowApi = vscode.window as unknown as {
+      showQuickPick: (...args: unknown[]) => Promise<unknown>;
+    };
+    const original = windowApi.showQuickPick;
+    let actions: string[] = [];
+    windowApi.showQuickPick = async (...args: unknown[]) => {
+      actions = (args[0] as { action?: string }[]).map((item) => item.action ?? "");
+      return undefined;
+    };
+    try {
+      await vscode.commands.executeCommand("devmock.endpointActions", "GET /users/:id", "User");
+      assert.deepStrictEqual(actions, ["scenario", "curl"]);
+    } finally {
+      windowApi.showQuickPick = original;
+    }
+  });
+
+  test("endpointActions encaminha browser do GET de coleção para a rota", async () => {
+    const windowApi = vscode.window as unknown as {
+      showQuickPick: (...args: unknown[]) => Promise<unknown>;
+    };
+    const commandsApi = vscode.commands as unknown as {
+      executeCommand: (command: string, ...args: unknown[]) => Thenable<unknown>;
+    };
+    const originalShow = windowApi.showQuickPick;
+    const originalExecute = commandsApi.executeCommand;
+    let openedRoute: unknown;
+    windowApi.showQuickPick = async (...args: unknown[]) =>
+      (args[0] as { action?: string }[]).find((item) => item.action === "browser");
+    commandsApi.executeCommand = (command, ...args) => {
+      if (command === "devmock.endpointActions") {
+        return originalExecute.call(vscode.commands, command, ...args);
+      }
+      if (command === "devmock.openEndpoint") {
+        openedRoute = args[0];
+        return Promise.resolve(undefined);
+      }
+      return originalExecute.call(vscode.commands, command, ...args);
+    };
+    try {
+      await vscode.commands.executeCommand("devmock.endpointActions", "GET /users", "User");
+      assert.strictEqual(openedRoute, "GET /users");
+    } finally {
+      windowApi.showQuickPick = originalShow;
+      commandsApi.executeCommand = originalExecute;
+    }
+  });
+
+  test("endpointActions copia GET :id e DELETE sem expandir $ nem incluir body", async () => {
+    const windowApi = vscode.window as unknown as {
+      showQuickPick: (...args: unknown[]) => Promise<unknown>;
+    };
+    const original = windowApi.showQuickPick;
+    windowApi.showQuickPick = async (...args: unknown[]) =>
+      (args[0] as { action?: string }[]).find((item) => item.action === "curl");
+    try {
+      await vscode.commands.executeCommand(
+        "devmock.endpointActions",
+        "GET /users/:id?owner=$HOME",
+        "User",
+      );
+      assert.strictEqual(
+        await vscode.env.clipboard.readText(),
+        "curl -X GET 'http://localhost:4123/users/:id?owner=$HOME'",
+      );
+
+      await vscode.commands.executeCommand("devmock.endpointActions", "DELETE /users/:id", "User");
+      const deleted = await vscode.env.clipboard.readText();
+      assert.strictEqual(deleted, "curl -X DELETE 'http://localhost:4123/users/:id'");
+      assert.doesNotMatch(deleted, /Content-Type|-d /);
+    } finally {
+      windowApi.showQuickPick = original;
+    }
+  });
+
+  test("switchScenario com rota do menu aplica direto", async () => {
+    const root = vscode.workspace.workspaceFolders?.[0]?.uri.fsPath;
+    assert.ok(root, "fixture workspace deve estar aberto");
+    const configPath = join(root, ".devmock", "config.json");
+    const before = readFileSync(configPath, "utf8");
+    const windowApi = vscode.window as unknown as {
+      showQuickPick: (...args: unknown[]) => Promise<unknown>;
+    };
+    const original = windowApi.showQuickPick;
+    windowApi.showQuickPick = async () => "Forbidden";
+    try {
+      await vscode.commands.executeCommand("devmock.switchScenario", "PATCH /users/:id");
+      const cfg = JSON.parse(readFileSync(configPath, "utf8")) as {
+        activeScenarios: Record<string, string>;
+      };
+      assert.strictEqual(cfg.activeScenarios["PATCH /users/:id"], "Forbidden");
+    } finally {
+      writeFileSync(configPath, before);
+      windowApi.showQuickPick = original;
+    }
+  });
+
   test("refresh não quebra e painel Studio abre", async () => {
     await vscode.commands.executeCommand("devmock.refresh");
     await vscode.commands.executeCommand("devmock.createSchema");

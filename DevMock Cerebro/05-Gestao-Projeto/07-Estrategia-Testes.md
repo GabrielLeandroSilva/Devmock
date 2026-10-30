@@ -91,6 +91,12 @@ Cada PRD ([[Indice-PRDs]]) confrontado com os testes existentes. **S2 entregue e
 | 03 | RF-05 Edição manual do JSON recarrega a Tree | `tree.test.ts` (builder com snapshot fresco; watcher = glue do host) | ✅ |
 | 03 | RF-06 Create API (From scratch/Import/Detect) | `detect.test.ts` (core) · `ops.test.ts` (host, W2) | ✅ |
 | 03 | §7 CTA sem `.devmock/` | `tree.test.ts` "sem .devmock oferece inicializar" | ✅ |
+| 03 | RF-12 Ações no header | `actions.test.ts` · `commands.test.ts` "Ações encaminha…" | ✅ |
+| 03 | RF-13 Cenário por clique | `actions.test.ts` "cenário: pick…" · `commands.test.ts` "applyScenario…" | ✅ |
+| 03 | RF-14 Nó de cenário com contagem | `tree.test.ts` "Scenarios marca o ativo…" | ✅ |
+| 03 | RF-16 Menu do endpoint/cURL/browser | `actions.test.ts` (menu/cURL) · `commands.test.ts` (cURL/clipboard/browser) | ✅ |
+| 03 | RF-17 `Switch Scenario` todas as rotas | `commands.test.ts` "switchScenario lista todas as rotas…" · "com rota do menu…" | ✅ |
+| 03 | RF-18 Cenário em todos os métodos + contador | `tree.test.ts` (métodos, contador por rota) | ✅ |
 | 04 | RF-01 CRUD de cenário | `ops.test.ts` "switch grava activeScenarios" | ✅ |
 | 04 | RF-02 Troca <500ms sem restart | `mockServer.test.ts` "troca de cenário sem restart" | ✅ |
 | 04 | RF-03 `Empty` → 200 `{data:[],total:0}` | `mockServer.test.ts` "Empty retorna envelope vazio com 200" | ✅ |

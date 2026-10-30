@@ -24,7 +24,7 @@ Hoje o Core já responde as 6 rotas, mas o path é fixo (`/${plural(name)}`) e a
 | **M1** | **`Schema.routes`**: `{ method, path, kind, response?, summary? }[]`; ausente = CRUD padrão (6 rotas); validação (path, `kind`×método, `method+path` único, `:param`) | [[PRD-02-Mock-Server]] §3 | ✅ v1.5.0 (M1) — core 140/host 44 |
 | **M2** | **Router**: tabela método+pattern, `:param`, estático vence param, params extraídos, chave de log/config = pattern; ligar `validateProject` no load (server/extension) | [[PRD-02-Mock-Server]] §3 | ✅ v1.5.0 (M2) — core 180/CLI 18/host 45 |
 | **M3** | **Semântica**: PUT substitui, PATCH merge, JSON inválido → 400, `DELETE` coleção → 405, `custom` usa `response` (precedência request > endpoint > rota > default) | [[PRD-02-Mock-Server]] §3 | ✅ v1.5.0 (M3) |
-| **M4** | **UI**: clique em qualquer endpoint → menu (Switch scenario, Copy as cURL; browser só GET sem `:id`); `Switch Scenario` lista todas as rotas; cenário por método; descrição em todos os nós | [[PRD-03-VSCode-Extension]] §3 | só GET tem ação/cenário |
+| **M4** | **UI**: clique em qualquer endpoint → menu (Switch scenario, Copy as cURL; browser só GET sem `:id`); `Switch Scenario` lista todas as rotas; cenário por método; descrição em todos os nós | [[PRD-03-VSCode-Extension]] §3 | ✅ v1.5.0 (M4) — host 60 |
 | **M5** | **Studio**: seção Rotas (método/path/kind/response), adicionar/remover, “Restaurar CRUD padrão”; salva `routes` só quando customizado | [[PRD-03-VSCode-Extension]] §3 | formulário só name/fields |
 | **M6** | **Propagação**: OpenAPI (paths por rota), MD/HTML (todas as rotas), `validate` (usa `kind: list`), CLI | [[PRD-05-Docs-Export]] §3 | exports assumem `plural` |
 | **M7** | **Docs**: PRDs, manual, README/wiki, CHANGELOG, Log | — | — |
@@ -45,7 +45,7 @@ Hoje o Core já responde as 6 rotas, mas o path é fixo (`/${plural(name)}`) e a
 - **M1:** `routes` ausente mantém as 6 rotas; `routes` presente substitui o conjunto; validação rejeita path inválido, `kind` incompatível e `method+path` duplicado; `:param` aceito. **Status:** ✅ implementado, revisado (Code-Reviewer) e auditado (QA-Testes; core **140**, host **44**).
 - **M2:** `GET /v1/users` e `GET /v1/users/:id` resolvem o mesmo Schema; rota estática vence `:param`; log/config usam `"METHOD /pattern"`. **Status:** ✅ implementado, revisado (Code-Reviewer) e auditado (QA-Testes; core **180** · CLI **18** · host **45**).
 - **M3:** PUT substitui (mantém `id`), PATCH faz merge; POST/PUT/PATCH com JSON inválido → 400; `DELETE` coleção → 405 com `Allow`; `custom` usa `response` e cenário/endpoint sobrescrevem. **Status:** ✅ implementado, revisado e auditado.
-- **M4:** todo endpoint abre o menu; Switch Scenario lista todos os métodos; cenário aplica por endpoint; cURL copia método/URL/body; GET sem `:id` abre no browser.
+- **M4:** todo endpoint abre o menu; Switch Scenario lista todos os métodos; cenário aplica por endpoint; cURL copia método/URL/body; GET sem `:id` abre no browser. **Status:** ✅ implementado, revisado (Code-Reviewer) e auditado (QA-Testes; host **60**).
 - **M5:** Studio edita rotas, restaura o padrão e salva; schema sem customização continua sem `routes`.
 - **M6:** OpenAPI/MD/HTML refletem rotas custom; validate usa a rota `list`; CLI export/validate acompanham.
 - **M7:** docs/superfícies sincronizadas.
@@ -54,7 +54,7 @@ Hoje o Core já responde as 6 rotas, mas o path é fixo (`/${plural(name)}`) e a
 - [x] #task ⏫ M1 — tipos `SchemaRoute`/`RouteKind` + defaults + validação + helpers (`routesFor`, `listRoute`) 🏷️ fase/codigo
 - [x] #task ⏫ M2 — router por método+pattern (estático > `:param`) + store/params 🏷️ fase/codigo
 - [x] #task ⏫ M3 — PUT replace, PATCH merge, 400/405, `response` custom + precedência 🏷️ fase/codigo
-- [/] #task ⏫ M4 — menu do endpoint + cURL + `Switch Scenario` todas as rotas 🏷️ fase/codigo
+- [x] #task ⏫ M4 — menu do endpoint + cURL + `Switch Scenario` todas as rotas 🏷️ fase/codigo
 - [/] #task ⏫ M5 — editor de rotas no Studio (webview + `StudioMessage`) 🏷️ fase/codigo
 - [/] #task ⏫ M6 — OpenAPI/MD/HTML/validate/CLI com rotas custom 🏷️ fase/codigo
 - [/] #task 🔼 S1 — `Location`/`Allow` 🏷️ fase/codigo

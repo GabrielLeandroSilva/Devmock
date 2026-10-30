@@ -64,19 +64,78 @@ suite("Tree (builder puro) — T3a", () => {
     });
   });
 
-  test("Endpoints: GET coleção abre no navegador; :id não abre", () => {
+  test("Endpoints: todos abrem o menu de ações e mostram cenário", () => {
     const nodes = buildTree(state(), { label: "Endpoints" });
     assert.strictEqual(nodes.length, 6);
+    for (const node of nodes) {
+      assert.strictEqual(node.command?.command, "devmock.endpointActions");
+      assert.match(node.description ?? "", /^cenário: /);
+    }
+    assert.deepStrictEqual(
+      nodes.find((n) => n.label === "GET /users")?.command?.arguments,
+      ["GET /users", "User"],
+    );
+    assert.deepStrictEqual(
+      nodes.find((n) => n.label === "POST /users")?.command?.arguments,
+      ["POST /users", "User"],
+    );
     const collection = nodes.find((n) => n.label === "GET /users");
-    assert.strictEqual(collection?.contextValue, "endpointGet");
-    assert.strictEqual(collection?.command?.command, "devmock.openEndpoint");
     assert.strictEqual(collection?.description, "cenário: Empty");
     const byId = nodes.find((n) => n.label === "GET /users/:id");
     assert.strictEqual(byId?.contextValue, "endpointGet");
-    assert.strictEqual(byId?.command, undefined);
     const post = nodes.find((n) => n.label === "POST /users");
     assert.strictEqual(post?.contextValue, "endpoint");
-    assert.strictEqual(post?.description, undefined);
+    assert.strictEqual(post?.description, "cenário: Default");
+  });
+
+  test("Endpoints: label preserva o case; argumento é a chave canônica", () => {
+    const custom = state({
+      schemas: [
+        {
+          name: "User",
+          fields: [{ name: "id", type: "uuid", required: true }],
+          routes: [{ method: "GET", path: "/Users", kind: "list" }],
+        },
+      ],
+      config: { ...DEFAULT_CONFIG, activeScenarios: { "GET /users": "Empty" } },
+    });
+    const [node] = buildTree(custom, { label: "Endpoints" });
+    assert.strictEqual(node.label, "GET /Users");
+    assert.deepStrictEqual(node.command?.arguments, ["GET /users", "User"]);
+    assert.strictEqual(node.description, "cenário: Empty");
+  });
+
+  test("Scenarios conta Schema com cenário em qualquer método", () => {
+    const nodes = buildTree(
+      state({ config: { ...DEFAULT_CONFIG, activeScenarios: { "POST /users": "Forbidden" } } }),
+      { label: "Scenarios" },
+    );
+    const node = nodes.find((n) => n.label === "✓ Forbidden");
+    assert.ok(node);
+    assert.strictEqual(node?.description, "1 schema(s)");
+  });
+
+  test("Scenarios conta um Schema uma única vez mesmo com várias rotas no mesmo cenário", () => {
+    const multiRoute: Schema = {
+      name: "User",
+      fields: [{ name: "id", type: "uuid", required: true }],
+      routes: [
+        { method: "POST", path: "/users", kind: "create" },
+        { method: "DELETE", path: "/users/:id", kind: "delete" },
+      ],
+    };
+    const nodes = buildTree(
+      state({
+        schemas: [multiRoute],
+        config: {
+          ...DEFAULT_CONFIG,
+          activeScenarios: { "POST /users": "Forbidden", "DELETE /users/:id": "Forbidden" },
+        },
+      }),
+      { label: "Scenarios" },
+    );
+    const forbidden = nodes.find((node) => node.label === "✓ Forbidden");
+    assert.strictEqual(forbidden?.description, "1 schema(s)");
   });
 
   test("Scenarios marca o ativo, conta Schemas e aplica no clique", () => {
@@ -94,14 +153,14 @@ suite("Tree (builder puro) — T3a", () => {
     assert.deepStrictEqual(idle?.command?.arguments, ["Default"]);
   });
 
-  test("Scenarios: ✓ acompanha a contagem (só GET de coleção)", () => {
+  test("Scenarios: ✓ acompanha a contagem (qualquer rota)", () => {
     const nodes = buildTree(
       state({ config: { ...DEFAULT_CONFIG, activeScenarios: { "GET /users/:id": "Empty" } } }),
       { label: "Scenarios" },
     );
-    const empty = nodes.find((n) => n.label === "Empty");
+    const empty = nodes.find((n) => n.label === "✓ Empty");
     assert.ok(empty);
-    assert.strictEqual(empty?.description, undefined);
+    assert.strictEqual(empty?.description, "1 schema(s)");
   });
 
   test("Scenarios: descrição conta cada Schema com o cenário ativo", () => {
