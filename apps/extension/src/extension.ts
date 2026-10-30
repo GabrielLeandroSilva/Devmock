@@ -11,6 +11,7 @@ import {
   routesFor,
   type MockServer,
   type Schema,
+  type SchemaRoute,
 } from "@devmock/core";
 import { handleStudioMessage } from "./studio.js";
 import {
@@ -724,6 +725,22 @@ function openSchemaForm(
     <div class="flex gap mt"><button id="add" class="btn btn-secondary">+ campo</button></div>
   </div>
   <div class="card">
+    <div class="justify-between">
+      <h3 class="subtitle">Rotas</h3>
+      <label class="checkbox"><input type="checkbox" id="customRoutes" /> Customizar rotas</label>
+    </div>
+    <p class="muted">Sem customização, o CRUD padrão é gerado a partir do model.</p>
+    <div id="routesBox" class="hidden">
+      <table class="grid" id="routes">
+        <tr><th>método</th><th>path</th><th>kind</th><th>status</th><th>body (JSON)</th><th></th></tr>
+      </table>
+      <div class="flex gap mt">
+        <button id="addRoute" class="btn btn-secondary">+ rota</button>
+        <button id="resetRoutes" class="btn btn-secondary">Usar CRUD padrão</button>
+      </div>
+    </div>
+  </div>
+  <div class="card">
     <h3 class="subtitle">Gerar preview</h3>
     <div class="flex gap">
       <label class="field">Records <input id="records" type="number" value="5" min="1" max="100" /></label>
@@ -737,12 +754,12 @@ function openSchemaForm(
     <div id="msg" class="alert hidden mt"></div>
   </div>
 </div>
-<script nonce="${nonce}">window.DM_GENERATORS = ${JSON.stringify(GENERATORS)}; window.DM_TYPES = ${JSON.stringify(TYPES)}; window.DM_SEED = ${JSON.stringify(cfg.seedDefault)}; window.DM_INITIAL = ${JSON.stringify(initial ?? null)}; window.DM_EDITING = ${JSON.stringify(initial?.name ?? null)};</script>
+<script nonce="${nonce}">window.DM_GENERATORS = ${jsonForHtml(GENERATORS)}; window.DM_TYPES = ${jsonForHtml(TYPES)}; window.DM_SEED = ${jsonForHtml(cfg.seedDefault)}; window.DM_INITIAL = ${jsonForHtml(initial ?? null)}; window.DM_EDITING = ${jsonForHtml(initial?.name ?? null)};</script>
 <script src="${jsUri}"></script>
 </body></html>`;
 
   panel.webview.onDidReceiveMessage(
-    (msg: { kind: string; model: string; fields: Record<string, unknown>[]; records?: number; seed?: number | string; silent?: boolean }) => {
+    (msg: { kind: string; model: string; fields: Record<string, unknown>[]; routes?: SchemaRoute[]; records?: number; seed?: number | string; silent?: boolean }) => {
       const reply = handleStudioMessage(msg, {
         root,
         seedDefault: cfg.seedDefault,
@@ -759,3 +776,11 @@ function openSchemaForm(
 }
 
 export function deactivate(): void {}
+
+/** JSON seguro para <script> inline: nao fecha a tag nem quebra linha. */
+function jsonForHtml(value: unknown): string {
+  return JSON.stringify(value)
+    .replace(/</g, "\\u003c")
+    .replace(/\u2028/g, "\\u2028")
+    .replace(/\u2029/g, "\\u2029");
+}
