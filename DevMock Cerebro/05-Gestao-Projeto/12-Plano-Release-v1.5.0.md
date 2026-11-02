@@ -48,7 +48,7 @@ Hoje o Core já responde as 6 rotas, mas o path é fixo (`/${plural(name)}`) e a
 - **M4:** todo endpoint abre o menu; Switch Scenario lista todos os métodos; cenário aplica por endpoint; cURL copia método/URL/body; GET sem `:id` abre no browser. **Status:** ✅ implementado, revisado (Code-Reviewer) e auditado (QA-Testes; host **60**).
 - **M5:** Studio edita rotas, restaura o padrão e salva; schema sem customização continua sem `routes`. **Status:** ✅ implementado/revisado/auditado; **Manual-Teste-v1.5 aprovado em 2026-11-02** (dívida: IIFE da Webview sem teste automatizado).
 - **M6:** OpenAPI/MD/HTML refletem rotas custom; validate usa a rota `list`; CLI export/validate acompanham. **Status:** ✅ implementado, revisado (Code-Reviewer) e auditado (QA-Testes; core **193** · CLI **20** · host **62**).
-- **M7:** docs/superfícies sincronizadas. **Status:** ✅ READMEs/wiki/CHANGELOG/versão; Manual aprovado; tag `ext-v1.5.0`.
+- **M7:** docs/superfícies sincronizadas. **Status:** ✅ READMEs/wiki/CHANGELOG/versão; Manual aprovado; **v1.5.0 publicada** (run [41480241608](https://github.com/GabrielLeandroSilva/Devmock/actions/runs/41480241608)).
 
 ## 4. Passos de execução (checklist)
 - [x] #task ⏫ M1 — tipos `SchemaRoute`/`RouteKind` + defaults + validação + helpers (`routesFor`, `listRoute`) 🏷️ fase/codigo
@@ -63,7 +63,7 @@ Hoje o Core já responde as 6 rotas, mas o path é fixo (`/${plural(name)}`) e a
 - [x] #task 🔼 Manual-Teste-v1.5 (F5 no host) 🏷️ fase/codigo
 - [x] #task 🔼 CHANGELOG + `apps/extension/package.json` = `1.5.0` 🏷️ fase/codigo
 - [x] #task 🔼 README (raiz + extension) + wiki 🏷️ fase/codigo
-- [/] #task ⏫ Rodar Gate de Release (§5) 🏷️ fase/codigo
+- [x] #task ⏫ Rodar Gate de Release (§5) 🏷️ fase/codigo
 
 ## 5. Gate de Release
 - [x] Manual-Teste-v1.5 100% (rotas custom + POST/PATCH/DELETE + Studio)
@@ -72,7 +72,7 @@ Hoje o Core já responde as 6 rotas, mas o path é fixo (`/${plural(name)}`) e a
 - [x] CHANGELOG + `apps/extension/package.json` = `1.5.0`
 - [x] README (raiz + extension) e wiki sincronizados
 - [x] `Log-Versionamento` atualizado
-- [ ] Tag `ext-v1.5.0` (trava `tag == versão`) → `publish.yml`
+- [x] Tag `ext-v1.5.0` (trava `tag == versão`) → `publish.yml`
 - [ ] Post de lançamento ([[Agente-LinkedIn]], postagem manual)
 
 ## 6. Riscos e Dependências

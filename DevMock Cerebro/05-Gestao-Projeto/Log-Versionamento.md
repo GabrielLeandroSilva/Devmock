@@ -154,6 +154,7 @@ updated: 2026-10-10
 | v1.9.54 | 2026-10-22 | des | M6 v1.5.0: OpenAPI/MD/HTML por rota, validate `kind: list` + skip, `Location`/expose, `summary`; core **193** · CLI **20** · host **62**; review+QA | `feat(core): export e validate com rotas custom (M6)` | ✅ em des |
 | v1.9.55 | 2026-10-22 | des | M7 v1.5.0: Manual-Teste-v1.5, CHANGELOG/versão `1.5.0`, READMEs + wiki; gate (build/tsc, core 193 · CLI 20 · host 62, `vsix` 1.5.0) | `docs: prepara v1.5.0` | ⏳ F5/manual → tag `ext-v1.5.0` |
 | v1.9.56 | 2026-11-02 | des | M7 v1.5.0: Manual-Teste-v1.5 aprovado (F5/rotas/PUT/PATCH/export/validate); tag `ext-v1.5.0` → `publish.yml` | `docs: fecha manual v1.5.0` | ⏳ publish |
+| v1.9.57 | 2026-11-02 | des | **v1.5.0 PUBLICADA** — run [41480241608](https://github.com/GabrielLeandroSilva/Devmock/actions/runs/41480241608): host **62**, `vsce publish` ok | — | ✅ Marketplace |
 
 ## Consulta (Dataview — notas de gestão)
 
