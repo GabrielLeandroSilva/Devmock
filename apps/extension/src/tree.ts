@@ -1,4 +1,12 @@
-import { SCENARIO_NAMES, routesFor, type DevMockConfig, type Schema } from "@devmock/core";
+import {
+  SCENARIO_NAMES,
+  listRoute,
+  routeKey,
+  routeLabel,
+  schemaRoutes,
+  type DevMockConfig,
+  type Schema,
+} from "@devmock/core";
 import { scenarioOf } from "./ops.js";
 
 /** Nó da Tree em formato puro (sem tipos do VS Code) — testável fora do host. */
@@ -42,32 +50,40 @@ export function buildTree(state: TreeState, el?: TreeNode): TreeNode[] {
   const cfg = state.config;
   switch (el.label) {
     case "Schemas":
-      return state.schemas.map((s) => ({
-        label: s.name,
-        description: `${s.fields.length} campos · cenário: ${scenarioOf(cfg.activeScenarios, routesFor(s)[0])}`,
-        contextValue: "schema",
-        schemaName: s.name,
-        command: { command: "devmock.editSchema", title: "Editar Schema", arguments: [s.name] },
-      }));
+      return state.schemas.map((s) => {
+        const route = listRoute(s);
+        return {
+          label: s.name,
+          description: `${s.fields.length} campos · cenário: ${route ? scenarioOf(cfg.activeScenarios, routeKey(route)) : "—"}`,
+          contextValue: "schema",
+          schemaName: s.name,
+          command: { command: "devmock.editSchema", title: "Editar Schema", arguments: [s.name] },
+        };
+      });
     case "Endpoints":
       return state.schemas.flatMap((s) =>
-        routesFor(s).map((r) => {
-          const isGet = r.startsWith("GET ");
-          const openable = isGet && !r.includes(":id");
+        schemaRoutes(s).map((route) => {
+          const key = routeKey(route);
+          const isGet = String(route.method).toUpperCase() === "GET";
           return {
-            label: r,
-            description: isGet ? `cenário: ${scenarioOf(cfg.activeScenarios, r)}` : undefined,
+            label: routeLabel(route),
+            description: `cenário: ${scenarioOf(cfg.activeScenarios, key)}`,
             contextValue: isGet ? "endpointGet" : "endpoint",
-            command: openable
-              ? { command: "devmock.openEndpoint", title: "Abrir no navegador", arguments: [r] }
-              : undefined,
+            schemaName: s.name,
+            command: {
+              command: "devmock.endpointActions",
+              title: "Ações do endpoint",
+              arguments: [key, s.name],
+            },
           };
         }),
       );
     case "Scenarios": {
       const active = cfg.activeScenarios ?? {};
       return SCENARIO_NAMES.map((name) => {
-        const count = state.schemas.filter((s) => scenarioOf(active, routesFor(s)[0]) === name).length;
+        const count = state.schemas.filter((s) =>
+          schemaRoutes(s).some((route) => active[routeKey(route)] === name),
+        ).length;
         return {
           label: (count > 0 ? "✓ " : "") + name,
           description: count > 0 ? `${count} schema(s)` : undefined,

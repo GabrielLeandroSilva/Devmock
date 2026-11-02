@@ -1,0 +1,88 @@
+---
+title: "Plano de Release — v1.5.0"
+type: gestao
+status: aprovado
+fase: codigo
+tags: [devmock/gestao, devmock/release]
+related: ["[[PRD-02-Mock-Server]]", "[[PRD-03-VSCode-Extension]]", "[[PRD-04-Scenarios]]", "[[PRD-05-Docs-Export]]", "[[11-Plano-Release-v1.4.0]]", "[[07-Estrategia-Testes]]"]
+created: 2026-10-22
+updated: 2026-10-22
+---
+
+# Gestão — 12 Plano de Release v1.5.0
+
+## 1. Objetivo
+**Tema:** *Rotas completas — mapa por Schema e POST/PATCH/DELETE de primeira classe.*
+
+Hoje o Core já responde as 6 rotas, mas o path é fixo (`/${plural(name)}`) e a UI só expõe GET (cenário, clique, browser). A 1.5.0 permite **declarar o mapa de rotas no Schema** (inclusive ações fora do CRUD), corrige a semântica de escrita e leva POST/PATCH/DELETE para a Tree com o mesmo nível de interação do GET.
+
+## 2. Escopo
+
+### Must
+| ID | Item | Origem | Status atual |
+|----|------|--------|--------------|
+| **M1** | **`Schema.routes`**: `{ method, path, kind, response?, summary? }[]`; ausente = CRUD padrão (6 rotas); validação (path, `kind`×método, `method+path` único, `:param`) | [[PRD-02-Mock-Server]] §3 | ✅ v1.5.0 (M1) — core 140/host 44 |
+| **M2** | **Router**: tabela método+pattern, `:param`, estático vence param, params extraídos, chave de log/config = pattern; ligar `validateProject` no load (server/extension) | [[PRD-02-Mock-Server]] §3 | ✅ v1.5.0 (M2) — core 180/CLI 18/host 45 |
+| **M3** | **Semântica**: PUT substitui, PATCH merge, JSON inválido → 400, `DELETE` coleção → 405, `custom` usa `response` (precedência request > endpoint > rota > default) | [[PRD-02-Mock-Server]] §3 | ✅ v1.5.0 (M3) |
+| **M4** | **UI**: clique em qualquer endpoint → menu (Switch scenario, Copy as cURL; browser só GET sem `:id`); `Switch Scenario` lista todas as rotas; cenário por método; descrição em todos os nós | [[PRD-03-VSCode-Extension]] §3 | ✅ v1.5.0 (M4) — host 60 |
+| **M5** | **Studio**: seção Rotas (método/path/kind/response), adicionar/remover, “Restaurar CRUD padrão”; salva `routes` só quando customizado | [[PRD-03-VSCode-Extension]] §3 | ⏳ v1.5.0 (M5) — implementado; aguarda Manual-Teste |
+| **M6** | **Propagação**: OpenAPI (paths por rota), MD/HTML (todas as rotas), `validate` (usa `kind: list`), CLI | [[PRD-05-Docs-Export]] §3 | ✅ v1.5.0 (M6) — core 193/CLI 20/host 62 |
+| **M7** | **Docs**: PRDs, manual, README/wiki, CHANGELOG, Log | — | — |
+
+### Should
+| ID | Item | Origem |
+|----|------|--------|
+| **S1** | `Location` no POST 201 (exposto no CORS); `Allow` no 405 | PRD-02 §12 |
+| **S2** | `summary` por rota no OpenAPI/MD | PRD-05 §16 |
+| **S3** | Guia de migração (chaves usam o pattern canônico em minúsculas, inclusive nomes de param) | — | ⏳ M7 (CHANGELOG/README) |
+
+### Fora (v1.6+)
+- Auth/rate limit por rota; middlewares.
+- Runner HTTP dentro da extensão.
+- GraphQL/WebSocket.
+
+## 3. Definition of Done (por item)
+- **M1:** `routes` ausente mantém as 6 rotas; `routes` presente substitui o conjunto; validação rejeita path inválido, `kind` incompatível e `method+path` duplicado; `:param` aceito. **Status:** ✅ implementado, revisado (Code-Reviewer) e auditado (QA-Testes; core **140**, host **44**).
+- **M2:** `GET /v1/users` e `GET /v1/users/:id` resolvem o mesmo Schema; rota estática vence `:param`; log/config usam `"METHOD /pattern"`. **Status:** ✅ implementado, revisado (Code-Reviewer) e auditado (QA-Testes; core **180** · CLI **18** · host **45**).
+- **M3:** PUT substitui (mantém `id`), PATCH faz merge; POST/PUT/PATCH com JSON inválido → 400; `DELETE` coleção → 405 com `Allow`; `custom` usa `response` e cenário/endpoint sobrescrevem. **Status:** ✅ implementado, revisado e auditado.
+- **M4:** todo endpoint abre o menu; Switch Scenario lista todos os métodos; cenário aplica por endpoint; cURL copia método/URL/body; GET sem `:id` abre no browser. **Status:** ✅ implementado, revisado (Code-Reviewer) e auditado (QA-Testes; host **60**).
+- **M5:** Studio edita rotas, restaura o padrão e salva; schema sem customização continua sem `routes`. **Status:** ✅ implementado/revisado/auditado; **Manual-Teste-v1.5 aprovado em 2026-11-02** (dívida: IIFE da Webview sem teste automatizado).
+- **M6:** OpenAPI/MD/HTML refletem rotas custom; validate usa a rota `list`; CLI export/validate acompanham. **Status:** ✅ implementado, revisado (Code-Reviewer) e auditado (QA-Testes; core **193** · CLI **20** · host **62**).
+- **M7:** docs/superfícies sincronizadas. **Status:** ✅ READMEs/wiki/CHANGELOG/versão; Manual aprovado; **v1.5.0 publicada** (run [41480241608](https://github.com/GabrielLeandroSilva/Devmock/actions/runs/41480241608)).
+
+## 4. Passos de execução (checklist)
+- [x] #task ⏫ M1 — tipos `SchemaRoute`/`RouteKind` + defaults + validação + helpers (`routesFor`, `listRoute`) 🏷️ fase/codigo
+- [x] #task ⏫ M2 — router por método+pattern (estático > `:param`) + store/params 🏷️ fase/codigo
+- [x] #task ⏫ M3 — PUT replace, PATCH merge, 400/405, `response` custom + precedência 🏷️ fase/codigo
+- [x] #task ⏫ M4 — menu do endpoint + cURL + `Switch Scenario` todas as rotas 🏷️ fase/codigo
+- [x] #task ⏫ M5 — editor de rotas no Studio (webview + `StudioMessage`) 🏷️ fase/codigo
+- [x] #task ⏫ M6 — OpenAPI/MD/HTML/validate/CLI com rotas custom 🏷️ fase/codigo
+- [x] #task 🔼 S1 — `Location`/`Allow` 🏷️ fase/codigo
+- [x] #task 🔼 S2 — `summary` nas docs 🏷️ fase/codigo
+- [x] #task 🔼 Testes core + host + regressão (default intacto) 🏷️ fase/codigo
+- [x] #task 🔼 Manual-Teste-v1.5 (F5 no host) 🏷️ fase/codigo
+- [x] #task 🔼 CHANGELOG + `apps/extension/package.json` = `1.5.0` 🏷️ fase/codigo
+- [x] #task 🔼 README (raiz + extension) + wiki 🏷️ fase/codigo
+- [x] #task ⏫ Rodar Gate de Release (§5) 🏷️ fase/codigo
+
+## 5. Gate de Release
+- [x] Manual-Teste-v1.5 100% (rotas custom + POST/PATCH/DELETE + Studio)
+- [x] suítes + cobertura ≥ gate (core 193 · 92.31/85.62 · CLI 20 · 98.62/84.03 · host 62)
+- [x] `tsc --noEmit` + `npm run build` + `vsce package` limpos (`devmock-vscode-1.5.0.vsix`)
+- [x] CHANGELOG + `apps/extension/package.json` = `1.5.0`
+- [x] README (raiz + extension) e wiki sincronizados
+- [x] `Log-Versionamento` atualizado
+- [x] Tag `ext-v1.5.0` (trava `tag == versão`) → `publish.yml`
+- [ ] Post de lançamento ([[Agente-LinkedIn]], postagem manual)
+
+## 6. Riscos e Dependências
+- **Router** é o ponto mais sensível (prioridade estático × `:param`, colisão, params). Testar antes de ligar na UI.
+- **`routes` substitui o CRUD**: documentar e oferecer “Restaurar CRUD padrão” no Studio.
+- **Export/validate** passam a depender do mapa; fixtures atuais precisam continuar verdes.
+- **Chaves de cenário** customizadas exigem migração documentada.
+- Depende de [[PRD-01-Core-Schema-Data]] e [[PRD-04-Scenarios]].
+
+## 7. Links
+- PRDs: [[PRD-02-Mock-Server]] · [[PRD-03-VSCode-Extension]] · [[PRD-04-Scenarios]] · [[PRD-05-Docs-Export]]
+- Qualidade: [[07-Estrategia-Testes]] · [[Agente-QA-Testes]] | Review: [[Agente-Code-Reviewer]]
+- Anterior: [[11-Plano-Release-v1.4.0]] | Roadmap: [[01-EAP]] · [[00-Home]]

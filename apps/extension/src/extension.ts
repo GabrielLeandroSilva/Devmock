@@ -6,10 +6,12 @@ import {
   DEFAULT_CONFIG,
   SCENARIO_NAMES,
   createMockServer,
+  generate,
   generatorNames,
   routesFor,
   type MockServer,
   type Schema,
+  type SchemaRoute,
 } from "@devmock/core";
 import { handleStudioMessage } from "./studio.js";
 import {
@@ -27,7 +29,7 @@ import {
   formatLogEntry,
 } from "./ops.js";
 import { buildTree, type TreeNode } from "./tree.js";
-import { buildActions, buildQuickPickItems, buildScenarioPick } from "./actions.js";
+import { buildActions, buildCurl, buildEndpointMenu, buildQuickPickItems, buildScenarioPick } from "./actions.js";
 import {
   devmockDir,
   listSchemas,
@@ -271,6 +273,47 @@ export function activate(context: vscode.ExtensionContext): void {
       }
       await vscode.env.openExternal(vscode.Uri.parse(url));
     }),
+    vscode.commands.registerCommand("devmock.endpointActions", async (key?: string, schemaName?: string) => {
+      if (!key) return;
+      const [method, path] = key.split(" ", 2);
+      if (!method || !path) return;
+      const items = buildEndpointMenu(method, path).map((item) => ({
+        label: item.icon ? `$(${item.icon}) ${item.label}` : item.label,
+        description: item.description,
+        action: item.action,
+      }));
+      const picked = await vscode.window.showQuickPick(items, { placeHolder: key });
+      if (!picked) return;
+
+      if (picked.action === "scenario") {
+        await vscode.commands.executeCommand("devmock.switchScenario", key);
+        return;
+      }
+      if (picked.action === "browser") {
+        await vscode.commands.executeCommand("devmock.openEndpoint", key);
+        return;
+      }
+
+      const root = workspaceRoot();
+      if (!root) return;
+      const cfg = readConfig(root);
+      const port = state.port ?? cfg.port;
+      let body: string | undefined;
+      const normalized = method.toUpperCase();
+      if (normalized === "POST" || normalized === "PUT" || normalized === "PATCH") {
+        const schema = listSchemas(root).find((s) => s.name === schemaName);
+        if (schema) {
+          const sample = { ...generate(schema, 1, cfg.seedDefault)[0] };
+          delete sample.id;
+          body = JSON.stringify(sample);
+        }
+      }
+      const command = buildCurl(method, `http://localhost:${port}${path}`, body);
+      await vscode.env.clipboard.writeText(command);
+      void vscode.window.showInformationMessage(
+        `DevMock: cURL copiado (POSIX)${state.server ? "" : " — servidor parado"}.`,
+      );
+    }),
     vscode.commands.registerCommand("devmock.init", async () => {
       const root = workspaceRoot();
       if (!root) {
@@ -302,13 +345,14 @@ export function activate(context: vscode.ExtensionContext): void {
       }
       const cfg = readConfig(root);
       const scenarios = readScenarios(root);
-      state.server = createMockServer(schemas, { config: cfg, scenarios });
       try {
+        state.server = createMockServer(schemas, { config: cfg, scenarios });
         state.port = await state.server.listen();
       } catch (err) {
         state.server = undefined;
         syncServerContext();
-        void vscode.window.showErrorMessage(`DevMock: ${err instanceof Error ? err.message : String(err)}`);
+        const message = err instanceof Error ? err.message : String(err);
+        void vscode.window.showErrorMessage(message.startsWith("DevMock:") ? message : `DevMock: ${message}`);
         return;
       }
       syncServerContext();
@@ -425,15 +469,17 @@ export function activate(context: vscode.ExtensionContext): void {
       }
       refresh();
     }),
-    vscode.commands.registerCommand("devmock.switchScenario", async () => {
+    vscode.commands.registerCommand("devmock.switchScenario", async (routeArg?: string) => {
       const root = workspaceRoot();
       if (!root || !existsSync(devmockDir(root))) {
         void vscode.window.showErrorMessage("DevMock: rode `DevMock: Initialize Project` primeiro.");
         return;
       }
       const schemas = listSchemas(root);
-      const endpoints = schemas.flatMap((s) => routesFor(s).filter((r) => r.startsWith("GET ")));
-      const endpoint = await vscode.window.showQuickPick(endpoints, { placeHolder: "Endpoint" });
+      const endpoints = schemas.flatMap((s) => routesFor(s));
+      const endpoint =
+        routeArg ??
+        (await vscode.window.showQuickPick(endpoints, { placeHolder: "Endpoint" }));
       if (!endpoint) return;
       const scenario = await vscode.window.showQuickPick(
         SCENARIO_NAMES,
@@ -560,6 +606,10 @@ export function activate(context: vscode.ExtensionContext): void {
               channel.appendLine(`✕ ${r.endpoint} — erro: ${r.error}`);
               continue;
             }
+            if (r.skipped) {
+              channel.appendLine(`- ${r.endpoint} — pulado: ${r.skipped}`);
+              continue;
+            }
             const icon = r.breaking > 0 ? "✕" : r.warnings > 0 ? "⚠" : "✓";
             channel.appendLine(
               `${icon} ${r.endpoint} — ${r.compatible} compatible, ${r.warnings} warnings, ${r.breaking} breaking (${r.checked} verificados)`,
@@ -571,10 +621,15 @@ export function activate(context: vscode.ExtensionContext): void {
             }
           }
           channel.appendLine(`\n${total.compatible} compatible, ${total.warnings} warnings, ${total.breaking} breaking.`);
+          if (total.skipped > 0) channel.appendLine(`${total.skipped} endpoint(s) pulado(s).`);
           channel.show(true);
           if (total.breaking > 0) {
             void vscode.window.showWarningMessage(
               `DevMock: ${total.breaking} breaking change(s) na API real — ver Output.`,
+            );
+          } else if (total.checked === 0 && total.skipped > 0) {
+            void vscode.window.showWarningMessage(
+              `DevMock: nenhum endpoint validado (${total.skipped} pulado(s)).`,
             );
           } else {
             void vscode.window.showInformationMessage("DevMock: API real compatível com o contrato. ✓");
@@ -679,6 +734,22 @@ function openSchemaForm(
     <div class="flex gap mt"><button id="add" class="btn btn-secondary">+ campo</button></div>
   </div>
   <div class="card">
+    <div class="justify-between">
+      <h3 class="subtitle">Rotas</h3>
+      <label class="checkbox"><input type="checkbox" id="customRoutes" /> Customizar rotas</label>
+    </div>
+    <p class="muted">Sem customização, o CRUD padrão é gerado a partir do model.</p>
+    <div id="routesBox" class="hidden">
+      <table class="grid" id="routes">
+        <tr><th>método</th><th>path</th><th>kind</th><th>status</th><th>body (JSON)</th><th></th></tr>
+      </table>
+      <div class="flex gap mt">
+        <button id="addRoute" class="btn btn-secondary">+ rota</button>
+        <button id="resetRoutes" class="btn btn-secondary">Usar CRUD padrão</button>
+      </div>
+    </div>
+  </div>
+  <div class="card">
     <h3 class="subtitle">Gerar preview</h3>
     <div class="flex gap">
       <label class="field">Records <input id="records" type="number" value="5" min="1" max="100" /></label>
@@ -692,12 +763,12 @@ function openSchemaForm(
     <div id="msg" class="alert hidden mt"></div>
   </div>
 </div>
-<script nonce="${nonce}">window.DM_GENERATORS = ${JSON.stringify(GENERATORS)}; window.DM_TYPES = ${JSON.stringify(TYPES)}; window.DM_SEED = ${JSON.stringify(cfg.seedDefault)}; window.DM_INITIAL = ${JSON.stringify(initial ?? null)}; window.DM_EDITING = ${JSON.stringify(initial?.name ?? null)};</script>
+<script nonce="${nonce}">window.DM_GENERATORS = ${jsonForHtml(GENERATORS)}; window.DM_TYPES = ${jsonForHtml(TYPES)}; window.DM_SEED = ${jsonForHtml(cfg.seedDefault)}; window.DM_INITIAL = ${jsonForHtml(initial ?? null)}; window.DM_EDITING = ${jsonForHtml(initial?.name ?? null)};</script>
 <script src="${jsUri}"></script>
 </body></html>`;
 
   panel.webview.onDidReceiveMessage(
-    (msg: { kind: string; model: string; fields: Record<string, unknown>[]; records?: number; seed?: number | string; silent?: boolean }) => {
+    (msg: { kind: string; model: string; fields: Record<string, unknown>[]; routes?: SchemaRoute[]; records?: number; seed?: number | string; silent?: boolean }) => {
       const reply = handleStudioMessage(msg, {
         root,
         seedDefault: cfg.seedDefault,
@@ -714,3 +785,11 @@ function openSchemaForm(
 }
 
 export function deactivate(): void {}
+
+/** JSON seguro para <script> inline: nao fecha a tag nem quebra linha. */
+function jsonForHtml(value: unknown): string {
+  return JSON.stringify(value)
+    .replace(/</g, "\\u003c")
+    .replace(/\u2028/g, "\\u2028")
+    .replace(/\u2029/g, "\\u2029");
+}

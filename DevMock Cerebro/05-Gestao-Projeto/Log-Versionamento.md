@@ -142,7 +142,19 @@ updated: 2026-10-10
 | v1.9.43 | 2026-10-21 | des | M2 v1.4.0: **cenário por clique** (multi-seleção de Schemas, GET de coleção, reload vivo, dedupe); host **41** testes; Code-Reviewer + QA-Testes | `feat(extension): cenário por clique na Tree (M2)` | ✅ em des |
 | v1.9.44 | 2026-10-21 | des | Fechamento v1.4.0: Manual-Teste-v1.4 (só-mouse), versão `1.4.0`, CHANGELOG, README; gate core 111 · cli 15 · host 41 | `docs(release): fecha v1.4.0 - manual, versao e docs` | ✅ concluído |
 | ext-v1.4.0 | 2026-10-22 | tag em des | 🚀 PUBLICADO na Marketplace (**Ações** no header + **cenário por clique**, mouse-first) | `Published devmock.devmock-vscode v1.4.0` via publish.yml (run 39709686570) | ✅ ao vivo |
-| v1.9.45 | 2026-10-22 | des | Pós-publicação v1.4.0: wiki, Log, Home/EAP; PR `#27` (des→main) | `docs(release): publica v1.4.0 e sincroniza docs` | ⏳ em des, PR #27 em revisão |
+| v1.9.45 | 2026-10-22 | des | Pós-publicação v1.4.0: wiki, Log, Home/EAP; PR `#27` (des→main) | `docs(release): publica v1.4.0 e sincroniza docs` | ✅ em main (PR #27, merge `c6b15f3`) |
+| v1.9.46 | 2026-10-22 | des | Pós-promoção v1.4.0 (PR #27) | `docs(git): registra promoção v1.4.0 em main` | ✅ em des |
+| v1.9.47 | 2026-10-22 | des | Agente **Technical-Writer** (Divio, README 5s, exemplos executáveis) + fronteira no Docs-Keeper; anexo removido após a criação | `docs(agentes): adiciona technical-writer` | ✅ em des |
+| v1.9.48 | 2026-10-22 | des | Agente **LinkedIn** atualizado (pilares, 3 ganchos, tipos de post, link no 1º comentário) + subagente; anexo removido | `docs(agentes): atualiza linkedin e adiciona subagente` | ✅ em des |
+| v1.9.49 | 2026-10-22 | des | Planejamento v1.5.0: **mapa de rotas por Schema** (custom), POST/PATCH/DELETE na Tree, semântica PUT/400/405; plano 12, PRD-02/03/04/05, Home/EAP, wiki/README | `docs(release): planeja v1.5.0 - rotas completas` | ✅ em des |
+| v1.9.50 | 2026-10-22 | des | M1 v1.5.0: `Schema.routes` + defaults + validação (path/kind/params/duplicatas) + `routeKey` canônico; core **140**/host **44**; Code-Reviewer + QA-Testes | `feat(core): mapa de rotas por Schema (M1)` | ✅ em des |
+| v1.9.51 | 2026-10-22 | des | M2/M3 v1.5.0: router por Schema (custom/aninhada, aliases), validação/400/405, PUT replace/PATCH merge, precedência status/body; core **180** · CLI **18** · host **45**; Code-Reviewer + QA-Testes | `feat(core): router e semântica das rotas (M2/M3)` | ✅ em des |
+| v1.9.52 | 2026-10-22 | des | M4 v1.5.0: menu do endpoint (cenário/cURL/browser), `Switch Scenario` todas as rotas, cenário por método, contador por rota; host **60**; Code-Reviewer + QA-Testes | `feat(extension): menu de ações do endpoint (M4)` | ✅ em des |
+| v1.9.53 | 2026-10-22 | des | M5 v1.5.0: editor de rotas no Studio (toggle/tabela, add/reset, `summary` passthrough, `jsonForHtml`); host **61**; review+QA; **dívida Webview** registrada | `feat(extension): editor de rotas no Studio (M5)` | ⏳ em des, aguarda Manual-Teste |
+| v1.9.54 | 2026-10-22 | des | M6 v1.5.0: OpenAPI/MD/HTML por rota, validate `kind: list` + skip, `Location`/expose, `summary`; core **193** · CLI **20** · host **62**; review+QA | `feat(core): export e validate com rotas custom (M6)` | ✅ em des |
+| v1.9.55 | 2026-10-22 | des | M7 v1.5.0: Manual-Teste-v1.5, CHANGELOG/versão `1.5.0`, READMEs + wiki; gate (build/tsc, core 193 · CLI 20 · host 62, `vsix` 1.5.0) | `docs: prepara v1.5.0` | ⏳ F5/manual → tag `ext-v1.5.0` |
+| v1.9.56 | 2026-11-02 | des | M7 v1.5.0: Manual-Teste-v1.5 aprovado (F5/rotas/PUT/PATCH/export/validate); tag `ext-v1.5.0` → `publish.yml` | `docs: fecha manual v1.5.0` | ⏳ publish |
+| v1.9.57 | 2026-11-02 | des | **v1.5.0 PUBLICADA** — run [41480241608](https://github.com/GabrielLeandroSilva/Devmock/actions/runs/41480241608): host **62**, `vsce publish` ok | — | ✅ Marketplace |
 
 ## Consulta (Dataview — notas de gestão)
 

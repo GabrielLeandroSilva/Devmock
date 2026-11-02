@@ -91,6 +91,8 @@ describe("validateLive contra mock local", () => {
     expect(reports[0].compatible).toBeGreaterThan(0);
     const total = summarize(reports);
     expect(total.breaking).toBe(0);
+    expect(total.checked).toBe(5);
+    expect(total.skipped).toBe(0);
     await server.close();
   });
 
@@ -122,5 +124,80 @@ describe("validateLive contra mock local", () => {
     const failed = await validateLive([user], base);
     expect(failed[0].error).toMatch(/HTTP 500/);
     await new Promise<void>((resolve) => srv.close(() => resolve()));
+  });
+});
+
+describe("v1.5.0 — rotas custom no validate", () => {
+  it("valida a rota kind list customizada", async () => {
+    const custom: Schema = {
+      ...user,
+      name: "Account",
+      routes: [
+        { method: "GET", path: "/v1/accounts", kind: "list" },
+        { method: "GET", path: "/v1/accounts/:id", kind: "item" },
+      ],
+    };
+    const server = createMockServer([custom], { config: { port: 0 } });
+    const port = await server.listen();
+    try {
+      const reports = await validateLive([custom], `http://127.0.0.1:${port}`);
+      expect(reports[0].endpoint).toBe("GET /v1/accounts");
+      expect(reports[0].breaking).toBe(0);
+      expect(reports[0].compatible).toBeGreaterThan(0);
+    } finally {
+      await server.close();
+    }
+  });
+
+  it("pula Schema sem rota de coleção sem contar breaking", async () => {
+    const custom: Schema = {
+      ...user,
+      name: "Account",
+      routes: [{ method: "GET", path: "/v1/accounts/:id", kind: "item" }],
+    };
+    const reports = await validateLive([custom], "http://127.0.0.1:1", { timeoutMs: 500 });
+    expect(reports[0].skipped).toMatch(/Sem rota de coleção/);
+    expect(summarize(reports).breaking).toBe(0);
+    expect(summarize(reports).skipped).toBe(1);
+    expect(summarize(reports).checked).toBe(0);
+  });
+
+  it("pula GET custom que não é kind list", async () => {
+    const custom: Schema = {
+      ...user,
+      name: "Account",
+      routes: [
+        {
+          method: "GET",
+          path: "/health",
+          kind: "custom",
+          response: { status: 200, body: { ok: true } },
+        },
+      ],
+    };
+    const reports = await validateLive([custom], "http://127.0.0.1:1", { timeoutMs: 500 });
+    expect(reports[0].skipped).toMatch(/Sem rota de coleção/);
+    expect(summarize(reports).breaking).toBe(0);
+  });
+
+  it("escolhe a list de coleção quando há uma aninhada", async () => {
+    const custom: Schema = {
+      ...user,
+      name: "Account",
+      routes: [
+        { method: "GET", path: "/v1/accounts/:id/posts", kind: "list" },
+        { method: "GET", path: "/v1/accounts", kind: "list" },
+      ],
+    };
+    const server = createMockServer([custom], { config: { port: 0 } });
+    const port = await server.listen();
+    try {
+      const reports = await validateLive([custom], `http://127.0.0.1:${port}`);
+      expect(reports[0].endpoint).toBe("GET /v1/accounts");
+      expect(reports[0].skipped).toBeUndefined();
+      expect(reports[0].compatible).toBeGreaterThan(0);
+    } finally {
+      await server.close();
+    }
   });
 });

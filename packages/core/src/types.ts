@@ -26,9 +26,31 @@ export interface SchemaField {
   ref?: string;
 }
 
+export type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
+
+export type RouteKind = "list" | "item" | "create" | "update" | "patch" | "delete" | "custom";
+
+/** Resposta padrão de uma rota (cenário/endpoint config têm precedência). */
+export interface SchemaRouteResponse {
+  status?: number;
+  body?: unknown;
+}
+
+/** Rota declarada pelo Schema (v1.5.0). */
+export interface SchemaRoute {
+  method: HttpMethod;
+  path: string;
+  kind: RouteKind;
+  response?: SchemaRouteResponse;
+  /** Texto para docs/OpenAPI. */
+  summary?: string;
+}
+
 export interface Schema {
   name: string;
   fields: SchemaField[];
+  /** Ausente = CRUD padrão; presente = substitui o conjunto. */
+  routes?: SchemaRoute[];
 }
 
 export interface Diagnostic {

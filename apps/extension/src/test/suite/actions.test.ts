@@ -1,7 +1,7 @@
 import * as assert from "node:assert";
 import { type Schema } from "@devmock/core";
 import * as vscode from "vscode";
-import { buildActions, buildQuickPickItems, buildScenarioPick, type ActionState } from "../../actions.js";
+import { buildActions, buildCurl, buildEndpointMenu, buildQuickPickItems, buildScenarioPick, type ActionState } from "../../actions.js";
 
 function commands(state: ActionState): string[] {
   return buildActions(state).map((a) => a.command);
@@ -101,10 +101,94 @@ suite("Ações da Tree (M1)", () => {
     assert.match(picks[1].description, /cenário: Default · GET \/orders/);
   });
 
+  test("cenário: respeita a rota list customizada (canônica)", () => {
+    const schema: Schema = {
+      name: "User",
+      fields: [{ name: "id", type: "uuid", required: true }],
+      routes: [
+        { method: "GET", path: "/v1/Users", kind: "list" },
+        { method: "GET", path: "/v1/Users/:id", kind: "item" },
+      ],
+    };
+    const picks = buildScenarioPick([schema], { activeScenarios: { "GET /v1/users": "Empty" } }, "Empty");
+    assert.deepStrictEqual(picks.map((p) => p.route), ["GET /v1/users"]);
+    assert.match(picks[0].description, /GET \/v1\/Users/);
+    assert.strictEqual(picks[0].picked, true);
+  });
+
+  test("cenário: Schema sem rota de coleção é omitido do pick", () => {
+    const schema: Schema = {
+      name: "User",
+      fields: [{ name: "id", type: "uuid", required: true }],
+      routes: [{ method: "GET", path: "/v1/users/:id", kind: "item" }],
+    };
+    assert.deepStrictEqual(buildScenarioPick([schema], { activeScenarios: {} }, "Empty"), []);
+  });
+
+  test("menu do endpoint: 3 ações no GET de coleção, 2 nos demais", () => {
+    assert.deepStrictEqual(
+      buildEndpointMenu("GET", "/users").map((a) => a.action),
+      ["scenario", "curl", "browser"],
+    );
+    assert.deepStrictEqual(
+      buildEndpointMenu("GET", "/users/:id").map((a) => a.action),
+      ["scenario", "curl"],
+    );
+    assert.deepStrictEqual(
+      buildEndpointMenu("POST", "/users").map((a) => a.action),
+      ["scenario", "curl"],
+    );
+  });
+
+  test("menu do endpoint descreve body conforme o método", () => {
+    for (const method of ["POST", "PUT", "PATCH"]) {
+      const curl = buildEndpointMenu(method, "/users").find((item) => item.action === "curl");
+      assert.strictEqual(curl?.description, "Copiar comando com body de exemplo", method);
+    }
+    for (const method of ["GET", "DELETE"]) {
+      const curl = buildEndpointMenu(method, "/users").find((item) => item.action === "curl");
+      assert.strictEqual(curl?.description, "Copiar comando (sem body)", method);
+    }
+  });
+
+  test("buildCurl monta GET e POST com body", () => {
+    assert.strictEqual(
+      buildCurl("GET", "http://localhost:4010/users"),
+      `curl -X GET 'http://localhost:4010/users'`,
+    );
+    assert.strictEqual(
+      buildCurl("post", "http://localhost:4010/users", `{"name":"A"}`),
+      `curl -X POST 'http://localhost:4010/users' -H "Content-Type: application/json" -d '{"name":"A"}'`,
+    );
+  });
+
+  test("buildCurl preserva :id e $ no path dentro de aspas POSIX", () => {
+    assert.strictEqual(
+      buildCurl("GET", "http://localhost:4010/users/:id?owner=$HOME"),
+      "curl -X GET 'http://localhost:4010/users/:id?owner=$HOME'",
+    );
+  });
+
+  test("buildCurl escapa aspas simples no body para POSIX", () => {
+    assert.strictEqual(
+      buildCurl("POST", "http://localhost:4010/users", `{"name":"O'Brien"}`),
+      String.raw`curl -X POST 'http://localhost:4010/users' -H "Content-Type: application/json" -d '{"name":"O'\''Brien"}'`,
+    );
+  });
+
+  test("buildCurl GET e DELETE sem body não adiciona header nem -d", () => {
+    for (const method of ["GET", "DELETE"]) {
+      const curl = buildCurl(method, "http://localhost:4010/users/:id");
+      assert.strictEqual(curl, `curl -X ${method} 'http://localhost:4010/users/:id'`);
+      assert.doesNotMatch(curl, /Content-Type|-d /);
+    }
+  });
+
   test("comandos Ações e Apply Scenario registrados no host", async () => {
     const all = await vscode.commands.getCommands(true);
     assert.ok(all.includes("devmock.actions"), "comando devmock.actions não registrado");
     assert.ok(all.includes("devmock.applyScenario"), "comando devmock.applyScenario não registrado");
+    assert.ok(all.includes("devmock.endpointActions"), "comando devmock.endpointActions não registrado");
   });
 
   test("Ações encaminha a seleção Create API ao comando", async () => {

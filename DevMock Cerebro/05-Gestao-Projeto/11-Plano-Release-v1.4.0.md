@@ -37,6 +37,7 @@ Hoje várias ações só existem na Command Palette. A 1.4.0 leva essas ações 
 - Menus de contexto extras em Schema/Endpoint.
 - Atalhos de teclado / keybindings.
 - Clique em Documentation para abrir o `.md`/HTML.
+- Lint de docs (markdownlint/Vale) no CI — DevOps/TW (futuro).
 
 ## 3. Definition of Done (por item)
 - **M1:** header mostra **Ações** + Refresh + Start/Stop; New Schema não está mais no header e aparece no Ações; todos os comandos listados são alcançáveis; itens indisponíveis ocultos; `executeCommand` sem `await` (não trava). **Status:** ✅ implementado, revisado pelo Code-Reviewer (sem blockers) e auditado pelo QA-Testes (host **36** testes).

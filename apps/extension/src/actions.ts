@@ -1,4 +1,4 @@
-import { routesFor, type DevMockConfig, type Schema } from "@devmock/core";
+import { listRoute, routeKey, routeLabel, type DevMockConfig, type Schema } from "@devmock/core";
 import { scenarioOf } from "./ops.js";
 
 /** Grupo de ações no QuickPick (separadores da UI). */
@@ -39,15 +39,19 @@ export function buildScenarioPick(
   config: ScenarioConfig,
   scenario: string,
 ): ScenarioPickItem[] {
-  return schemas.map((schema) => {
-    const route = routesFor(schema)[0];
-    const current = scenarioOf(config.activeScenarios, route);
-    return {
-      label: schema.name,
-      description: `cenário: ${current} · ${route}`,
-      route,
-      picked: current === scenario,
-    };
+  return schemas.flatMap((schema) => {
+    const route = listRoute(schema);
+    if (!route) return [];
+    const key = routeKey(route);
+    const current = scenarioOf(config.activeScenarios, key);
+    return [
+      {
+        label: schema.name,
+        description: `cenário: ${current} · ${routeLabel(route)}`,
+        route: key,
+        picked: current === scenario,
+      },
+    ];
   });
 }
 
@@ -66,6 +70,56 @@ export interface QuickPickAction {
   label: string;
   description?: string;
   command?: string;
+}
+
+/** Ações do clique num endpoint (M4). */
+export type EndpointActionId = "scenario" | "curl" | "browser";
+
+export interface EndpointActionItem {
+  label: string;
+  description?: string;
+  icon?: string;
+  action: EndpointActionId;
+}
+
+/** Menu de um endpoint: cenário/cURL sempre; browser só em GET de coleção. */
+export function buildEndpointMenu(method: string, path: string): EndpointActionItem[] {
+  const m = String(method).toUpperCase();
+  const withBody = m === "POST" || m === "PUT" || m === "PATCH";
+  const items: EndpointActionItem[] = [
+    {
+      label: "Switch scenario…",
+      description: "Aplicar um cenário neste endpoint",
+      icon: "symbol-enum",
+      action: "scenario",
+    },
+    {
+      label: "Copy as cURL",
+      description: withBody ? "Copiar comando com body de exemplo" : "Copiar comando (sem body)",
+      icon: "copy",
+      action: "curl",
+    },
+  ];
+  if (m === "GET" && !String(path).includes(":")) {
+    items.push({
+      label: "Open in browser",
+      description: "Abrir GET de coleção",
+      icon: "globe",
+      action: "browser",
+    });
+  }
+  return items;
+}
+
+/** cURL pronto (POSIX; body opcional para métodos de escrita). */
+export function buildCurl(method: string, url: string, body?: string): string {
+  const quote = (value: string): string => `'${value.replace(/'/g, "'\\''")}'`;
+  const parts = [`curl -X ${String(method).toUpperCase()} ${quote(url)}`];
+  if (body !== undefined) {
+    parts.push(`-H "Content-Type: application/json"`);
+    parts.push(`-d ${quote(body)}`);
+  }
+  return parts.join(" ");
 }
 
 /** Converte as ações em itens de QuickPick, com um separador por grupo (M1). */

@@ -1,4 +1,4 @@
-import type { FieldType } from "./types.js";
+import type { FieldType, HttpMethod, RouteKind } from "./types.js";
 
 export const FIELD_TYPES: FieldType[] = [
   "uuid",
@@ -11,4 +11,16 @@ export const FIELD_TYPES: FieldType[] = [
   "enum",
   "ref",
   "array",
+];
+
+export const HTTP_METHODS: HttpMethod[] = ["GET", "POST", "PUT", "PATCH", "DELETE"];
+
+export const ROUTE_KINDS: RouteKind[] = [
+  "list",
+  "item",
+  "create",
+  "update",
+  "patch",
+  "delete",
+  "custom",
 ];

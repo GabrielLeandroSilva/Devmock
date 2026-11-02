@@ -40,6 +40,11 @@ export {
 export {
   createMockServer,
   routesFor,
+  defaultRoutes,
+  schemaRoutes,
+  listRoute,
+  routeKey,
+  routeLabel,
   paginate,
   DEFAULT_ENDPOINT,
   SCENARIO_NAMES,

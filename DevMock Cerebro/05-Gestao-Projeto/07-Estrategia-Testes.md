@@ -36,7 +36,7 @@ Transformar a cobertura atual (que existe mas **não é rastreável**) em suíte
 
 ## 4. Matriz de rastreabilidade — `AUD-xx → teste`
 
-Status atual: **✅ rastreável** — S1 entregue (15/15). Baseline original (pré-S1): 0 referências a `AUD-xx`.
+Status atual: **✅ rastreável** — 16/16 IDs do catálogo presente no working tree. Baseline original (pré-S1): 0 referências a `AUD-xx`.
 
 | ID | Bug (resumo) | Área | Teste | Tipo | Status |
 |----|--------------|------|-------|------|--------|
@@ -55,8 +55,9 @@ Status atual: **✅ rastreável** — S1 entregue (15/15). Baseline original (pr
 | AUD-13 | `?limit` sozinho não paginava | core / mockServer | `regression.test.ts` | unit | ✅ |
 | AUD-14 | `build --workspaces` compilava CLI antes do Core | infra / build | `guards.test.ts` | guard | ✅ |
 | AUD-15 | Workflow ignorava o script ordenado da raiz | infra / CI | `guards.test.ts` | guard | ✅ |
+| AUD-16 | `close()` aguardava conexões keep-alive | core / mockServer | `regression.test.ts` | unit | ✅ |
 
-**Meta v1.1.0:** 15/15 com teste nomeado (11 unit/integração + 4 guards). **Atingida em 2026-10-17.**
+**Meta v1.1.0:** 15/15 com teste nomeado (11 unit/integração + 4 guards). **Atingida em 2026-10-17.** AUD-16 foi adicionado depois e também tem regressão nomeada.
 
 ## 5. Matriz de rastreabilidade — `RF do PRD → teste`
 Cada PRD ([[Indice-PRDs]]) confrontado com os testes existentes. **S2 entregue em 2026-10-17:** 4 órfãos fechados com testes novos (`packages/core/test/prd.test.ts` + 1 em `cli.test.ts`); 4 órfãos de UI do host e 1 de CLI ficam registrados com motivo (abaixo).
@@ -78,6 +79,10 @@ Cada PRD ([[Indice-PRDs]]) confrontado com os testes existentes. **S2 entregue e
 | 02 | RF-05 Start/stop pelo painel | `commands.test.ts` "start sobe HTTP real; stop derruba" | ✅ |
 | 02 | RF-06 `GET /:id` inexistente → 404 | `mockServer.test.ts` "GET /users/:id … 404" | ✅ |
 | 02 | RF-07 Porta em uso acionável | `mockServer.test.ts` "porta ocupada…" · `regression.test.ts` AUD-05 | ✅ |
+| 02 | RF-08 `Schema.routes` (mapa + validação) | `routes.test.ts` "PRD-02 RF-08 …" (29 casos) | ✅ |
+| 02 | RF-09 Router (custom/aninhada/estático) | `router.test.ts` (custom/aninhada, estático × param, colisão, alias) | ✅ |
+| 02 | RF-10 Semântica (PUT/PATCH/400/405) | `router.test.ts` "PRD-02 RF-10 …" | ✅ |
+| 02 | RF-11 `response` custom/precedência | `router.test.ts` "PRD-02 RF-11 …" | ✅ |
 | 02 | §7 Trocar porta + restart sem resíduo | `prd.test.ts` "PRD-02 §7" | ✅ |
 | 03 | RF-01 Init idempotente | `commands.test.ts` "init é idempotente" · `00-smoke.test.ts` | ✅ |
 | 03 | RF-03 Start/Stop painel | `commands.test.ts` "start sobe HTTP real" | ✅ |
@@ -87,6 +92,13 @@ Cada PRD ([[Indice-PRDs]]) confrontado com os testes existentes. **S2 entregue e
 | 03 | RF-05 Edição manual do JSON recarrega a Tree | `tree.test.ts` (builder com snapshot fresco; watcher = glue do host) | ✅ |
 | 03 | RF-06 Create API (From scratch/Import/Detect) | `detect.test.ts` (core) · `ops.test.ts` (host, W2) | ✅ |
 | 03 | §7 CTA sem `.devmock/` | `tree.test.ts` "sem .devmock oferece inicializar" | ✅ |
+| 03 | RF-12 Ações no header | `actions.test.ts` · `commands.test.ts` "Ações encaminha…" | ✅ |
+| 03 | RF-13 Cenário por clique | `actions.test.ts` "cenário: pick…" · `commands.test.ts` "applyScenario…" | ✅ |
+| 03 | RF-14 Nó de cenário com contagem | `tree.test.ts` "Scenarios marca o ativo…" | ✅ |
+| 03 | RF-15 Studio edita/restaura rotas e salva | `ops.test.ts` "studio: rotas customizadas salvam, validam e preview ignora" (handler host) | ⚠️ manual v1.5 ok; IIFE sem teste automatizado (dívida) |
+| 03 | RF-16 Menu do endpoint/cURL/browser | `actions.test.ts` (menu/cURL) · `commands.test.ts` (cURL/clipboard/browser) | ✅ |
+| 03 | RF-17 `Switch Scenario` todas as rotas | `commands.test.ts` "switchScenario lista todas as rotas…" · "com rota do menu…" | ✅ |
+| 03 | RF-18 Cenário em todos os métodos + contador | `tree.test.ts` (métodos, contador por rota) | ✅ |
 | 04 | RF-01 CRUD de cenário | `ops.test.ts` "switch grava activeScenarios" | ✅ |
 | 04 | RF-02 Troca <500ms sem restart | `mockServer.test.ts` "troca de cenário sem restart" | ✅ |
 | 04 | RF-03 `Empty` → 200 `{data:[],total:0}` | `mockServer.test.ts` "Empty retorna envelope vazio com 200" | ✅ |
@@ -99,8 +111,10 @@ Cada PRD ([[Indice-PRDs]]) confrontado com os testes existentes. **S2 entregue e
 | 05 | RF-04 `types.ts` (enum union, BRL number) | `export.test.ts` "enum vira union, BRL vira number" | ✅ |
 | 05 | RF-05 Export Contract (comando único) | `ops.test.ts` · `cli.test.ts` "export gera 5 artefatos" | ✅ |
 | 05 | §8 Re-export idempotente | `export.test.ts` "re-export do mesmo Schema gera saída idêntica" | ✅ |
+| 05 | RF-07 Export por `Schema.routes` (OpenAPI/MD/HTML, summary) | `export.test.ts` "v1.5.0 — rotas custom no export" | ✅ |
 | 06 | RF-01…05 Import OpenAPI (fixture, warnings, YAML, --force) | `import.test.ts` (4) · `cli.test.ts` "import yaml…" · `ops.test.ts` "import cria…" | ✅ |
 | 07 | RF-01…06 Contract Validation | `validate.test.ts` (11) · `cli.test.ts` "validate…" · `ops.test.ts` "validate contra mock real" | ✅ |
+| 07 | RF-07 Validate na rota list custom; skip com aviso | `validate.test.ts` "v1.5.0 — rotas custom no validate" · `cli.test.ts` "validate pula…" · host (aviso) | ✅ |
 | 08 | RF-01 `generate` (records/seed/--out) | `cli.test.ts` "generate é determinístico e --out grava" | ✅ |
 | 08 | RF-02 `export` 5 artefatos **+ `.hashes.json`** | `cli.test.ts` "export gera 5 artefatos" (sem hashes) | ⚠️ órfão (c) |
 | 08 | RF-03 CI verde no PR | `guards.test.ts` AUD-15 · `.github/workflows/ci.yml` | ✅ |
@@ -110,6 +124,7 @@ Cada PRD ([[Indice-PRDs]]) confrontado com os testes existentes. **S2 entregue e
 - **(a) UI do host — TreeView/watch/CTA (PRD-03 RF-02, RF-05, §7):** ✅ **resolvido na v1.3.0 (T3a)** — `ProjectProvider.getChildren` virou o builder puro `apps/extension/src/tree.ts`, testado em `suite/tree.test.ts` (8 casos); o watcher/reload é glue do host. → [[10-Plano-Release-v1.3.0]]
 - **(b) Create API (PRD-03 RF-06):** ✅ **resolvido na v1.2.0** — Detect implementado ([[PRD-09-Detect-From-Project]]) com testes em `detect.test.ts` (core) e `ops.test.ts` (host).
 - **(c) CLI `export` sem `.hashes.json` (PRD-08 RF-02):** **bug de produto**, não de teste — tratado em **M4** do [[06-Plano-Release-v1.1.0]] (staleDetector completo + CLI grava hashes); o teste é adicionado junto do fix.
+- **(d) Studio Webview (PRD-03 RF-15):** o teste atual cobre `handleStudioMessage` no host, mas não executa o IIFE `media/form.js`; `toUi`/`toRoutes`, parsing do body, erro de linha sem path, preservação de `summary` durante edição e os cliques de customizar/adicionar/remover/restaurar/salvar permanecem sem regressão automatizada. `jsonForHtml` também não tem teste para `<`/U+2028/U+2029. Dívida: criar seam testável para conversores e cobrir o fluxo da Webview sem depender de relógio/rede; não extrair nesta alteração porque isso mudaria código de produção.
 
 ## 6. Guard tests (bugs de infra)
 Não são unit-testáveis; vivem em `packages/core/test/guards.test.ts` e falham o CI se o invariante quebrar:

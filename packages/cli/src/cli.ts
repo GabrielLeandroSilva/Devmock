@@ -69,12 +69,14 @@ async function cmdStart(cwd: string): Promise<void> {
     return;
   }
 
-  const server = createMockServer(schemas, { config, scenarios });
+  let server: ReturnType<typeof createMockServer>;
   let port: number;
   try {
+    server = createMockServer(schemas, { config, scenarios });
     port = await server.listen();
   } catch (err) {
-    console.error(`DevMock: ${err instanceof Error ? err.message : String(err)}`);
+    const message = err instanceof Error ? err.message : String(err);
+    console.error(message.startsWith("DevMock:") ? message : `DevMock: ${message}`);
     process.exitCode = 1;
     return;
   }
@@ -99,6 +101,7 @@ function loadProject(dir: string): {
 
   const schemasDir = join(dir, "schemas");
   if (existsSync(schemasDir)) {
+    const candidates: { file: string; schema: Schema }[] = [];
     for (const f of readdirSync(schemasDir).filter((x) => x.endsWith(".json"))) {
       let parsed: unknown;
       try {
@@ -107,12 +110,23 @@ function loadProject(dir: string): {
         warnings.push(`${f} ignorado: JSON inválido.`);
         continue;
       }
-      const diags = validateSchema(parsed as Schema);
-      if (diags.some((d) => d.severity === "error")) {
-        warnings.push(`${f} ignorado: ${diags.find((d) => d.severity === "error")?.message ?? "schema inválido"}`);
+      if (!parsed || typeof parsed !== "object") {
+        warnings.push(`${f} ignorado: schema inválido.`);
         continue;
       }
-      schemas.push(parsed as Schema);
+      candidates.push({ file: f, schema: parsed as Schema });
+    }
+    // Refs só podem ser checadas com todos os nomes conhecidos (PRD-01).
+    const known = candidates
+      .map((candidate) => candidate.schema.name)
+      .filter((name): name is string => typeof name === "string" && name.length > 0);
+    for (const { file, schema } of candidates) {
+      const diags = validateSchema(schema, known);
+      if (diags.some((d) => d.severity === "error")) {
+        warnings.push(`${file} ignorado: ${diags.find((d) => d.severity === "error")?.message ?? "schema inválido"}`);
+        continue;
+      }
+      schemas.push(schema);
     }
   }
 
@@ -194,6 +208,10 @@ async function cmdValidate(args: string[]): Promise<void> {
       console.log(`✕ ${r.endpoint} — erro: ${r.error}`);
       continue;
     }
+    if (r.skipped) {
+      console.log(`- ${r.endpoint} — pulado: ${r.skipped}`);
+      continue;
+    }
     const icon = r.breaking > 0 ? "✕" : r.warnings > 0 ? "⚠" : "✓";
     console.log(`${icon} ${r.endpoint} — ${r.compatible} compatible, ${r.warnings} warnings, ${r.breaking} breaking (${r.checked} verificados)`);
     for (const f of r.findings) {
@@ -202,6 +220,7 @@ async function cmdValidate(args: string[]): Promise<void> {
   }
   const total = summarize(reports);
   console.log(`\n${total.compatible} compatible, ${total.warnings} warnings, ${total.breaking} breaking.`);
+  if (total.skipped > 0) console.log(`${total.skipped} endpoint(s) pulado(s).`);
   if (total.breaking > 0) process.exitCode = 1;
 }
 
@@ -323,17 +342,23 @@ function cmdExport(args: string[]): void {
     process.exitCode = 1;
     return;
   }
-  mkdirSync(join(dir, "openapi"), { recursive: true });
-  mkdirSync(join(dir, "docs"), { recursive: true });
-  writeFileSync(join(dir, "openapi", "generated.json"), `${JSON.stringify(buildOpenApi(schemas), null, 2)}\n`);
-  writeFileSync(join(dir, "openapi", "generated.yaml"), toYaml(buildOpenApi(schemas)));
-  writeFileSync(join(dir, "openapi", "schemas.json"), `${JSON.stringify(buildJsonSchemas(schemas), null, 2)}\n`);
-  writeFileSync(join(dir, "docs", "types.ts"), buildTypes(schemas));
-  for (const s of schemas) {
-    writeFileSync(join(dir, "docs", `${s.name.toLowerCase()}.md`), buildDocFor(s));
+  try {
+    mkdirSync(join(dir, "openapi"), { recursive: true });
+    mkdirSync(join(dir, "docs"), { recursive: true });
+    writeFileSync(join(dir, "openapi", "generated.json"), `${JSON.stringify(buildOpenApi(schemas), null, 2)}\n`);
+    writeFileSync(join(dir, "openapi", "generated.yaml"), toYaml(buildOpenApi(schemas)));
+    writeFileSync(join(dir, "openapi", "schemas.json"), `${JSON.stringify(buildJsonSchemas(schemas), null, 2)}\n`);
+    writeFileSync(join(dir, "docs", "types.ts"), buildTypes(schemas));
+    for (const s of schemas) {
+      writeFileSync(join(dir, "docs", `${s.name.toLowerCase()}.md`), buildDocFor(s));
+    }
+    writeFileSync(join(dir, "docs", "index.html"), buildHtmlDocs(schemas));
+    const hashes = mergeExportHashes(undefined, schemas, ALL_ARTIFACTS);
+    writeFileSync(join(dir, "openapi", ".hashes.json"), `${JSON.stringify(hashes, null, 2)}\n`);
+    console.log(`DevMock: contrato exportado (${schemas.length} schema(s), 6 artefatos + .hashes.json).`);
+  } catch (err) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.error(message.startsWith("DevMock:") ? message : `DevMock: ${message}`);
+    process.exitCode = 1;
   }
-  writeFileSync(join(dir, "docs", "index.html"), buildHtmlDocs(schemas));
-  const hashes = mergeExportHashes(undefined, schemas, ALL_ARTIFACTS);
-  writeFileSync(join(dir, "openapi", ".hashes.json"), `${JSON.stringify(hashes, null, 2)}\n`);
-  console.log(`DevMock: contrato exportado (${schemas.length} schema(s), 6 artefatos + .hashes.json).`);
 }

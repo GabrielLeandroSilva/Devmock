@@ -1,11 +1,12 @@
 import { existsSync, unlinkSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
-import { generate, validateSchema, type Schema } from "@devmock/core";
+import { generate, validateSchema, type Schema, type SchemaRoute } from "@devmock/core";
 
 export interface StudioMessage {
   kind: string;
   model: string;
   fields: Record<string, unknown>[];
+  routes?: SchemaRoute[];
   records?: number;
   seed?: number | string;
   silent?: boolean;
@@ -30,21 +31,31 @@ export interface StudioEnv {
  * O handler da webview é só um wrapper fino sobre esta função.
  */
 export function handleStudioMessage(msg: StudioMessage, env: StudioEnv): StudioReply {
-  const schema = { name: (msg.model || "").trim(), fields: msg.fields } as unknown as Schema;
-  const errors = validateSchema(schema).filter((d) => d.severity === "error");
+  const base = { name: (msg.model || "").trim(), fields: msg.fields } as unknown as Schema;
+  const schema: Schema =
+    msg.routes !== undefined ? { ...base, routes: msg.routes } : base;
 
   if (msg.kind === "preview") {
-    // Preview silencioso (auto): sem schema válido, sem resposta.
+    // Preview usa só model+campos (rotas não afetam os dados).
+    const errors = validateSchema(base).filter((d) => d.severity === "error");
     if (errors.length > 0) {
       return msg.silent
         ? { kind: "noop" }
         : { kind: "error", text: errors.map((d) => `${d.field}: ${d.message}`).join("\n") };
     }
     const seed = msg.seed === undefined || msg.seed === "" ? env.seedDefault : msg.seed;
-    const rows = generate(schema, msg.records ?? 5, seed);
+    const rows = generate(base, msg.records ?? 5, seed);
     return { kind: "previewResult", text: JSON.stringify(rows, null, 2) };
   }
 
+  if (msg.kind !== "preview" && Array.isArray(msg.routes) && msg.routes.length === 0) {
+    return {
+      kind: "error",
+      text: "Adicione ao menos 1 rota ou desmarque \"Customizar rotas\" para usar o CRUD padrão.",
+    };
+  }
+
+  const errors = validateSchema(schema).filter((d) => d.severity === "error");
   if (errors.length > 0) {
     return { kind: "error", text: errors.map((d) => `${d.field}: ${d.message}`).join("\n") };
   }

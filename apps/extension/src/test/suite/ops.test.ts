@@ -2,7 +2,7 @@ import * as assert from "node:assert";
 import { cpSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
-import { createMockServer } from "@devmock/core";
+import { createMockServer, type SchemaRoute } from "@devmock/core";
 import { handleStudioMessage } from "../../studio.js";
 import {
   doCreateDetectedSchemas,
@@ -134,6 +134,75 @@ suite("ops no host (fs real, sem mocks)", () => {
     assert.strictEqual(renamed.kind, "ok");
     assert.ok(existsSync(join(devmockDir(root), "schemas", "users.json")));
     assert.ok(!existsSync(join(devmockDir(root), "schemas", "user.json")));
+  });
+
+  test("studio: rotas customizadas salvam, validam e preview ignora", () => {
+    const fields = [
+      { name: "id", type: "uuid", required: true },
+      { name: "name", type: "string", generator: "br.nome" },
+    ];
+    const routes: SchemaRoute[] = [
+      { method: "GET", path: "/v1/route-users", kind: "list", summary: "Lista" },
+      {
+        method: "POST",
+        path: "/route-auth/login",
+        kind: "custom",
+        response: { status: 201, body: { token: "x" } },
+      },
+    ];
+    const file = join(devmockDir(root), "schemas", "routeuser.json");
+
+    const saved = handleStudioMessage(
+      { kind: "save", model: "RouteUser", fields, routes },
+      { root, seedDefault: 7, onSaved: () => {} },
+    );
+    assert.strictEqual(saved.kind, "ok");
+    assert.deepStrictEqual(JSON.parse(readFileSync(file, "utf8")).routes, routes);
+
+    const preview = handleStudioMessage(
+      {
+        kind: "preview",
+        model: "RouteUser",
+        fields,
+        routes: [{ method: "GET", path: "bad", kind: "list" }],
+        records: 1,
+      },
+      { root, seedDefault: 7 },
+    );
+    assert.strictEqual(preview.kind, "previewResult");
+    if (preview.kind === "previewResult") {
+      assert.strictEqual(JSON.parse(preview.text).length, 1);
+    }
+
+    const empty = handleStudioMessage(
+      { kind: "save", model: "RouteUser", fields, routes: [] },
+      { root, seedDefault: 7 },
+    );
+    assert.strictEqual(empty.kind, "error");
+    if (empty.kind === "error") {
+      assert.match(empty.text, /Adicione ao menos 1 rota/);
+    }
+    const savedBeforeInvalidRoutes = readFileSync(file, "utf8");
+
+    const invalid = handleStudioMessage(
+      {
+        kind: "save",
+        model: "RouteUser",
+        fields,
+        routes: [{ method: "GET", path: "bad", kind: "list" }],
+      },
+      { root, seedDefault: 7 },
+    );
+    assert.strictEqual(invalid.kind, "error");
+    assert.strictEqual(readFileSync(file, "utf8"), savedBeforeInvalidRoutes);
+
+    // Volta ao CRUD padrão (sem routes) para não afetar os próximos testes.
+    const reset = handleStudioMessage(
+      { kind: "save", model: "RouteUser", fields },
+      { root, seedDefault: 7, onSaved: () => {} },
+    );
+    assert.strictEqual(reset.kind, "ok");
+    assert.strictEqual(JSON.parse(readFileSync(file, "utf8")).routes, undefined);
   });
 
   test("M4 — export parcial não sincroniza os demais artefatos", () => {

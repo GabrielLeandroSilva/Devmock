@@ -146,7 +146,7 @@ export async function doImportContent(
 export async function doValidate(
   root: string,
   baseUrl: string,
-): Promise<{ reports: EndpointReport[]; total: { compatible: number; warnings: number; breaking: number } }> {
+): Promise<{ reports: EndpointReport[]; total: ReturnType<typeof summarize> }> {
   const schemas = listSchemas(root);
   if (schemas.length === 0) throw new Error("DevMock: nenhum Schema válido.");
   const reports = await validateLive(schemas, baseUrl);
