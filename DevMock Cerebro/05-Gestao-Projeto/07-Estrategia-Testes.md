@@ -95,7 +95,7 @@ Cada PRD ([[Indice-PRDs]]) confrontado com os testes existentes. **S2 entregue e
 | 03 | RF-12 Ações no header | `actions.test.ts` · `commands.test.ts` "Ações encaminha…" | ✅ |
 | 03 | RF-13 Cenário por clique | `actions.test.ts` "cenário: pick…" · `commands.test.ts` "applyScenario…" | ✅ |
 | 03 | RF-14 Nó de cenário com contagem | `tree.test.ts` "Scenarios marca o ativo…" | ✅ |
-| 03 | RF-15 Studio edita/restaura rotas e salva | `ops.test.ts` "studio: rotas customizadas salvam, validam e preview ignora" (handler host) | ⚠️ parcial — não exercita a Webview |
+| 03 | RF-15 Studio edita/restaura rotas e salva | `ops.test.ts` "studio: rotas customizadas salvam, validam e preview ignora" (handler host) | ⚠️ manual v1.5 ok; IIFE sem teste automatizado (dívida) |
 | 03 | RF-16 Menu do endpoint/cURL/browser | `actions.test.ts` (menu/cURL) · `commands.test.ts` (cURL/clipboard/browser) | ✅ |
 | 03 | RF-17 `Switch Scenario` todas as rotas | `commands.test.ts` "switchScenario lista todas as rotas…" · "com rota do menu…" | ✅ |
 | 03 | RF-18 Cenário em todos os métodos + contador | `tree.test.ts` (métodos, contador por rota) | ✅ |

@@ -88,7 +88,7 @@ Dev precisa de experiência visual simples (TreeView) + edição direta dos arqu
 - [x] #task 🔼 **[v1.4.0]** Header com **Ações** + Refresh + Start/Stop; New Schema acessível pelo Ações 🏷️ fase/codigo
 - [x] #task 🔼 **[v1.4.0]** Clique no cenário aplica aos Schemas selecionados (GET de coleção) sem restart 🏷️ fase/codigo
 - [x] #task 🔼 **[v1.4.0]** Nó de cenário com `contextValue` e descrição `N schema(s)` 🏷️ fase/codigo
-- [ ] #task 🔼 **[v1.5.0]** Studio edita rotas (método/path/kind/response) e restaura o padrão 🏷️ fase/codigo
+- [x] #task 🔼 **[v1.5.0]** Studio edita rotas (método/path/kind/response) e restaura o padrão 🏷️ fase/codigo
 - [x] #task 🔼 **[v1.5.0]** Clique em POST/PATCH/DELETE abre menu (cenário/cURL); GET abre no browser 🏷️ fase/codigo
 - [x] #task 🔼 **[v1.5.0]** `Switch Scenario…` lista todas as rotas e aplica por endpoint 🏷️ fase/codigo
 

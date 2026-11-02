@@ -2,7 +2,7 @@
 
 Formato [Keep a Changelog](https://keepachangelog.com/). Versões da extension são independentes das tags do monorepo.
 
-## [1.5.0] — 2026-10-22 — Rotas completas: mapa por Schema + POST/PUT/PATCH/DELETE
+## [1.5.0] — 2026-11-02 — Rotas completas: mapa por Schema + POST/PUT/PATCH/DELETE
 ### Added
 - **Rotas por Schema** (`routes`): cada Schema declara `method`/`path`/`kind`/`response`/`summary`; ausente = CRUD padrão (`/users`, `/users/:id`). `kind`: `list`, `item`, `create`, `update`, `patch`, `delete`, `custom`
 - **Router por método/pattern**: `:param`, estático vence param, alias singular e rotas aninhadas (`/v1/users`); rotas validadas no start

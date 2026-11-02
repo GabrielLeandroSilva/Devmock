@@ -46,27 +46,27 @@ Hoje o Core já responde as 6 rotas, mas o path é fixo (`/${plural(name)}`) e a
 - **M2:** `GET /v1/users` e `GET /v1/users/:id` resolvem o mesmo Schema; rota estática vence `:param`; log/config usam `"METHOD /pattern"`. **Status:** ✅ implementado, revisado (Code-Reviewer) e auditado (QA-Testes; core **180** · CLI **18** · host **45**).
 - **M3:** PUT substitui (mantém `id`), PATCH faz merge; POST/PUT/PATCH com JSON inválido → 400; `DELETE` coleção → 405 com `Allow`; `custom` usa `response` e cenário/endpoint sobrescrevem. **Status:** ✅ implementado, revisado e auditado.
 - **M4:** todo endpoint abre o menu; Switch Scenario lista todos os métodos; cenário aplica por endpoint; cURL copia método/URL/body; GET sem `:id` abre no browser. **Status:** ✅ implementado, revisado (Code-Reviewer) e auditado (QA-Testes; host **60**).
-- **M5:** Studio edita rotas, restaura o padrão e salva; schema sem customização continua sem `routes`. **Status:** ⏳ implementado/revisado; QA aceitou com dívida da Webview; falta o **Manual-Teste-v1.5**.
+- **M5:** Studio edita rotas, restaura o padrão e salva; schema sem customização continua sem `routes`. **Status:** ✅ implementado/revisado/auditado; **Manual-Teste-v1.5 aprovado em 2026-11-02** (dívida: IIFE da Webview sem teste automatizado).
 - **M6:** OpenAPI/MD/HTML refletem rotas custom; validate usa a rota `list`; CLI export/validate acompanham. **Status:** ✅ implementado, revisado (Code-Reviewer) e auditado (QA-Testes; core **193** · CLI **20** · host **62**).
-- **M7:** docs/superfícies sincronizadas.
+- **M7:** docs/superfícies sincronizadas. **Status:** ✅ READMEs/wiki/CHANGELOG/versão; Manual aprovado; tag `ext-v1.5.0`.
 
 ## 4. Passos de execução (checklist)
 - [x] #task ⏫ M1 — tipos `SchemaRoute`/`RouteKind` + defaults + validação + helpers (`routesFor`, `listRoute`) 🏷️ fase/codigo
 - [x] #task ⏫ M2 — router por método+pattern (estático > `:param`) + store/params 🏷️ fase/codigo
 - [x] #task ⏫ M3 — PUT replace, PATCH merge, 400/405, `response` custom + precedência 🏷️ fase/codigo
 - [x] #task ⏫ M4 — menu do endpoint + cURL + `Switch Scenario` todas as rotas 🏷️ fase/codigo
-- [/] #task ⏫ M5 — editor de rotas no Studio (webview + `StudioMessage`) 🏷️ fase/codigo
+- [x] #task ⏫ M5 — editor de rotas no Studio (webview + `StudioMessage`) 🏷️ fase/codigo
 - [x] #task ⏫ M6 — OpenAPI/MD/HTML/validate/CLI com rotas custom 🏷️ fase/codigo
 - [x] #task 🔼 S1 — `Location`/`Allow` 🏷️ fase/codigo
 - [x] #task 🔼 S2 — `summary` nas docs 🏷️ fase/codigo
 - [x] #task 🔼 Testes core + host + regressão (default intacto) 🏷️ fase/codigo
-- [/] #task 🔼 Manual-Teste-v1.5 (F5 no host) 🏷️ fase/codigo
+- [x] #task 🔼 Manual-Teste-v1.5 (F5 no host) 🏷️ fase/codigo
 - [x] #task 🔼 CHANGELOG + `apps/extension/package.json` = `1.5.0` 🏷️ fase/codigo
 - [x] #task 🔼 README (raiz + extension) + wiki 🏷️ fase/codigo
 - [/] #task ⏫ Rodar Gate de Release (§5) 🏷️ fase/codigo
 
 ## 5. Gate de Release
-- [ ] Manual-Teste-v1.5 100% (rotas custom + POST/PATCH/DELETE + Studio)
+- [x] Manual-Teste-v1.5 100% (rotas custom + POST/PATCH/DELETE + Studio)
 - [x] suítes + cobertura ≥ gate (core 193 · 92.31/85.62 · CLI 20 · 98.62/84.03 · host 62)
 - [x] `tsc --noEmit` + `npm run build` + `vsce package` limpos (`devmock-vscode-1.5.0.vsix`)
 - [x] CHANGELOG + `apps/extension/package.json` = `1.5.0`
