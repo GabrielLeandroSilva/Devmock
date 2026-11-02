@@ -25,12 +25,12 @@ Na [Visual Studio Marketplace](https://marketplace.visualstudio.com/items?itemNa
 | Import OpenAPI… | Gera Schemas de `openapi.yaml/json` |
 | Generate / Save Fake Data… | Preview em aba ou salva em `docs/examples/` |
 | Start / Stop Mock Server | Sobe/derruba `:4010`; Stop mostra o request log |
-| Switch Scenario… | Default, Empty, 401/403/500/429, Slow — sem restart |
-| Export Contract… | OpenAPI JSON+YAML, JSON Schema, `types.ts`, Markdown, HTML |
-| Validate Real API… | Compara a API real com o contrato (Compatible/Warning/Breaking) |
+| Switch Scenario… | Default, Empty, 401/403/500/429, Slow — lista todas as rotas e aplica por método, sem restart |
+| Export Contract… | OpenAPI JSON+YAML, JSON Schema, `types.ts`, Markdown, HTML — por rota (custom, `summary`) |
+| Validate Real API… | Compara a API real com o contrato (Compatible/Warning/Breaking); pula com aviso rotas sem `kind: list` |
 | Show Request Log | Método, rota, status, ms, cenário e bodies (request/response, truncados em 1KB) |
 
-Na Tree, o botão **Ações** concentra os comandos; clique num **cenário** para aplicá-lo a um ou mais Schemas.
+Na Tree, o botão **Ações** concentra os comandos; clique num **cenário** para aplicá-lo a um ou mais Schemas. Cada endpoint (incluindo POST/PUT/PATCH/DELETE e rotas custom) tem seu próprio menu de **cenário**, **cURL** e **abrir no browser**.
 
 Prefere terminal? Há CLI equivalente: `devmock init|start|generate|export|import|validate` (ver `packages/cli`).
 
@@ -42,6 +42,9 @@ Quer testar instabilidade? Defina **`errorRate`** (0–100) em `.devmock/config.
 # com o servidor rodando:
 curl "http://localhost:4010/users?page=1&limit=5"
 curl -X POST http://localhost:4010/users -H "Content-Type: application/json" -d "{}"
+curl -X PUT http://localhost:4010/users/1 -H "Content-Type: application/json" -d "{\"name\":\"Ana\"}"
+curl -X PATCH http://localhost:4010/users/1 -H "Content-Type: application/json" -d "{\"name\":\"Ana\"}"
+curl -X DELETE http://localhost:4010/users/1
 
 # forçar um cenário só nesta chamada:
 curl "http://localhost:4010/users?scenario=Empty"
@@ -61,13 +64,28 @@ Schema mínimo (`.devmock/schemas/user.json`):
 }
 ```
 
+## Rotas custom
+
+Sem `routes`, cada Schema expõe o CRUD padrão (`GET/POST /users`, `GET/PUT/PATCH/DELETE /users/:id`). Declare `routes` para caminhos e ações próprios:
+
+```json
+{
+  "name": "User",
+  "fields": [{ "name": "id", "type": "uuid", "required": true }],
+  "routes": [
+    { "method": "GET", "path": "/v1/users", "kind": "list", "summary": "Lista usuários" },
+    { "method": "POST", "path": "/auth/login", "kind": "custom", "response": { "status": 200, "body": { "token": "abc" } } }
+  ]
+}
+```
+
+`kind`: `list`, `item`, `create`, `update`, `patch`, `delete` ou `custom` (usa `response.status`/`response.body`). `:param` casa um segmento; rota estática vence param. Rotas inválidas/duplicadas falham no start (e no `export`).
+
 ## Roadmap
 
 Próximas versões são planejadas **sem data** e priorizadas por feedback — veja o [Roadmap](https://github.com/GabrielLeandroSilva/Devmock/wiki/Roadmap). Já publicado: [Versões](https://github.com/GabrielLeandroSilva/Devmock/wiki/Vers%C3%B5es) · [Correções](https://github.com/GabrielLeandroSilva/Devmock/wiki/Corre%C3%A7%C3%B5es).
 
-Última versão: **v1.4.0** — botão **Ações** na Tree e cenário aplicado por clique nos Schemas (mouse-first).
-
-- **v1.5.0 (planejado):** mapa de rotas por Schema (inclui ações custom) e POST/PATCH/DELETE na Tree (cenário/cURL)
+Última versão: **v1.5.0** — rotas completas por Schema: mapa de rotas, POST/PUT/PATCH/DELETE e ações custom no mock, na Tree e nas docs.
 
 ## Links
 

@@ -152,6 +152,7 @@ updated: 2026-10-10
 | v1.9.52 | 2026-10-22 | des | M4 v1.5.0: menu do endpoint (cenário/cURL/browser), `Switch Scenario` todas as rotas, cenário por método, contador por rota; host **60**; Code-Reviewer + QA-Testes | `feat(extension): menu de ações do endpoint (M4)` | ✅ em des |
 | v1.9.53 | 2026-10-22 | des | M5 v1.5.0: editor de rotas no Studio (toggle/tabela, add/reset, `summary` passthrough, `jsonForHtml`); host **61**; review+QA; **dívida Webview** registrada | `feat(extension): editor de rotas no Studio (M5)` | ⏳ em des, aguarda Manual-Teste |
 | v1.9.54 | 2026-10-22 | des | M6 v1.5.0: OpenAPI/MD/HTML por rota, validate `kind: list` + skip, `Location`/expose, `summary`; core **193** · CLI **20** · host **62**; review+QA | `feat(core): export e validate com rotas custom (M6)` | ✅ em des |
+| v1.9.55 | 2026-10-22 | des | M7 v1.5.0: Manual-Teste-v1.5, CHANGELOG/versão `1.5.0`, READMEs + wiki; gate (build/tsc, core 193 · CLI 20 · host 62, `vsix` 1.5.0) | `docs: prepara v1.5.0` | ⏳ F5/manual → tag `ext-v1.5.0` |
 
 ## Consulta (Dataview — notas de gestão)
 

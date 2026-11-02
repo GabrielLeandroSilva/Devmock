@@ -2,6 +2,21 @@
 
 Formato [Keep a Changelog](https://keepachangelog.com/). Versões da extension são independentes das tags do monorepo.
 
+## [1.5.0] — 2026-10-22 — Rotas completas: mapa por Schema + POST/PUT/PATCH/DELETE
+### Added
+- **Rotas por Schema** (`routes`): cada Schema declara `method`/`path`/`kind`/`response`/`summary`; ausente = CRUD padrão (`/users`, `/users/:id`). `kind`: `list`, `item`, `create`, `update`, `patch`, `delete`, `custom`
+- **Router por método/pattern**: `:param`, estático vence param, alias singular e rotas aninhadas (`/v1/users`); rotas validadas no start
+- **Semântica completa**: PUT substitui (id imutável), PATCH faz merge; JSON inválido/não-objeto → 400 `INVALID_JSON`; DELETE em coleção → 405 com `Allow`; `custom` usa `response`; POST 201 com `Location` exposto no CORS
+- **Tree e Ações por endpoint**: POST/PUT/PATCH/DELETE/custom com menu de cenário, cURL e abrir no browser (GET sem `:param`); `Switch Scenario` lista todas as rotas e aplica por método
+- **Studio de rotas**: “Customizar rotas”, tabela método/path/kind/status/body, adicionar/remover/restaurar CRUD, `summary` e resposta custom
+- **Export e validate por rota**: OpenAPI/MD/HTML com todas as rotas, `summary`, params, requestBody e resposta custom (204/304 sem body); `validate` usa a rota `kind: list` e **pula com aviso** quando não há list
+### Changed
+- **Export** deixa de assumir só o CRUD padrão: OpenAPI/MD/HTML refletem `Schema.routes`
+- **Switch Scenario** lista todas as rotas (não só `GET /<plural>`); a Tree mostra o cenário por endpoint
+- Chaves de rota usam o **pattern canônico em minúsculas** na UI/CLI (`GET /v1/users`); a resolução segue case-insensitive
+### Fixed
+- `validate` não gera mais falso positivo em coleção aninhada/custom: escolhe a rota `kind: list` não aninhada e pula o que não é coleção
+
 ## [1.4.0] — 2026-10-21 — Mouse-first: Ações + cenário por clique
 ### Added
 - **Botão Ações** no header da Tree: QuickPick agrupado com os comandos (Init, New/Edit Schema, Create API, Import, Generate/Save, Export, Validate, Start/Stop, Switch Scenario, Set Error Rate, Show Log, Refresh). Os itens refletem o estado: sem `.devmock/` só Initialize+Refresh; sem Schema esconde as ações que dependem dele; rodando mostra Stop e Show Log
